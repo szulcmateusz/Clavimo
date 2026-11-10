@@ -80,6 +80,10 @@ func format(_ summary: LatencyRecorder.Summary?) -> String {
     return "n=\(summary.count) p50=\(us(summary.p50)) p95=\(us(summary.p95)) p99=\(us(summary.p99)) max=\(us(summary.max))"
 }
 
+// Line-buffer output so results reach a log file promptly when the
+// probe runs as an app bundle launched with `open --stdout`.
+setvbuf(stdout, nil, _IOLBF, 0)
+
 let options = parse(CommandLine.arguments)
 
 switch options.command {
@@ -179,6 +183,8 @@ if ConsoleSession.isActive() == false {
     controller.setPaused(true)
 }
 
+// Run the main run loop (not just the main queue) so NSWorkspace session
+// notifications are delivered.
 withExtendedLifetime((signalSources, resignObserver, becomeObserver)) {
-    dispatchMain()
+    RunLoop.main.run()
 }
