@@ -893,6 +893,26 @@
         }
       }
     },
+    "Bottom left": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewy dolny"
+          }
+        }
+      }
+    },
+    "Bottom right": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawy dolny"
+          }
+        }
+      }
+    },
     "Built-in": {
       "localizations": {
         "pl": {
@@ -1079,6 +1099,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clavimo: %@"
+          }
+        }
+      }
+    },
+    "Click in the bottom left corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie w lewym dolnym rogu"
+          }
+        }
+      }
+    },
+    "Click in the bottom right corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie w prawym dolnym rogu"
+          }
+        }
+      }
+    },
+    "Click in the top left corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie w lewym górnym rogu"
+          }
+        }
+      }
+    },
+    "Click in the top right corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie w prawym górnym rogu"
+          }
+        }
+      }
+    },
+    "Click with %lld fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie %lld palcami"
           }
         }
       }
@@ -3837,6 +3907,46 @@
         }
       }
     },
+    "Swipe down with %lld fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesunięcie %lld palcami w dół"
+          }
+        }
+      }
+    },
+    "Swipe left with %lld fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesunięcie %lld palcami w lewo"
+          }
+        }
+      }
+    },
+    "Swipe right with %lld fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesunięcie %lld palcami w prawo"
+          }
+        }
+      }
+    },
+    "Swipe up with %lld fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesunięcie %lld palcami w górę"
+          }
+        }
+      }
+    },
     "System": {
       "localizations": {
         "pl": {
@@ -3853,6 +3963,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tab"
+          }
+        }
+      }
+    },
+    "Tap with %lld fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie %lld palcami"
           }
         }
       }
@@ -4189,6 +4309,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "Czas, jaki Clavimo dodaje do każdego zdarzenia, zmierzony na tym Macu. Nie obejmuje opóźnień USB, Bluetooth ani ekranu."
+          }
+        }
+      }
+    },
+    "Tip tap left": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TipTap po lewej"
+          }
+        }
+      }
+    },
+    "Tip tap right": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TipTap po prawej"
+          }
+        }
+      }
+    },
+    "Top left": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewy górny"
+          }
+        }
+      }
+    },
+    "Top right": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawy górny"
+          }
+        }
+      }
+    },
+    "Trackpad gesture": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gest gładzika"
           }
         }
       }
@@ -4571,6 +4741,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "wszystkie włączone"
+          }
+        }
+      }
+    },
+    "direction.down": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Down"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W dół"
+          }
+        }
+      }
+    },
+    "direction.left": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Left"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W lewo"
+          }
+        }
+      }
+    },
+    "direction.right": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Right"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W prawo"
+          }
+        }
+      }
+    },
+    "direction.up": {
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Up"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W górę"
           }
         }
       }

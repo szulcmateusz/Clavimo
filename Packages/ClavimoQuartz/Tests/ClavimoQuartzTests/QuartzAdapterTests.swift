@@ -59,6 +59,14 @@ struct QuartzFlagsTests {
         #expect(EventTapController.eventMask(for: .empty) & scrollBit == 0)
     }
 
+    @Test func trackpadClickRulesNeedPrimaryButtonsButGesturesDoNot() throws {
+        let leftDown = CGEventMask(1) << CGEventMask(CGEventType.leftMouseDown.rawValue)
+        let clicks = try CompiledRules.compile([.trackpad(id: "c", trigger: .click(fingers: 3), action: .click(.middle))]).get()
+        #expect(EventTapController.eventMask(for: clicks) & leftDown != 0)
+        let gestures = try CompiledRules.compile([.trackpad(id: "g", trigger: .gesture(.tap(fingers: 3)), action: .missionControl)]).get()
+        #expect(EventTapController.eventMask(for: gestures) == EventTapController.baseEventMask)
+    }
+
     @Test func eventMaskExcludesPointerAndPrimaryButtons() {
         let mask = EventTapController.eventMask(for: .empty)
         for type: CGEventType in [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged,

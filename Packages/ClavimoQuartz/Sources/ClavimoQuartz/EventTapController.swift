@@ -32,7 +32,7 @@ public final class EventTapController: @unchecked Sendable {
     /// One input event as shown by the diagnostics inspector: a symbolic
     /// description only, kept in memory while the inspector is open.
     public struct InspectedEvent: Sendable, Equatable {
-        public enum Kind: Sendable, Equatable { case key, modifier, mouse, scroll }
+        public enum Kind: Sendable, Equatable { case key, modifier, mouse, scroll, gesture }
         public enum Outcome: Sendable, Equatable { case unchanged, changed, consumed, action }
         public let kind: Kind
         /// Key code, or mouse button number starting at 1.
@@ -40,6 +40,8 @@ public final class EventTapController: @unchecked Sendable {
         public let isDown: Bool
         public let outcome: Outcome
         public let callbackNanoseconds: UInt64
+        /// The recognized trackpad gesture, for `.gesture` events.
+        public var gesture: GestureEvent?
     }
 
     public struct Statistics: Sendable {
@@ -51,6 +53,9 @@ public final class EventTapController: @unchecked Sendable {
         public var tapReenabled: Int
         /// Nil when no rule needs device attribution.
         public var deviceAttributionAvailable: Bool?
+        /// Nil when no rule uses the trackpad.
+        public var trackpad: TouchBackend.Status?
+        public var gesturesRecognized: Int = 0
     }
 
     /// Marks events posted by Clavimo ("CLV1").
@@ -63,7 +68,7 @@ public final class EventTapController: @unchecked Sendable {
     /// only when a rule explicitly uses them.
     public static func eventMask(for rules: CompiledRules) -> CGEventMask {
         var result = baseEventMask
-        if rules.observesProtectedButtons {
+        if rules.observesProtectedButtons || rules.observesTrackpadClicks {
             result |= mask(of: [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp])
         }
         if rules.observesScrollWheel {
@@ -85,6 +90,11 @@ public final class EventTapController: @unchecked Sendable {
     private let keysNeedingDevice: Set<KeyCode>
     private let buttonsNeedingDevice: Set<MouseButton>
     private let usesDeviceConditions: Bool
+    private let observesTrackpad: Bool
+    private let observesTrackpadClicks: Bool
+    private let gestures = TrackpadGestures()
+    private var touchSubscription: TouchHub.Subscription?
+    private var gesturesRecognized = 0
 
     // Tap-thread state.
     private var engine: InputEngine
@@ -117,6 +127,8 @@ public final class EventTapController: @unchecked Sendable {
         keysNeedingDevice = rules.keysNeedingDevice
         buttonsNeedingDevice = rules.buttonsNeedingDevice
         usesDeviceConditions = rules.usesDeviceConditions
+        observesTrackpad = rules.observesTrackpad
+        observesTrackpadClicks = rules.observesTrackpadClicks
         self.flagRewrite = flagRewrite
         self.actionHandler = actionHandler
         self.onStop = onStop
@@ -188,7 +200,9 @@ public final class EventTapController: @unchecked Sendable {
                 tapDisabledByTimeout: disabledByTimeout,
                 tapDisabledByUserInput: disabledByUserInput,
                 tapReenabled: reenableTimes.count,
-                deviceAttributionAvailable: usesDeviceConditions ? deviceAttributionAvailable : nil
+                deviceAttributionAvailable: usesDeviceConditions ? deviceAttributionAvailable : nil,
+                trackpad: observesTrackpad ? TouchHub.shared.status : nil,
+                gesturesRecognized: gesturesRecognized
             ))
         }
     }
@@ -230,8 +244,36 @@ public final class EventTapController: @unchecked Sendable {
             deviceAttributionAvailable = attributor.start(on: loop)
             self.attributor = attributor
         }
+        if observesTrackpad {
+            touchSubscription = TouchHub.shared.subscribe { [weak self] device, frame in
+                self?.receiveTouch(device: device, frame: frame)
+            }
+        }
         CGEvent.tapEnable(tap: port, enable: true)
         return true
+    }
+
+    // MARK: - Trackpad (framework thread, then tap thread)
+
+    private func receiveTouch(device: UInt64, frame: TouchFrame) {
+        let events = gestures.process(device: device, frame: frame, now: clock_gettime_nsec_np(CLOCK_UPTIME_RAW))
+        for gesture in events {
+            perform { [self] in handleGesture(gesture) }
+        }
+    }
+
+    private func handleGesture(_ gesture: GestureEvent) {
+        guard tap != nil, !paused else { return }
+        gesturesRecognized += 1
+        let output = engine.handleGesture(gesture)
+        dispatchActions(output.actions)
+        if inspectorEnabled {
+            var event = InspectedEvent(kind: .gesture, code: 0, isDown: true,
+                                       outcome: output.actions.isEmpty ? .unchanged : .action, callbackNanoseconds: 0)
+            event.gesture = gesture
+            if inspected.count >= Self.inspectorCapacity { inspected.removeFirst() }
+            inspected.append(event)
+        }
     }
 
     private func shutDown(reason: StopReason) {
@@ -246,6 +288,9 @@ public final class EventTapController: @unchecked Sendable {
         deadlineTimer = nil
         attributor?.stop()
         attributor = nil
+        touchSubscription?.cancel()
+        touchSubscription = nil
+        gestures.reset()
         if let runLoop { CFRunLoopStop(runLoop) }
         onStop(reason)
     }
@@ -500,7 +545,11 @@ public final class EventTapController: @unchecked Sendable {
         if isDown, buttonsNeedingDevice.contains(button) {
             device = attributor?.deviceHolding(button: button)
         }
-        return InputEvent(kind: .mouseButton(button, isDown: isDown), modifiers: physical, time: time, device: device)
+        var touch: TouchSnapshot?
+        if isDown, observesTrackpadClicks, button.isProtected {
+            touch = gestures.currentSnapshot(now: time)
+        }
+        return InputEvent(kind: .mouseButton(button, isDown: isDown), modifiers: physical, time: time, device: device, touch: touch)
     }
 
     /// Only keys used by device-scoped rules pay for the device query.

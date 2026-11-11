@@ -190,6 +190,10 @@ private struct InspectorRow: View {
                 MouseButtonToken(title: KeyNames.shortButtonName(Int(event.code)))
             case .scroll:
                 MouseButtonToken(title: String(localized: "Wheel"))
+            case .gesture:
+                Label(event.gesture.map(GestureNames.title) ?? String(localized: "Trackpad gesture"),
+                      systemImage: "hand.point.up.left")
+                    .font(.callout.weight(.medium))
             case .key, .modifier:
                 let cap = KeyNames.keyCap(for: event.code)
                 KeyCap(label: cap.label, caption: cap.caption)

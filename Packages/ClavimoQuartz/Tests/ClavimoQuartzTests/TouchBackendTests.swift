@@ -63,3 +63,34 @@ struct TouchDecodingTests {
         #expect(!validator.isBroken)
     }
 }
+
+@Suite("Trackpad gesture state")
+struct TrackpadGesturesTests {
+    func frame(_ time: Double, _ points: [(Int32, Float, Float)]) -> TouchFrame {
+        TouchFrame(time: time, contacts: points.map { TouchContact(id: $0.0, state: .touching, x: $0.1, y: $0.2) })
+    }
+
+    @Test func snapshotExpiresWhenFramesStop() {
+        let gestures = TrackpadGestures()
+        _ = gestures.process(device: 1, frame: frame(1, [(1, 0.3, 0.5), (2, 0.4, 0.5), (3, 0.5, 0.5)]), now: 1_000_000_000)
+        #expect(gestures.currentSnapshot(now: 1_100_000_000).fingers == 3)
+        #expect(gestures.currentSnapshot(now: 1_400_000_000) == .empty, "fingers without fresh frames are not trusted")
+    }
+
+    @Test func cornerTapIsForgottenAfterAWhile() {
+        let gestures = TrackpadGestures()
+        _ = gestures.process(device: 1, frame: frame(1, [(1, 0.95, 0.95)]), now: 1_000_000_000)
+        _ = gestures.process(device: 1, frame: frame(1.05, []), now: 1_050_000_000)
+        #expect(gestures.currentSnapshot(now: 1_100_000_000).tappedCorner == .topRight)
+        #expect(gestures.currentSnapshot(now: 1_600_000_000).tappedCorner == nil)
+    }
+
+    @Test func gesturesAreRecognizedPerDevice() {
+        let gestures = TrackpadGestures()
+        var events: [GestureEvent] = []
+        events += gestures.process(device: 1, frame: frame(1, [(1, 0.3, 0.5), (2, 0.4, 0.5), (3, 0.5, 0.5)]), now: 1)
+        events += gestures.process(device: 2, frame: frame(1.01, [(9, 0.5, 0.5)]), now: 2)
+        events += gestures.process(device: 1, frame: frame(1.08, []), now: 3)
+        #expect(events == [.tap(fingers: 3)])
+    }
+}

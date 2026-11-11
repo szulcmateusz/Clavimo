@@ -268,8 +268,10 @@ final class AgentController {
 
     private func systemWoke() {
         guard controller != nil else { return }
-        // Fresh tap and empty pressed-state ledger after sleep.
+        // Fresh tap and empty pressed-state ledger after sleep; trackpads
+        // must be opened again after the Mac wakes.
         stopTap()
+        TouchHub.shared.restart()
         reconcile()
     }
 
