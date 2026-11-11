@@ -31,9 +31,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         editor.onSaved = { [weak self] in self?.agent.reloadConfiguration() }
         agent.start()
 
+        // First launch with no rules: guide the user. People who already
+        // have rules (for example from an earlier version) skip the guide.
+        let key = "didCompleteOnboarding"
         let document = agent.loaded?.document
-        if document?.rules.isEmpty == true && (document?.deviceSettings ?? []).isEmpty {
-            windows.showSettings()
+        let hasRules = !(document?.rules.isEmpty ?? true) || !(document?.deviceSettings ?? []).isEmpty
+        if !UserDefaults.standard.bool(forKey: key) {
+            if hasRules {
+                UserDefaults.standard.set(true, forKey: key)
+            } else {
+                windows.showOnboarding { [weak self] in
+                    UserDefaults.standard.set(true, forKey: key)
+                    self?.windows.showSettings()
+                }
+            }
         }
     }
 

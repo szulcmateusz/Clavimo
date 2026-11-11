@@ -38,6 +38,11 @@ enum ScreenshotRenderer {
                                to: outputDirectory.appendingPathComponent("editor-\(suffix).png"))
                 }
             }
+            for step in OnboardingView.Step.allCases {
+                let view = OnboardingPreview(agent: agent, editor: editor, step: step)
+                try render(view, size: NSSize(width: 640, height: 560), appearance: .aqua,
+                           to: outputDirectory.appendingPathComponent("onboarding-\(step.rawValue + 1).png"))
+            }
             print("Rendered screenshots to \(outputDirectory.path)")
             return 0
         } catch {

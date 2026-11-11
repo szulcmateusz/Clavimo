@@ -5,6 +5,14 @@ struct RuleTemplate: Identifiable {
     let id: String
     let title: String
     let draft: RuleDraft
+
+    init(id: String, title: String, draft: RuleDraft) {
+        self.id = id
+        self.title = title
+        var named = draft
+        named.name = title
+        self.draft = named
+    }
 }
 
 enum RuleTemplates {

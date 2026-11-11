@@ -8,6 +8,7 @@ final class WindowCoordinator {
     private let agent: AgentController
     private let editor: ConfigEditor
     private var settingsWindow: NSWindow?
+    private var onboardingWindow: NSWindow?
 
     init(agent: AgentController, editor: ConfigEditor) {
         self.agent = agent
@@ -30,5 +31,24 @@ final class WindowCoordinator {
         agent.refreshSystemState()
         NSApp.activate()
         settingsWindow?.makeKeyAndOrderFront(nil)
+    }
+
+    func showOnboarding(finished: @escaping () -> Void) {
+        if onboardingWindow == nil {
+            let view = OnboardingView(agent: agent, editor: editor) { [weak self] in
+                self?.onboardingWindow?.close()
+                self?.onboardingWindow = nil
+                finished()
+            }
+            let window = NSWindow(contentViewController: NSHostingController(rootView: view))
+            window.title = String(localized: "Welcome to Clavimo")
+            window.styleMask = [.titled, .closable, .fullSizeContentView]
+            window.titlebarAppearsTransparent = true
+            window.isReleasedWhenClosed = false
+            window.center()
+            onboardingWindow = window
+        }
+        NSApp.activate()
+        onboardingWindow?.makeKeyAndOrderFront(nil)
     }
 }
