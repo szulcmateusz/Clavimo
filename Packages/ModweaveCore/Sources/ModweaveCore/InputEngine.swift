@@ -46,6 +46,9 @@ public struct InputEngine: Sendable {
     }
 
     public private(set) var rules: CompiledRules
+    /// Bundle ID of the frontmost app, updated by the adapter from
+    /// workspace notifications (never looked up on the event path).
+    public private(set) var frontmostApp: String?
 
     private var physicalModifiers: ModifierSet = []
     /// Physical source key -> output key for remaps that are currently held.
@@ -62,6 +65,17 @@ public struct InputEngine: Sendable {
 
     public init(rules: CompiledRules = .empty) {
         self.rules = rules
+    }
+
+    public mutating func setFrontmostApp(_ bundleID: String?) {
+        frontmostApp = bundleID
+    }
+
+    /// Wheel reversal for a scroll event, or nil to leave it unchanged.
+    /// Continuous (trackpad and Magic Mouse) scrolling is never reversed.
+    public func wheelReversal(isContinuous: Bool, device: DeviceID?) -> WheelReversal? {
+        guard !isContinuous else { return nil }
+        return rules.wheelReversal(app: frontmostApp, device: device)
     }
 
     /// Replaces the rule snapshot. Held activations keep the mapping they
@@ -87,12 +101,12 @@ public struct InputEngine: Sendable {
         switch event.kind {
         case let .key(code, isDown, isRepeat):
             if let modifier = code.modifierKey {
-                handleModifier(modifier, isDown: isDown, physical: event.modifiers, into: &output)
+                handleModifier(modifier, isDown: isDown, physical: event.modifiers, device: event.device, into: &output)
             } else {
-                handleKey(code, isDown: isDown, isRepeat: isRepeat, physical: event.modifiers, time: event.time, into: &output)
+                handleKey(code, isDown: isDown, isRepeat: isRepeat, physical: event.modifiers, time: event.time, device: event.device, into: &output)
             }
         case let .mouseButton(button, isDown):
-            handleMouse(button, isDown: isDown, physical: event.modifiers, into: &output)
+            handleMouse(button, isDown: isDown, physical: event.modifiers, device: event.device, into: &output)
         }
 
         output.nextDeadline = pendingDeadline
@@ -150,6 +164,7 @@ public struct InputEngine: Sendable {
         _ modifier: ModifierKey,
         isDown: Bool,
         physical: ModifierSet,
+        device: DeviceID?,
         into output: inout EngineOutput
     ) {
         // A modifier change while a letter leader is buffered would make
@@ -160,10 +175,10 @@ public struct InputEngine: Sendable {
 
         let code = modifier.keyCode
         let logicalBefore = logicalModifiers(for: physicalModifiers)
-        let unchangedFastPath = activeRemaps.isEmpty && rules.keyRemaps[code] == nil
+        let hadActiveRemaps = !activeRemaps.isEmpty
 
         if isDown {
-            if activeRemaps[code] == nil, let target = rules.keyRemaps[code] {
+            if activeRemaps[code] == nil, let target = rules.remapTarget(for: code, app: frontmostApp, device: device) {
                 activeRemaps[code] = target
                 if target.modifierKey == nil {
                     holdOutput(target, flags: logicalModifiers(for: physical), into: &output)
@@ -174,7 +189,9 @@ public struct InputEngine: Sendable {
         }
 
         physicalModifiers = physical
-        if unchangedFastPath {
+        // No remap before or after this event (including a device- or
+        // app-scoped rule that did not match): forward it untouched.
+        if !hadActiveRemaps && activeRemaps.isEmpty {
             output.items.append(.original(flags: nil))
             return
         }
@@ -227,6 +244,7 @@ public struct InputEngine: Sendable {
         isRepeat: Bool,
         physical: ModifierSet,
         time: UInt64,
+        device: DeviceID?,
         into output: inout EngineOutput
     ) {
         physicalModifiers = physical
@@ -245,7 +263,7 @@ public struct InputEngine: Sendable {
                 }
                 return
             }
-            if !isRepeat, let target = rules.keyRemaps[code] {
+            if !isRepeat, let target = rules.remapTarget(for: code, app: frontmostApp, device: device) {
                 activeRemaps[code] = target
                 if target.modifierKey == nil {
                     holdOutput(target, flags: flags, into: &output)
@@ -254,7 +272,7 @@ public struct InputEngine: Sendable {
                 }
                 return
             }
-            if !isRepeat, let policy = rules.leaderPolicies[code] {
+            if !isRepeat, let policy = rules.leaderPolicy(for: code, app: frontmostApp) {
                 switch policy {
                 case .nonConsuming:
                     heldNonConsumingLeaders.insert(code)
@@ -334,6 +352,7 @@ public struct InputEngine: Sendable {
         _ button: MouseButton,
         isDown: Bool,
         physical: ModifierSet,
+        device: DeviceID?,
         into output: inout EngineOutput
     ) {
         physicalModifiers = physical
@@ -350,7 +369,8 @@ public struct InputEngine: Sendable {
             return // a second down without an up; keep it consumed
         }
 
-        for chord in rules.chordsByButton[button] ?? [] where chordLeaderIsHeld(chord.leader, physical: physical) {
+        for chord in rules.chordsByButton[button] ?? []
+        where chordLeaderIsHeld(chord.leader, physical: physical) && chord.conditions.matches(app: frontmostApp, device: device) {
             if case let .key(key, _) = chord.leader, leader?.key == key {
                 leader?.chorded = true
                 leader?.deadline = nil

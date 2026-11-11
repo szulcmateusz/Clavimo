@@ -188,11 +188,15 @@ public struct InputEvent: Equatable, Sendable {
     public var modifiers: ModifierSet
     /// Monotonic timestamp in nanoseconds.
     public var time: UInt64
+    /// The physical device, only when the adapter could attribute it
+    /// reliably. Nil never matches a device-scoped rule.
+    public var device: DeviceID?
 
-    public init(kind: Kind, modifiers: ModifierSet, time: UInt64) {
+    public init(kind: Kind, modifiers: ModifierSet, time: UInt64, device: DeviceID? = nil) {
         self.kind = kind
         self.modifiers = modifiers
         self.time = time
+        self.device = device
     }
 }
 

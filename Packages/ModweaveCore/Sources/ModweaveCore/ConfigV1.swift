@@ -138,9 +138,9 @@ public struct InterpretedConfig: Equatable, Sendable {
 }
 
 extension ConfigDocument {
-    /// Translates enabled rules of the active profile into engine rule
-    /// definitions. Profile inheritance and conditions are not supported
-    /// yet; affected rules are reported as unsupported.
+    /// Translates enabled rules and device settings of the active profile
+    /// into engine rule definitions. Profile inheritance is not supported
+    /// yet; anything the engine cannot run is reported as unsupported.
     public func interpret() throws -> InterpretedConfig {
         guard profiles.contains(where: { $0.id == activeProfileId }) else {
             throw ConfigLoadError.unknownActiveProfile(activeProfileId)
@@ -154,7 +154,59 @@ extension ConfigDocument {
                 result.unsupported.append(ConfigIssue(ruleID: rule.id, ruleName: rule.name, reason: reason.message))
             }
         }
+        for setting in deviceSettings ?? [] {
+            guard setting["enabled"] == .bool(true), setting["profileId"]?.string == activeProfileId else { continue }
+            let id = setting["id"]?.string ?? "?"
+            let name = setting["name"]?.string ?? id
+            do {
+                result.definitions.append(try Self.translateDeviceSetting(setting))
+            } catch let error as Unsupported {
+                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: error.message))
+            } catch {
+                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: "invalid device setting"))
+            }
+        }
         return result
+    }
+
+    /// Only wheel direction reversal for mice is supported. Pointer
+    /// acceleration and scroll modes are reported as unsupported.
+    private static func translateDeviceSetting(_ setting: JSONValue) throws -> RuleDefinition {
+        guard setting["scope"]?["deviceClass"]?.string == "mouse" else {
+            throw Unsupported(message: "only mouse device settings are supported; trackpad behavior is never changed")
+        }
+        if let pointer = setting["pointer"], pointer["accelerationMode"]?.string != "system" || pointer["speedMultiplier"] != nil {
+            throw Unsupported(message: "pointer speed and acceleration are not supported yet")
+        }
+        var reverse = (vertical: false, horizontal: false)
+        for axis in ["vertical", "horizontal"] {
+            guard let config = setting["scrolling"]?[axis] else { continue }
+            if let mode = config["mode"]?.string, mode != "system" {
+                throw Unsupported(message: "scroll mode \(mode) is not supported yet")
+            }
+            for key in ["speedMultiplier", "acceleration", "distanceLines", "distancePixels", "smoothing"] where config[key] != nil {
+                throw Unsupported(message: "scroll \(key) is not supported yet")
+            }
+            let isReversed = config["reverse"] == .bool(true)
+            if axis == "vertical" { reverse.vertical = isReversed } else { reverse.horizontal = isReversed }
+        }
+        guard reverse.vertical || reverse.horizontal else {
+            throw Unsupported(message: "no supported scroll change in this setting")
+        }
+        var conditions = RuleConditions()
+        let scope = setting["scope"]
+        if let vendor = scope?["vendorId"]?.int, let product = scope?["productId"]?.int {
+            conditions.devices = [DeviceID(vendorID: vendor, productID: product)]
+        } else if scope?["vendorId"] != nil || scope?["productId"] != nil {
+            throw Unsupported(message: "device scope needs both vendorId and productId")
+        }
+        if let app = scope?["appBundleId"]?.string {
+            conditions.onlyApps = [app]
+        }
+        if scope?["displayId"] != nil {
+            throw Unsupported(message: "display scope is not supported")
+        }
+        return .reverseWheel(vertical: reverse.vertical, horizontal: reverse.horizontal, conditions: conditions)
     }
 
     private struct Unsupported: Error {
@@ -171,10 +223,30 @@ extension ConfigDocument {
         }
     }
 
-    private static func translateOrThrow(_ rule: Rule) throws -> RuleDefinition {
-        if !rule.conditions.isEmpty {
-            throw Unsupported(message: "conditions are not supported yet")
+    private static func conditions(_ values: [JSONValue]) throws -> RuleConditions {
+        var result = RuleConditions()
+        for value in values {
+            switch value["kind"]?.string {
+            case "appIs":
+                guard let id = value["bundleId"]?.string, !id.isEmpty else { throw Unsupported(message: "appIs needs a bundleId") }
+                result.onlyApps.insert(id)
+            case "appIsNot":
+                guard let id = value["bundleId"]?.string, !id.isEmpty else { throw Unsupported(message: "appIsNot needs a bundleId") }
+                result.exceptApps.insert(id)
+            case "physicalDeviceIs":
+                guard let text = value["deviceId"]?.string, let device = DeviceID(string: text) else {
+                    throw Unsupported(message: "deviceId must be \"<vendorId>:<productId>\"")
+                }
+                result.devices.insert(device)
+            case let kind:
+                throw Unsupported(message: "condition \(kind ?? "unknown") is not supported")
+            }
         }
+        return result
+    }
+
+    private static func translateOrThrow(_ rule: Rule) throws -> RuleDefinition {
+        let conditions = try conditions(rule.conditions)
         guard let triggerKind = rule.trigger["kind"]?.string, let actionKind = rule.action["kind"]?.string else {
             throw Unsupported(message: "missing trigger or action kind")
         }
@@ -188,12 +260,12 @@ extension ConfigDocument {
             guard sideMode != "both" else {
                 throw Unsupported(message: "sideMode both is not supported yet; add one rule per side")
             }
-            return .swap(first, second)
+            return .swap(first, second, conditions: conditions)
 
         case ("key", "sendKey"):
             let from = try key(rule.trigger["key"])
             let to = try key(rule.action["key"])
-            return .remap(from: from, to: to)
+            return .remap(from: from, to: to, conditions: conditions)
 
         case ("modifierChord", _):
             guard rule.trigger["key"] == nil, let number = rule.trigger["mouseButton"]?.int,
@@ -208,7 +280,8 @@ extension ConfigDocument {
                 button: button,
                 action: try action(rule.action),
                 priority: rule.priority,
-                allowProtectedButton: behavior.allowProtectedButton ?? false
+                allowProtectedButton: behavior.allowProtectedButton ?? false,
+                conditions: conditions
             )
 
         case ("keyMouseChord", _):
@@ -237,7 +310,8 @@ extension ConfigDocument {
                 button: button,
                 action: try action(rule.action),
                 priority: rule.priority,
-                allowProtectedButton: behavior.allowProtectedButton ?? false
+                allowProtectedButton: behavior.allowProtectedButton ?? false,
+                conditions: conditions
             )
 
         default:

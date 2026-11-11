@@ -94,7 +94,7 @@ struct ConfigTests {
             Self.rule(id: "cond",
                       trigger: #"{"kind": "modifierChord", "requiredModifiers": ["shift"], "mouseButton": 5}"#,
                       action: #"{"kind": "previousWorkspace"}"#,
-                      conditions: #"[{"kind": "appIs", "bundleId": "com.apple.Safari"}]"#),
+                      conditions: #"[{"kind": "physicalDeviceIs", "deviceId": "logitech"}]"#),
             Self.rule(id: "side",
                       trigger: #"{"kind": "modifierChord", "requiredModifiers": ["leftShift"], "mouseButton": 5}"#,
                       action: #"{"kind": "previousWorkspace"}"#),
@@ -127,5 +127,39 @@ struct ConfigTests {
         #expect(throws: (any Error).self) {
             try ConfigDocument.decode(Data("{\"schemaVersion\": 1".utf8))
         }
+    }
+
+    @Test func conditionsAreTranslated() throws {
+        let json = Self.document(rules: Self.rule(
+            trigger: #"{"kind": "keyPair", "first": {"codeNamespace": "macVirtualKeyCode", "code": 54}, "second": {"codeNamespace": "macVirtualKeyCode", "code": 61}}"#,
+            action: #"{"kind": "swapKeys", "sideMode": "right"}"#,
+            conditions: #"[{"kind": "physicalDeviceIs", "deviceId": "1452:835"}, {"kind": "appIsNot", "bundleId": "com.apple.Terminal"}]"#
+        ))
+        let result = try interpret(json)
+        let expected = RuleConditions(exceptApps: ["com.apple.Terminal"], devices: [DeviceID(vendorID: 1452, productID: 835)])
+        #expect(result.definitions == [.swap(.rightCommand, .rightOption, conditions: expected)])
+    }
+
+    @Test func mouseWheelReversalFromDeviceSettings() throws {
+        var json = Self.document(rules: "")
+        json = json.replacingOccurrences(of: "\"macros\": []", with: """
+        "macros": [],
+        "deviceSettings": [
+          {"id": "w", "name": "Mouse wheel", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse", "vendorId": 1133, "productId": 49298},
+           "scrolling": {"vertical": {"reverse": true}, "horizontal": {"reverse": false, "mode": "system"}}},
+          {"id": "t", "name": "Trackpad", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "trackpad"}, "scrolling": {"vertical": {"reverse": true}}},
+          {"id": "p", "name": "Pointer", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse"}, "pointer": {"accelerationMode": "disabled"}},
+          {"id": "off", "name": "Disabled", "enabled": false, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse"}, "scrolling": {"vertical": {"reverse": true}}}
+        ]
+        """)
+        let result = try interpret(json)
+        #expect(result.definitions == [
+            .reverseWheel(vertical: true, horizontal: false, conditions: RuleConditions(devices: [DeviceID(vendorID: 1133, productID: 49298)])),
+        ])
+        #expect(result.unsupported.map(\.ruleID) == ["t", "p"])
     }
 }

@@ -25,11 +25,74 @@ public enum ChordLeader: Equatable, Sendable {
     case key(KeyCode, LeaderPolicy)
 }
 
+/// Identifies a physical device model by USB/Bluetooth vendor and product
+/// IDs. Two identical devices share an ID; that limitation is documented.
+public struct DeviceID: Hashable, Sendable, Comparable, CustomStringConvertible {
+    public let vendorID: Int
+    public let productID: Int
+
+    public init(vendorID: Int, productID: Int) {
+        self.vendorID = vendorID
+        self.productID = productID
+    }
+
+    /// Parses the config form `"<vendor>:<product>"` in decimal.
+    public init?(string: String) {
+        let parts = string.split(separator: ":")
+        guard parts.count == 2, let vendor = Int(parts[0]), let product = Int(parts[1]),
+              vendor >= 0, product >= 0 else { return nil }
+        self.init(vendorID: vendor, productID: product)
+    }
+
+    public var description: String { "\(vendorID):\(productID)" }
+
+    public static func < (lhs: DeviceID, rhs: DeviceID) -> Bool {
+        (lhs.vendorID, lhs.productID) < (rhs.vendorID, rhs.productID)
+    }
+}
+
+/// Conditions that must all hold for a rule to apply (AND semantics).
+public struct RuleConditions: Hashable, Sendable {
+    /// When non-empty, the frontmost app must be one of these bundle IDs.
+    public var onlyApps: Set<String>
+    /// The rule never applies while one of these apps is frontmost.
+    public var exceptApps: Set<String>
+    /// When non-empty, the triggering input must be attributed to one of
+    /// these devices. Unknown attribution never matches.
+    public var devices: Set<DeviceID>
+
+    public init(onlyApps: Set<String> = [], exceptApps: Set<String> = [], devices: Set<DeviceID> = []) {
+        self.onlyApps = onlyApps
+        self.exceptApps = exceptApps
+        self.devices = devices
+    }
+
+    public static let always = RuleConditions()
+
+    public var isEmpty: Bool { onlyApps.isEmpty && exceptApps.isEmpty && devices.isEmpty }
+
+    /// More specific rules win over general ones with the same trigger.
+    var specificity: Int {
+        (onlyApps.isEmpty ? 0 : 2) + (exceptApps.isEmpty ? 0 : 1) + (devices.isEmpty ? 0 : 4)
+    }
+
+    public func matches(app: String?, device: DeviceID?) -> Bool {
+        if !onlyApps.isEmpty {
+            guard let app, onlyApps.contains(app) else { return false }
+        }
+        if let app, exceptApps.contains(app) { return false }
+        if !devices.isEmpty {
+            guard let device, devices.contains(device) else { return false }
+        }
+        return true
+    }
+}
+
 /// A user-level rule before compilation.
 public enum RuleDefinition: Equatable, Sendable {
-    case remap(from: KeyCode, to: KeyCode)
+    case remap(from: KeyCode, to: KeyCode, conditions: RuleConditions = .always)
     /// Bidirectional swap; compiles to two remaps.
-    case swap(KeyCode, KeyCode)
+    case swap(KeyCode, KeyCode, conditions: RuleConditions = .always)
     /// `allowProtectedButton` must be set explicitly for the primary or
     /// secondary button; only modifier leaders may use them.
     case mouseChord(
@@ -38,8 +101,12 @@ public enum RuleDefinition: Equatable, Sendable {
         button: MouseButton,
         action: ActionCommand,
         priority: Int,
-        allowProtectedButton: Bool = false
+        allowProtectedButton: Bool = false,
+        conditions: RuleConditions = .always
     )
+    /// Reverses discrete (mouse wheel) scrolling on the chosen axes.
+    /// Continuous scrolling from trackpads is never changed.
+    case reverseWheel(vertical: Bool, horizontal: Bool, conditions: RuleConditions = .always)
 }
 
 public enum RuleValidationError: Error, Equatable, Sendable {
@@ -55,6 +122,8 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     case protectedMouseButtonNeedsModifierLeader(MouseButton, id: String)
     case duplicateChord(button: MouseButton, ids: [String])
     case duplicateRuleID(String)
+    case deviceConditionOnLetterLeader(id: String)
+    case duplicateWheelRule
 }
 
 public struct ChordRule: Equatable, Sendable {
@@ -63,21 +132,44 @@ public struct ChordRule: Equatable, Sendable {
     public let button: MouseButton
     public let action: ActionCommand
     public let priority: Int
+    public let conditions: RuleConditions
+}
+
+public struct RemapCandidate: Equatable, Sendable {
+    public let target: KeyCode
+    public let conditions: RuleConditions
+}
+
+public struct WheelReversal: Equatable, Sendable {
+    public let vertical: Bool
+    public let horizontal: Bool
+    public let conditions: RuleConditions
 }
 
 /// An immutable, validated rule snapshot optimized for lookups on the
-/// event path: every lookup is a dictionary access keyed by the input.
+/// event path: every lookup is a dictionary access keyed by the input,
+/// followed by a short candidate list ordered by specificity.
 public struct CompiledRules: Equatable, Sendable {
-    public let keyRemaps: [KeyCode: KeyCode]
-    /// Chord candidates per button, highest priority first; ties keep
-    /// definition order so evaluation is deterministic.
+    /// Candidates per source key, most specific first.
+    public let remapCandidates: [KeyCode: [RemapCandidate]]
+    /// Chord candidates per button: higher priority first, then more
+    /// specific conditions, then definition order.
     public let chordsByButton: [MouseButton: [ChordRule]]
     public let leaderPolicies: [KeyCode: LeaderPolicy]
+    /// Wheel reversal rules, most specific first.
+    public let wheelReversals: [WheelReversal]
 
-    public static let empty = CompiledRules(keyRemaps: [:], chordsByButton: [:], leaderPolicies: [:])
+    public static let empty = CompiledRules(remapCandidates: [:], chordsByButton: [:], leaderPolicies: [:], wheelReversals: [])
 
     public var isEmpty: Bool {
-        keyRemaps.isEmpty && chordsByButton.isEmpty
+        remapCandidates.isEmpty && chordsByButton.isEmpty && wheelReversals.isEmpty
+    }
+
+    /// Unconditional remaps, for inspection and tests.
+    public var keyRemaps: [KeyCode: KeyCode] {
+        remapCandidates.compactMapValues { candidates in
+            candidates.first { $0.conditions.isEmpty }?.target
+        }
     }
 
     /// Whether any rule needs the primary or secondary mouse button, which
@@ -86,37 +178,85 @@ public struct CompiledRules: Equatable, Sendable {
         chordsByButton.keys.contains { $0.isProtected }
     }
 
+    public var observesScrollWheel: Bool { !wheelReversals.isEmpty }
+
+    /// Whether any rule depends on knowing the physical device, which
+    /// requires device attribution in the platform adapter.
+    public var usesDeviceConditions: Bool {
+        remapCandidates.values.contains { $0.contains { !$0.conditions.devices.isEmpty } }
+            || chordsByButton.values.contains { $0.contains { !$0.conditions.devices.isEmpty } }
+            || wheelReversals.contains { !$0.conditions.devices.isEmpty }
+    }
+
+    /// Keys whose rules have device conditions; only these need a device
+    /// lookup on the event path.
+    public var keysNeedingDevice: Set<KeyCode> {
+        Set(remapCandidates.filter { $0.value.contains { !$0.conditions.devices.isEmpty } }.keys)
+    }
+
+    public var buttonsNeedingDevice: Set<MouseButton> {
+        Set(chordsByButton.filter { $0.value.contains { !$0.conditions.devices.isEmpty } }.keys)
+    }
+
+    public func remapTarget(for key: KeyCode, app: String?, device: DeviceID?) -> KeyCode? {
+        guard let candidates = remapCandidates[key] else { return nil }
+        return candidates.first { $0.conditions.matches(app: app, device: device) }?.target
+    }
+
+    /// The leader policy for `key` if any chord using it as leader can
+    /// apply in `app`; otherwise the key is not buffered at all.
+    public func leaderPolicy(for key: KeyCode, app: String?) -> LeaderPolicy? {
+        guard let policy = leaderPolicies[key] else { return nil }
+        let applies = chordsByButton.values.contains { chords in
+            chords.contains { chord in
+                if case .key(key, _) = chord.leader { chord.conditions.matches(app: app, device: nil) } else { false }
+            }
+        }
+        return applies ? policy : nil
+    }
+
+    public func wheelReversal(app: String?, device: DeviceID?) -> WheelReversal? {
+        wheelReversals.first { $0.conditions.matches(app: app, device: device) }
+    }
+
     public static func compile(_ definitions: [RuleDefinition]) -> Result<CompiledRules, CompileFailure> {
         var errors: [RuleValidationError] = []
-        var remaps: [KeyCode: KeyCode] = [:]
+        var remaps: [KeyCode: [(RemapCandidate, Int)]] = [:]
         var chords: [ChordRule] = []
         var leaderPolicies: [KeyCode: LeaderPolicy] = [:]
+        var wheel: [(WheelReversal, Int)] = []
         var seenIDs: Set<String> = []
 
-        func addRemap(_ from: KeyCode, _ to: KeyCode) {
-            if remaps[from] != nil {
+        func addRemap(_ from: KeyCode, _ to: KeyCode, _ conditions: RuleConditions, _ order: Int) {
+            if remaps[from]?.contains(where: { $0.0.conditions == conditions }) == true {
                 errors.append(.duplicateRemapSource(from))
             } else {
-                remaps[from] = to
+                remaps[from, default: []].append((RemapCandidate(target: to, conditions: conditions), order))
             }
         }
 
-        for definition in definitions {
+        for (order, definition) in definitions.enumerated() {
             switch definition {
-            case let .remap(from, to):
+            case let .remap(from, to, conditions):
                 if from == to {
                     errors.append(.remapToItself(from))
                 } else {
-                    addRemap(from, to)
+                    addRemap(from, to, conditions, order)
                 }
-            case let .swap(first, second):
+            case let .swap(first, second, conditions):
                 if first == second {
                     errors.append(.swapWithItself(first))
                 } else {
-                    addRemap(first, second)
-                    addRemap(second, first)
+                    addRemap(first, second, conditions, order)
+                    addRemap(second, first, conditions, order)
                 }
-            case let .mouseChord(id, leader, button, action, priority, allowProtected):
+            case let .reverseWheel(vertical, horizontal, conditions):
+                if wheel.contains(where: { $0.0.conditions == conditions }) {
+                    errors.append(.duplicateWheelRule)
+                } else {
+                    wheel.append((WheelReversal(vertical: vertical, horizontal: horizontal, conditions: conditions), order))
+                }
+            case let .mouseChord(id, leader, button, action, priority, allowProtected, conditions):
                 if !seenIDs.insert(id).inserted {
                     errors.append(.duplicateRuleID(id))
                 }
@@ -137,13 +277,18 @@ public struct CompiledRules: Equatable, Sendable {
                     if case let .boundedWindow(ms) = policy, !LeaderPolicy.allowedWindow.contains(ms) {
                         errors.append(.leaderWindowOutOfRange(key, milliseconds: ms))
                     }
+                    if !conditions.devices.isEmpty {
+                        // The leader is buffered before the mouse device is
+                        // known, so device scoping would be ambiguous.
+                        errors.append(.deviceConditionOnLetterLeader(id: id))
+                    }
                     if let existing = leaderPolicies[key], existing != policy {
                         errors.append(.conflictingLeaderPolicies(key))
                     } else {
                         leaderPolicies[key] = policy
                     }
                 }
-                chords.append(ChordRule(id: id, leader: leader, button: button, action: action, priority: priority))
+                chords.append(ChordRule(id: id, leader: leader, button: button, action: action, priority: priority, conditions: conditions))
             }
         }
 
@@ -151,26 +296,39 @@ public struct CompiledRules: Equatable, Sendable {
             errors.append(.leaderAlsoRemapped(key))
         }
 
+        func bySpecificity<T>(_ items: [(T, Int)], _ conditions: (T) -> RuleConditions) -> [T] {
+            items.sorted { lhs, rhs in
+                let left = conditions(lhs.0).specificity
+                let right = conditions(rhs.0).specificity
+                return left != right ? left > right : lhs.1 < rhs.1
+            }.map(\.0)
+        }
+
         var byButton: [MouseButton: [ChordRule]] = [:]
         for chord in chords {
             byButton[chord.button, default: []].append(chord)
         }
         for (button, list) in byButton {
-            // Stable sort: equal priorities keep definition order.
             let sorted = list.enumerated()
                 .sorted { lhs, rhs in
-                    lhs.element.priority != rhs.element.priority
-                        ? lhs.element.priority > rhs.element.priority
-                        : lhs.offset < rhs.offset
+                    if lhs.element.priority != rhs.element.priority { return lhs.element.priority > rhs.element.priority }
+                    let left = lhs.element.conditions.specificity
+                    let right = rhs.element.conditions.specificity
+                    return left != right ? left > right : lhs.offset < rhs.offset
                 }
                 .map(\.element)
             byButton[button] = sorted
-            var seenLeaders: [ChordLeader: String] = [:]
+            struct Signature: Hashable {
+                let leader: ChordLeader
+                let conditions: RuleConditions
+            }
+            var seen: [Signature: String] = [:]
             for chord in sorted {
-                if let other = seenLeaders[chord.leader] {
+                let signature = Signature(leader: chord.leader, conditions: chord.conditions)
+                if let other = seen[signature] {
                     errors.append(.duplicateChord(button: button, ids: [other, chord.id]))
                 } else {
-                    seenLeaders[chord.leader] = chord.id
+                    seen[signature] = chord.id
                 }
             }
         }
@@ -178,7 +336,12 @@ public struct CompiledRules: Equatable, Sendable {
         if !errors.isEmpty {
             return .failure(CompileFailure(errors: errors))
         }
-        return .success(CompiledRules(keyRemaps: remaps, chordsByButton: byButton, leaderPolicies: leaderPolicies))
+        return .success(CompiledRules(
+            remapCandidates: remaps.mapValues { bySpecificity($0) { $0.conditions } },
+            chordsByButton: byButton,
+            leaderPolicies: leaderPolicies,
+            wheelReversals: bySpecificity(wheel) { $0.conditions }
+        ))
     }
 }
 

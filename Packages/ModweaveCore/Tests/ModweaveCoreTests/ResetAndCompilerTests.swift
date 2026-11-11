@@ -143,3 +143,90 @@ struct CompilerTests {
         #expect(MouseButton(userFacingNumber: 0) == nil)
     }
 }
+
+@Suite("Rule conditions")
+struct ConditionTests {
+    static let builtIn = DeviceID(vendorID: 1452, productID: 835)
+    static let logitech = DeviceID(vendorID: 1133, productID: 45934)
+
+    @Test func deviceScopedSwapAppliesOnlyToThatDevice() throws {
+        let rules = try CompiledRules.compile([
+            .swap(.rightCommand, .rightOption, conditions: RuleConditions(devices: [Self.builtIn])),
+        ]).get()
+        var engine = InputEngine(rules: rules)
+        let fromBuiltIn = engine.handle(InputEvent(kind: .key(.rightCommand, isDown: true, isRepeat: false), modifiers: [.rightCommand], time: 1, device: Self.builtIn))
+        #expect(fromBuiltIn.items == [keyDown(.rightOption, [.rightOption])])
+        _ = engine.handle(InputEvent(kind: .key(.rightCommand, isDown: false, isRepeat: false), modifiers: [], time: 2, device: Self.builtIn))
+
+        let fromOther = engine.handle(InputEvent(kind: .key(.rightCommand, isDown: true, isRepeat: false), modifiers: [.rightCommand], time: 3, device: Self.logitech))
+        #expect(fromOther.items == [passThrough])
+        let unknown = engine.handle(InputEvent(kind: .key(.rightCommand, isDown: false, isRepeat: false), modifiers: [], time: 4, device: nil))
+        #expect(unknown.items == [passThrough], "unknown attribution never matches a device rule")
+    }
+
+    @Test func perDeviceRulesForSameKeyCoexistAndSpecificWins() throws {
+        let rules = try CompiledRules.compile([
+            .remap(from: .a, to: .g),
+            .remap(from: .a, to: .c, conditions: RuleConditions(devices: [Self.logitech])),
+        ]).get()
+        #expect(rules.remapTarget(for: .a, app: nil, device: Self.logitech) == .c)
+        #expect(rules.remapTarget(for: .a, app: nil, device: Self.builtIn) == .g)
+        #expect(rules.remapTarget(for: .a, app: nil, device: nil) == .g)
+        #expect(rules.keysNeedingDevice == [.a])
+        #expect(rules.usesDeviceConditions)
+    }
+
+    @Test func duplicateConditionsAreStillRejected() {
+        let conditions = RuleConditions(devices: [Self.builtIn])
+        let result = CompiledRules.compile([
+            .remap(from: .a, to: .g, conditions: conditions),
+            .remap(from: .a, to: .c, conditions: conditions),
+        ])
+        #expect(throws: CompileFailure.self) { try result.get() }
+    }
+
+    @Test func appConditionsUseFrontmostApp() throws {
+        var h = try EngineHarness([
+            .mouseChord(id: "x", leader: .modifiers(.shift), button: .button5, action: .previousWorkspace, priority: 1,
+                        conditions: RuleConditions(exceptApps: ["com.example.game"])),
+        ])
+        h.down(.leftShift)
+        h.engine.setFrontmostApp("com.example.game")
+        #expect(h.press(.button5).items == [passThrough])
+        h.release(.button5)
+        h.engine.setFrontmostApp("com.apple.Safari")
+        #expect(h.press(.button5).actions == [.previousWorkspace])
+    }
+
+    @Test func letterLeaderIsNotBufferedWhereItsChordCannotApply() throws {
+        var h = try EngineHarness([
+            .mouseChord(id: "x", leader: .key(.f, .boundedWindow(milliseconds: 120)), button: .button4, action: .nextWorkspace, priority: 1,
+                        conditions: RuleConditions(onlyApps: ["com.apple.finder"])),
+        ])
+        h.engine.setFrontmostApp("com.apple.TextEdit")
+        #expect(h.down(.f).items == [passThrough], "no typing delay outside the chord's apps")
+        h.up(.f)
+        h.engine.setFrontmostApp("com.apple.finder")
+        #expect(h.down(.f).items == [])
+    }
+
+    @Test func deviceConditionOnLetterLeaderIsRejected() {
+        let result = CompiledRules.compile([
+            .mouseChord(id: "x", leader: .key(.f, .deferredUntilUp), button: .button4, action: .nextWorkspace, priority: 1,
+                        conditions: RuleConditions(devices: [Self.logitech])),
+        ])
+        #expect(throws: CompileFailure.self) { try result.get() }
+    }
+
+    @Test func wheelReversalSkipsContinuousScrolling() throws {
+        let engine = InputEngine(rules: try CompiledRules.compile([.reverseWheel(vertical: true, horizontal: false)]).get())
+        #expect(engine.wheelReversal(isContinuous: false, device: nil)?.vertical == true)
+        #expect(engine.wheelReversal(isContinuous: true, device: nil) == nil, "trackpads are never changed")
+    }
+
+    @Test func deviceIDParsing() {
+        #expect(DeviceID(string: "1133:49298") == DeviceID(vendorID: 1133, productID: 49298))
+        #expect(DeviceID(string: "0x46d:1") == nil)
+        #expect(DeviceID(string: "1133") == nil)
+    }
+}
