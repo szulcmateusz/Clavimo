@@ -52,6 +52,13 @@ struct QuartzFlagsTests {
         }
     }
 
+    @Test func scrollJoinsMaskOnlyWithWheelRules() throws {
+        let wheel = try CompiledRules.compile([.reverseWheel(vertical: true, horizontal: false)]).get()
+        let scrollBit = CGEventMask(1) << CGEventMask(CGEventType.scrollWheel.rawValue)
+        #expect(EventTapController.eventMask(for: wheel) & scrollBit != 0)
+        #expect(EventTapController.eventMask(for: .empty) & scrollBit == 0)
+    }
+
     @Test func eventMaskExcludesPointerAndPrimaryButtons() {
         let mask = EventTapController.eventMask(for: .empty)
         for type: CGEventType in [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged,

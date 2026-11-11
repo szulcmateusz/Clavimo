@@ -71,15 +71,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         inputs.sessionActive = ConsoleSession.isActive() ?? true
         inputs.permissionsGranted = Self.permissionsGranted()
         reloadConfiguration(applyEnabledOnLaunch: true)
+        requestPermissionsOnFirstLaunch()
 
         let center = NSWorkspace.shared.notificationCenter
         center.addObserver(self, selector: #selector(sessionResigned), name: NSWorkspace.sessionDidResignActiveNotification, object: nil)
         center.addObserver(self, selector: #selector(sessionBecameActive), name: NSWorkspace.sessionDidBecomeActiveNotification, object: nil)
         center.addObserver(self, selector: #selector(systemWoke), name: NSWorkspace.didWakeNotification, object: nil)
+        center.addObserver(self, selector: #selector(appActivated), name: NSWorkspace.didActivateApplicationNotification, object: nil)
     }
 
     func applicationWillTerminate(_: Notification) {
         stopTap()
+    }
+
+    /// Opening the app is the user's explicit action, so ask once; this
+    /// also lists the app in System Settings, which the user can otherwise
+    /// only do by browsing to the bundle. Later requests come from the menu.
+    private func requestPermissionsOnFirstLaunch() {
+        let key = "didRequestPermissions"
+        guard !inputs.permissionsGranted, !UserDefaults.standard.bool(forKey: key) else { return }
+        UserDefaults.standard.set(true, forKey: key)
+        PermissionSnapshot.requestAccess()
     }
 
     // MARK: - State
@@ -113,6 +125,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         )
         do {
             try tap.start()
+            tap.setFrontmostApp(NSWorkspace.shared.frontmostApplication?.bundleIdentifier)
             controller = tap
         } catch {
             // Creation fails when permissions are missing or were revoked.
@@ -180,6 +193,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Re-check instead of trusting state from before the switch.
         inputs.permissionsGranted = Self.permissionsGranted()
         reconcile()
+    }
+
+    @objc private func appActivated(_ notification: Notification) {
+        let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+        controller?.setFrontmostApp(app?.bundleIdentifier)
     }
 
     @objc private func systemWoke() {

@@ -47,8 +47,14 @@ public final class EventTapController: @unchecked Sendable {
     /// The minimal mask for `rules`: primary and secondary clicks are added
     /// only when a rule explicitly uses them.
     public static func eventMask(for rules: CompiledRules) -> CGEventMask {
-        guard rules.observesProtectedButtons else { return baseEventMask }
-        return baseEventMask | mask(of: [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp])
+        var result = baseEventMask
+        if rules.observesProtectedButtons {
+            result |= mask(of: [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp])
+        }
+        if rules.observesScrollWheel {
+            result |= mask(of: [.scrollWheel])
+        }
+        return result
     }
 
     private static func mask(of types: [CGEventType]) -> CGEventMask {
@@ -126,6 +132,12 @@ public final class EventTapController: @unchecked Sendable {
         }
     }
 
+    /// Updates the frontmost app used by app conditions. Called from
+    /// workspace notifications, never looked up on the event path.
+    public func setFrontmostApp(_ bundleID: String?) {
+        perform { [self] in engine.setFrontmostApp(bundleID) }
+    }
+
     public func statistics(_ completion: @escaping @Sendable (Statistics) -> Void) {
         perform { [self] in
             completion(Statistics(
@@ -197,6 +209,11 @@ public final class EventTapController: @unchecked Sendable {
         }
         let start = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
         eventsSeen &+= 1
+        if type == .scrollWheel {
+            reverseWheelIfNeeded(event)
+            passThroughLatency.record(clock_gettime_nsec_np(CLOCK_UPTIME_RAW) &- start)
+            return Unmanaged.passUnretained(event)
+        }
         guard let input = normalize(type: type, event: event, time: start) else {
             return Unmanaged.passUnretained(event)
         }
@@ -213,6 +230,29 @@ public final class EventTapController: @unchecked Sendable {
             handledLatency.record(elapsed)
         }
         return result
+    }
+
+    /// Negates discrete wheel deltas in place. Continuous scrolling
+    /// (trackpads, Magic Mouse) is identified by the system's continuous
+    /// flag and left untouched.
+    private func reverseWheelIfNeeded(_ event: CGEvent) {
+        let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0
+        guard let reversal = engine.wheelReversal(isContinuous: isContinuous, device: nil) else { return }
+        if reversal.vertical {
+            Self.negate(event, .scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1)
+        }
+        if reversal.horizontal {
+            Self.negate(event, .scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2)
+        }
+    }
+
+    private static func negate(_ event: CGEvent, _ line: CGEventField, _ fixed: CGEventField, _ point: CGEventField) {
+        let lineDelta = event.getIntegerValueField(line)
+        let fixedDelta = event.getDoubleValueField(fixed)
+        let pointDelta = event.getIntegerValueField(point)
+        event.setIntegerValueField(line, value: -lineDelta)
+        event.setDoubleValueField(fixed, value: -fixedDelta)
+        event.setIntegerValueField(point, value: -pointDelta)
     }
 
     private func normalize(type: CGEventType, event: CGEvent, time: UInt64) -> InputEvent? {
