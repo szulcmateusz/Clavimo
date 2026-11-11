@@ -28,6 +28,8 @@ public struct SystemShortcutExecutor: Sendable {
         case let .launchApp(bundleID):
             guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) else { return }
             NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
+        case .toggleCapsLock:
+            CapsLockState.toggle()
         }
     }
 

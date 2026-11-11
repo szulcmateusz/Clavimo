@@ -84,6 +84,11 @@ public final class EventTapController: @unchecked Sendable {
     private let flagRewrite: FlagRewriteMode
     private let actionHandler: @Sendable (ActionCommand) -> Void
     private let onStop: @Sendable (StopReason) -> Void
+    private let onOverlayChange: (@Sendable (KeyboardOverlay) -> Void)?
+    /// Whether any rule can show something in the overlay (layers,
+    /// sequences, one-shot modifiers); otherwise it is never computed.
+    private let tracksOverlay: Bool
+    private var lastOverlay = KeyboardOverlay()
     private let actionQueue = DispatchQueue(label: "clavimo.actions", qos: .userInteractive)
     private let source: CGEventSource?
     private let eventMask: CGEventMask
@@ -120,9 +125,12 @@ public final class EventTapController: @unchecked Sendable {
         rules: CompiledRules,
         flagRewrite: FlagRewriteMode = .inPlace,
         actionHandler: @escaping @Sendable (ActionCommand) -> Void,
-        onStop: @escaping @Sendable (StopReason) -> Void = { _ in }
+        onStop: @escaping @Sendable (StopReason) -> Void = { _ in },
+        onOverlayChange: (@Sendable (KeyboardOverlay) -> Void)? = nil
     ) {
         engine = InputEngine(rules: rules)
+        self.onOverlayChange = onOverlayChange
+        tracksOverlay = onOverlayChange != nil && (!rules.keyBindings.isEmpty || !rules.layerBindings.isEmpty || !rules.sequences.isEmpty)
         eventMask = Self.eventMask(for: rules)
         keysNeedingDevice = rules.keysNeedingDevice
         buttonsNeedingDevice = rules.buttonsNeedingDevice
@@ -176,6 +184,11 @@ public final class EventTapController: @unchecked Sendable {
     /// workspace notifications, never looked up on the event path.
     public func setFrontmostApp(_ bundleID: String?) {
         perform { [self] in engine.setFrontmostApp(bundleID) }
+    }
+
+    /// Updates the keyboard input source used by input source conditions.
+    public func setInputSource(_ identifier: String?) {
+        perform { [self] in engine.setInputSource(identifier) }
     }
 
     /// Turns the input inspector on or off. Turning it off discards every
@@ -336,7 +349,16 @@ public final class EventTapController: @unchecked Sendable {
         if inspectorEnabled {
             inspect(input, type: type, output: output, plain: isPlainPassThrough, elapsed: elapsed)
         }
+        if tracksOverlay { publishOverlay() }
         return result
+    }
+
+    /// Tells the app when layers, sequences or one-shot modifiers change.
+    private func publishOverlay() {
+        let overlay = engine.overlay
+        guard overlay != lastOverlay else { return }
+        lastOverlay = overlay
+        onOverlayChange?(overlay)
     }
 
     /// Applies wheel settings to discrete wheel events in place. Returns
@@ -647,6 +669,7 @@ public final class EventTapController: @unchecked Sendable {
         let output = engine.handleDeadline(now: now)
         postOutsideCallback(output)
         scheduleDeadline(output.nextDeadline, now: now)
+        if tracksOverlay { publishOverlay() }
     }
 
     private func resetEngine(insideCallback _: CGEventTapProxy?) {
@@ -654,6 +677,7 @@ public final class EventTapController: @unchecked Sendable {
         let output = engine.reset()
         postOutsideCallback(output)
         if let deadlineTimer { CFRunLoopTimerSetNextFireDate(deadlineTimer, .infinity) }
+        if tracksOverlay { publishOverlay() }
     }
 
     private static let maxReenablesPerMinute = 5

@@ -21,8 +21,12 @@ func usage() -> Never {
     usage: clavimo-probe status
            clavimo-probe request-access
            clavimo-probe touches [--seconds N] [--raw]
+           clavimo-probe keyboard
            clavimo-probe run [--seconds N] [--flags inplace|repost]
                               [--leader bounded[:MS]|deferred|nonconsuming] [--no-swap]
+
+    keyboard prints the selected and enabled input sources, Secure Input
+    and whether Caps Lock is mapped for Clavimo (read only).
 
     touches lists multitouch devices and summarizes finger frames (no
     permission needed); --raw also prints the bytes of the first frames.
@@ -157,6 +161,12 @@ case "run":
     break
 case "touches":
     runTouches(seconds: options.seconds, raw: options.raw)
+case "keyboard":
+    print("Selected input source: \(InputSources.current() ?? "unknown")")
+    for source in InputSources.enabled() { print("  enabled: \(source.id) (\(source.name))") }
+    let secure = SecureInput.current()
+    print("Secure Input: \(secure.isEnabled ? "on" : "off")\(secure.appName.map { " (\($0))" } ?? "")")
+    exit(0)
 default:
     usage()
 }
