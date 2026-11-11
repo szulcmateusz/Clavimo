@@ -4,7 +4,7 @@ Clavimo observes and changes keyboard and mouse input, so security issues are ta
 
 ## Supported versions
 
-Clavimo has not had a release yet. Security fixes are made on the `main` branch. Once releases exist, only the latest release will receive fixes.
+Only the latest release receives security fixes. Fixes are made on the `main` branch first.
 
 ## Reporting a vulnerability
 

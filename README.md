@@ -4,7 +4,7 @@
 
 Clavimo is a native, open source menu bar app that remaps keys and combines your keyboard and mouse into shortcuts. Swap Command and Option, switch Spaces with Fn + click, open Mission Control with a side mouse button, hold a letter and click to run an action, or reverse the mouse wheel without touching your trackpad. Rules are created in a visual editor, stored in a readable JSON file, and processed locally on your Mac.
 
-> **Project status: early preview.** There is no release yet; build from source. Clavimo is used daily by its maintainer on one Mac, but most features have not been verified on other hardware or macOS versions. See [Compatibility](#compatibility-and-limitations) and [docs/testing.md](docs/testing.md) before relying on it.
+> **Project status: early preview.** Version 0.1.0 is a pre-release. Clavimo is used daily by its maintainer on one Mac, but most features have not been verified on other hardware or macOS versions. See [Compatibility](#compatibility-and-limitations) and [docs/testing.md](docs/testing.md) before relying on it.
 
 ## Features
 
@@ -33,17 +33,32 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 
 ## Installation
 
-There are no prebuilt downloads yet. Build Clavimo from source:
+### Download
+
+1. Download `Clavimo-<version>.zip` from the [latest release](https://github.com/szulcmateusz/Clavimo/releases).
+2. Double-click the zip and move **Clavimo.app** to your **Applications** folder.
+3. Open Clavimo. macOS shows that Apple could not verify the app, because releases are **not notarized by Apple**: the project does not have a paid Apple Developer membership. Click **Done**.
+4. Open **System Settings > Privacy & Security**, scroll down to the message about Clavimo and click **Open Anyway**, then confirm with your password. This is needed only once per version.
+
+Never disable Gatekeeper or System Integrity Protection for Clavimo; it does not need it.
+
+Releases are signed with the project's own self-signed certificate. That certificate is not trusted by Apple, but it stays the same across versions, so macOS keeps Clavimo's permissions when you update. To check that your download is intact, compare its checksum with the `.sha256` file published with the release:
 
 ```sh
-git clone <this repository's URL> clavimo
-cd clavimo
+shasum -a 256 Clavimo-0.1.0.zip
+```
+
+### Build from source
+
+```sh
+git clone https://github.com/szulcmateusz/Clavimo.git
+cd Clavimo
 scripts/setup-local-signing.sh   # optional, keeps permissions across rebuilds
 scripts/build-app.sh --install   # builds and copies Clavimo.app to /Applications
 open /Applications/Clavimo.app
 ```
 
-`--install` copies the app to `/Applications` when that folder is writable (administrator accounts) and to `~/Applications` otherwise. Apps you build yourself are not quarantined, so Gatekeeper does not block them. Never disable Gatekeeper or System Integrity Protection for Clavimo; it does not need it.
+`--install` copies the app to `/Applications` when that folder is writable (administrator accounts) and to `~/Applications` otherwise. Apps you build yourself are not quarantined, so Gatekeeper does not block them.
 
 `setup-local-signing.sh` creates a self-signed code signing certificate in a separate keychain under `~/Library/Application Support/ClavimoDev`. Without it, the build is signed ad hoc and macOS forgets the app's permissions every time you rebuild.
 

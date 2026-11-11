@@ -36,7 +36,11 @@ The repository builds with Swift Package Manager and small scripts that assemble
 
 ## Local signing identity for development
 
-macOS ties privacy permissions to the code signature. A self-signed identity in a dedicated keychain keeps permissions across rebuilds without an Apple Developer account. Release builds will need a separate decision about Developer ID signing and notarization.
+macOS ties privacy permissions to the code signature. A self-signed identity in a dedicated keychain keeps permissions across rebuilds without an Apple Developer account.
+
+## Releases signed with a stable self-signed certificate, not notarized
+
+The project has no paid Apple Developer membership, so releases cannot be signed with a Developer ID or notarized, and users must approve the first launch in System Settings. Releases are signed with the maintainer's self-signed certificate instead of ad hoc: its identity stays the same across versions, so macOS keeps the app's privacy permissions after updates. Developer ID signing and notarization can be adopted later without changing the app.
 
 ## No telemetry
 
