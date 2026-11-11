@@ -13,14 +13,19 @@ struct Options {
     var flagRewrite: EventTapController.FlagRewriteMode = .inPlace
     var policy: LeaderPolicy = .boundedWindow(milliseconds: LeaderPolicy.defaultWindowMilliseconds)
     var swapModifiers = true
+    var raw = false
 }
 
 func usage() -> Never {
     print("""
     usage: clavimo-probe status
            clavimo-probe request-access
+           clavimo-probe touches [--seconds N] [--raw]
            clavimo-probe run [--seconds N] [--flags inplace|repost]
                               [--leader bounded[:MS]|deferred|nonconsuming] [--no-swap]
+
+    touches lists multitouch devices and summarizes finger frames (no
+    permission needed); --raw also prints the bytes of the first frames.
 
     run installs a session event tap with these rules:
       - Left Command <-> Left Option (unless --no-swap)
@@ -56,6 +61,8 @@ func parse(_ arguments: [String]) -> Options {
             }
         case "--no-swap":
             options.swapModifiers = false
+        case "--raw":
+            options.raw = true
         default:
             usage()
         }
@@ -80,6 +87,58 @@ func format(_ summary: LatencyRecorder.Summary?) -> String {
     return "n=\(summary.count) p50=\(us(summary.p50)) p95=\(us(summary.p95)) p99=\(us(summary.p99)) max=\(us(summary.max))"
 }
 
+/// Prints multitouch devices and, once per second, how many frames arrived
+/// and the fingers of the latest frame. Stops after `seconds`.
+func runTouches(seconds: Int, raw: Bool) -> Never {
+    final class Counter: @unchecked Sendable {
+        let lock = NSLock()
+        var frames = 0
+        var maxFingers = 0
+        var latest: TouchFrame?
+        var dumps = 0
+    }
+    let counter = Counter()
+    let onFrame: TouchBackend.FrameHandler = { _, frame in
+        counter.lock.lock()
+        counter.frames += 1
+        counter.maxFingers = max(counter.maxFingers, frame.down.count)
+        if !frame.contacts.isEmpty { counter.latest = frame }
+        counter.lock.unlock()
+    }
+    let dump: @Sendable (Data) -> Void = { data in
+        counter.lock.lock()
+        defer { counter.lock.unlock() }
+        guard counter.dumps < 5 else { return }
+        counter.dumps += 1
+        print("raw:", data.map { String(format: "%02x", $0) }.joined(separator: " "))
+    }
+    let backend = TouchBackend(onFrame: onFrame, rawDump: raw ? dump : nil)
+    let status = backend.start()
+    print("status: \(status)")
+    for device in backend.devices {
+        print("device id=\(device.id) family=\(device.familyID) builtIn=\(device.isBuiltIn)")
+    }
+    guard case .running = status else { exit(1) }
+    print("Touch the trackpad. Running for \(seconds) s.")
+    for second in 1...seconds {
+        Thread.sleep(forTimeInterval: 1)
+        counter.lock.lock()
+        var line = "t=\(second)s frames=\(counter.frames) maxFingers=\(counter.maxFingers)"
+        for contact in counter.latest?.contacts ?? [] {
+            line += String(format: " [id %d x %.2f y %.2f size %.1f ", contact.id, contact.x, contact.y, contact.size) + "\(contact.state)]"
+        }
+        counter.frames = 0
+        counter.maxFingers = 0
+        counter.latest = nil
+        counter.lock.unlock()
+        print(line)
+        if case .unavailable = backend.status { print("status: \(backend.status)"); break }
+    }
+    print("valid frames: \(backend.validFrames), final status: \(backend.status)")
+    backend.stop()
+    exit(0)
+}
+
 // Line-buffer output so results reach a log file promptly when the
 // probe runs as an app bundle launched with `open --stdout`.
 setvbuf(stdout, nil, _IOLBF, 0)
@@ -96,6 +155,8 @@ case "request-access":
     exit(0)
 case "run":
     break
+case "touches":
+    runTouches(seconds: options.seconds, raw: options.raw)
 default:
     usage()
 }
