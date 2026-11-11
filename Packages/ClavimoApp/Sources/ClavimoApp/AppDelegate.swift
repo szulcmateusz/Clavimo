@@ -2,6 +2,7 @@ import AppKit
 import ClavimoCore
 import ClavimoQuartz
 import ServiceManagement
+import SwiftUI
 
 @main
 @MainActor
@@ -50,6 +51,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private let store = ConfigStore(fileURL: ConfigStore.defaultLocation())
+    private lazy var model = AppModel(configURL: store.fileURL)
+    private lazy var editor = ConfigEditor(store: store)
+    private var settingsWindow: NSWindow?
+    private var isRecordingKey = false
     private let executor = SystemShortcutExecutor()
     private var statusItem: NSStatusItem?
     private var controller: EventTapController?
@@ -78,7 +83,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         inputs.sessionActive = ConsoleSession.isActive() ?? true
         inputs.permissionsGranted = Self.permissionsGranted()
         reloadConfiguration(applyEnabledOnLaunch: true)
+        connectModel()
         requestPermissionsOnFirstLaunch()
+        if loaded?.document.rules.isEmpty == true && loaded?.document.deviceSettings?.isEmpty ?? true {
+            showSettings()
+        }
 
         let center = NSWorkspace.shared.notificationCenter
         center.addObserver(self, selector: #selector(sessionResigned), name: NSWorkspace.sessionDidResignActiveNotification, object: nil)
@@ -89,6 +98,58 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func applicationWillTerminate(_: Notification) {
         stopTap()
+    }
+
+    /// Opening the app again (Finder, Spotlight, Launchpad) shows settings,
+    /// so the app stays reachable even when the menu bar item is hidden.
+    func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows _: Bool) -> Bool {
+        showSettings()
+        return false
+    }
+
+    private func connectModel() {
+        model.setEnabled = { [weak self] enabled in
+            guard let self else { return }
+            if enabled, inputs.safeMode { inputs.safeMode = false }
+            inputs.userEnabled = enabled
+            reconcile()
+        }
+        model.reloadConfiguration = { [weak self] in self?.reloadConfiguration(applyEnabledOnLaunch: false) }
+        model.requestPermissions = { [weak self] in self?.requestPermissions() }
+        model.setRecording = { [weak self] recording in
+            guard let self else { return }
+            isRecordingKey = recording
+            controller?.setPaused(recording)
+        }
+        editor.onSaved = { [weak self] in self?.reloadConfiguration(applyEnabledOnLaunch: false) }
+        publishState()
+    }
+
+    private func publishState() {
+        model.status = status
+        model.userEnabled = inputs.userEnabled
+        model.unsupported = loaded?.unsupported ?? []
+        model.loadError = loadError?.description
+        model.otherRemapper = Self.otherRemapperName()
+        model.refreshSystemState()
+    }
+
+    @objc private func showSettings() {
+        if settingsWindow == nil {
+            let host = NSHostingController(rootView: SettingsView(model: model, editor: editor))
+            let window = NSWindow(contentViewController: host)
+            window.title = "Clavimo"
+            window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
+            window.setContentSize(NSSize(width: 860, height: 580))
+            window.isReleasedWhenClosed = false
+            window.center()
+            window.setFrameAutosaveName("ClavimoSettings")
+            settingsWindow = window
+        }
+        editor.reload()
+        publishState()
+        NSApp.activate()
+        settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
     /// Opening the app is the user's explicit action, so ask once; this
@@ -115,8 +176,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         } else {
             stopTap()
         }
+        if isRecordingKey { controller?.setPaused(true) }
         updatePermissionPolling()
         updateIcon()
+        publishState()
     }
 
     private func startTap() {
@@ -261,6 +324,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         menu.addItem(.separator())
 
+        menu.addItem(item("Settings...", #selector(showSettings), key: ","))
         menu.addItem(item("Reload Configuration", #selector(reload), key: "r"))
         menu.addItem(item("Show Configuration in Finder", #selector(revealConfiguration)))
         let login = item("Launch at Login", #selector(toggleLaunchAtLogin))

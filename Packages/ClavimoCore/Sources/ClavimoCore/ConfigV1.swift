@@ -31,7 +31,10 @@ public enum JSONValue: Codable, Equatable, Sendable {
         var container = encoder.singleValueContainer()
         switch self {
         case let .string(value): try container.encode(value)
-        case let .number(value): try container.encode(value)
+        case let .number(value):
+            // Whole numbers are written without a fractional part so that
+            // saved files stay valid against integer schema fields.
+            if value.rounded() == value, abs(value) < 9e15 { try container.encode(Int64(value)) } else { try container.encode(value) }
         case let .bool(value): try container.encode(value)
         case let .object(value): try container.encode(value)
         case let .array(value): try container.encode(value)
@@ -39,22 +42,22 @@ public enum JSONValue: Codable, Equatable, Sendable {
         }
     }
 
-    subscript(key: String) -> JSONValue? {
+    public subscript(key: String) -> JSONValue? {
         if case let .object(object) = self { return object[key] }
         return nil
     }
 
-    var string: String? {
+    public var string: String? {
         if case let .string(value) = self { return value }
         return nil
     }
 
-    var int: Int? {
+    public var int: Int? {
         if case let .number(value) = self, value.rounded() == value, abs(value) <= 1e9 { return Int(value) }
         return nil
     }
 
-    var array: [JSONValue]? {
+    public var array: [JSONValue]? {
         if case let .array(value) = self { return value }
         return nil
     }
@@ -65,12 +68,33 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
     public struct Engine: Codable, Equatable, Sendable {
         public var enabledOnLaunch: Bool
         public var failOpen: Bool
+
+        public init(enabledOnLaunch: Bool, failOpen: Bool = true) {
+            self.enabledOnLaunch = enabledOnLaunch
+            self.failOpen = failOpen
+        }
     }
 
     public struct Profile: Codable, Equatable, Sendable {
         public var id: String
         public var name: String
         public var inherits: String?
+
+        public init(id: String, name: String, inherits: String? = nil) {
+            self.id = id
+            self.name = name
+            self.inherits = inherits
+        }
+
+        enum CodingKeys: String, CodingKey { case id, name, inherits }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(id, forKey: .id)
+            try container.encode(name, forKey: .name)
+            // The schema requires the key, with null for no parent.
+            try container.encode(inherits, forKey: .inherits)
+        }
     }
 
     public struct Behavior: Codable, Equatable, Sendable {
@@ -81,6 +105,24 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
         public var leaderWindowMs: Int?
         public var repeatCooldownMs: Int?
         public var allowProtectedButton: Bool?
+
+        public init(
+            consumeTrigger: Bool,
+            fireOn: String,
+            repeat: String,
+            leaderPolicy: String? = nil,
+            leaderWindowMs: Int? = nil,
+            repeatCooldownMs: Int? = nil,
+            allowProtectedButton: Bool? = nil
+        ) {
+            self.consumeTrigger = consumeTrigger
+            self.fireOn = fireOn
+            self.repeat = `repeat`
+            self.leaderPolicy = leaderPolicy
+            self.leaderWindowMs = leaderWindowMs
+            self.repeatCooldownMs = repeatCooldownMs
+            self.allowProtectedButton = allowProtectedButton
+        }
     }
 
     public struct Rule: Codable, Equatable, Sendable {
@@ -94,6 +136,22 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
         public var action: JSONValue
         public var behavior: Behavior
         public var ui: JSONValue
+
+        public init(
+            id: String, name: String, enabled: Bool, priority: Int, profileId: String,
+            trigger: JSONValue, conditions: [JSONValue], action: JSONValue, behavior: Behavior, ui: JSONValue
+        ) {
+            self.id = id
+            self.name = name
+            self.enabled = enabled
+            self.priority = priority
+            self.profileId = profileId
+            self.trigger = trigger
+            self.conditions = conditions
+            self.action = action
+            self.behavior = behavior
+            self.ui = ui
+        }
     }
 
     public var schemaVersion: Int
@@ -106,6 +164,34 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
     public var deviceSettings: [JSONValue]?
 
     public static let supportedSchemaVersion = 1
+
+    public init(
+        configId: String = UUID().uuidString.lowercased(),
+        engine: Engine = Engine(enabledOnLaunch: false),
+        activeProfileId: String = "default",
+        profiles: [Profile] = [Profile(id: "default", name: "Default")],
+        rules: [Rule] = [],
+        macros: [JSONValue] = [],
+        deviceSettings: [JSONValue]? = nil
+    ) {
+        schemaVersion = Self.supportedSchemaVersion
+        self.configId = configId
+        self.engine = engine
+        self.activeProfileId = activeProfileId
+        self.profiles = profiles
+        self.rules = rules
+        self.macros = macros
+        self.deviceSettings = deviceSettings
+    }
+
+    /// Stable, human-diffable JSON.
+    public func encoded() throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        var data = try encoder.encode(self)
+        data.append(0x0A)
+        return data
+    }
 
     public static func decode(_ data: Data) throws -> ConfigDocument {
         let document = try JSONDecoder().decode(ConfigDocument.self, from: data)

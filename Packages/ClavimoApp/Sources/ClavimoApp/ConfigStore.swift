@@ -11,7 +11,7 @@ struct ConfigStore {
         var unsupported: [ConfigIssue]
     }
 
-    enum LoadError: Error, CustomStringConvertible {
+    enum LoadError: Error, CustomStringConvertible, LocalizedError {
         case unreadable(String)
         case invalid(String)
         case rejected([RuleValidationError])
@@ -23,6 +23,8 @@ struct ConfigStore {
             case let .rejected(errors): "Conflicting rules: \(errors.map { "\($0)" }.joined(separator: ", "))"
             }
         }
+
+        var errorDescription: String? { description }
     }
 
     let fileURL: URL
@@ -56,6 +58,28 @@ struct ConfigStore {
         case let .failure(failure):
             return .failure(.rejected(failure.errors))
         }
+    }
+
+    var backupURL: URL {
+        fileURL.deletingLastPathComponent().appendingPathComponent("config.backup.json")
+    }
+
+    /// Validates the whole document before writing, keeps the previous file
+    /// as a backup, and replaces the file atomically. An invalid document
+    /// never replaces the last valid one.
+    func save(_ document: ConfigDocument) throws {
+        let interpreted = try document.interpret()
+        if case let .failure(failure) = CompiledRules.compile(interpreted.definitions) {
+            throw LoadError.rejected(failure.errors)
+        }
+        let data = try document.encoded()
+        let manager = FileManager.default
+        try manager.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+        if manager.fileExists(atPath: fileURL.path) {
+            try? manager.removeItem(at: backupURL)
+            try manager.copyItem(at: fileURL, to: backupURL)
+        }
+        try data.write(to: fileURL, options: .atomic)
     }
 
     private func createDefaultIfMissing() throws {

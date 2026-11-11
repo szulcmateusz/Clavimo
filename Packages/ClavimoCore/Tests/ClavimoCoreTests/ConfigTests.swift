@@ -164,4 +164,24 @@ struct ConfigTests {
         ])
         #expect(result.unsupported.map(\.ruleID) == ["d", "t", "p"])
     }
+
+    @Test func encodingRoundTripsAndKeepsSchemaShape() throws {
+        let document = ConfigDocument(rules: [
+            ConfigDocument.Rule(
+                id: "r", name: "Swap", enabled: true, priority: 100, profileId: "default",
+                trigger: .object(["kind": .string("keyPair"),
+                                  "first": .object(["codeNamespace": .string("macVirtualKeyCode"), "code": .number(54)]),
+                                  "second": .object(["codeNamespace": .string("macVirtualKeyCode"), "code": .number(61)])]),
+                conditions: [], action: .object(["kind": .string("swapKeys"), "sideMode": .string("asSpecified")]),
+                behavior: .init(consumeTrigger: true, fireOn: "down", repeat: "onAutorepeat"),
+                ui: .object(["order": .number(0)])
+            ),
+        ])
+        let data = try document.encoded()
+        let text = String(decoding: data, as: UTF8.self)
+        #expect(text.contains("\"inherits\" : null"))
+        #expect(text.contains("\"code\" : 54"), "integers must not be written as 54.0")
+        #expect(try ConfigDocument.decode(data) == document)
+        #expect(try ConfigDocument.decode(data).interpret().definitions == [.swap(.rightCommand, .rightOption)])
+    }
 }
