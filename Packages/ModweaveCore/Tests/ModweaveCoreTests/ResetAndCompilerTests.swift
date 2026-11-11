@@ -81,7 +81,16 @@ struct CompilerTests {
         #expect(result == [.protectedMouseButton(.primary, id: "x")])
     }
 
-    @Test(arguments: [0, 29, 1001])
+    @Test func protectedButtonNeedsExplicitOptInAndModifierLeader() {
+        #expect(errors([
+            .mouseChord(id: "x", leader: .modifiers(.function), button: .primary, action: .previousWorkspace, priority: 1, allowProtectedButton: true),
+        ]) == [])
+        #expect(errors([
+            .mouseChord(id: "x", leader: .key(.f, .deferredUntilUp), button: .secondary, action: .nextWorkspace, priority: 1, allowProtectedButton: true),
+        ]) == [.protectedMouseButtonNeedsModifierLeader(.secondary, id: "x")])
+    }
+
+    @Test(arguments: [0, 49, 501])
     func rejectsLeaderWindowOutsideRange(milliseconds: Int) {
         let result = errors([
             .mouseChord(id: "x", leader: .key(.f, .boundedWindow(milliseconds: milliseconds)), button: .button4, action: .nextWorkspace, priority: 1),

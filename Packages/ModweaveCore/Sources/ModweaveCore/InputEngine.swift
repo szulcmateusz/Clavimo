@@ -202,6 +202,9 @@ public struct InputEngine: Sendable {
         to after: ModifierSet,
         into output: inout EngineOutput
     ) {
+        // Fn is tracked for chord matching only; it is never emitted.
+        let before = before.subtracting(.function)
+        let after = after.subtracting(.function)
         guard before != after else { return }
         var current = before
         // Releases first, then presses, so a swap never shows both

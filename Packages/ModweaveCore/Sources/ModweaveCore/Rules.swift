@@ -13,7 +13,8 @@ public enum LeaderPolicy: Equatable, Sendable {
     /// held. The key's character may reach the focused application.
     case nonConsuming
 
-    public static let allowedWindow: ClosedRange<Int> = 30...1000
+    /// Matches `behavior.leaderWindowMs` in the v1 schema.
+    public static let allowedWindow: ClosedRange<Int> = 50...500
     public static let defaultWindowMilliseconds = 120
 }
 
@@ -29,7 +30,16 @@ public enum RuleDefinition: Equatable, Sendable {
     case remap(from: KeyCode, to: KeyCode)
     /// Bidirectional swap; compiles to two remaps.
     case swap(KeyCode, KeyCode)
-    case mouseChord(id: String, leader: ChordLeader, button: MouseButton, action: ActionCommand, priority: Int)
+    /// `allowProtectedButton` must be set explicitly for the primary or
+    /// secondary button; only modifier leaders may use them.
+    case mouseChord(
+        id: String,
+        leader: ChordLeader,
+        button: MouseButton,
+        action: ActionCommand,
+        priority: Int,
+        allowProtectedButton: Bool = false
+    )
 }
 
 public enum RuleValidationError: Error, Equatable, Sendable {
@@ -42,6 +52,7 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     case conflictingLeaderPolicies(KeyCode)
     case emptyModifierLeader(id: String)
     case protectedMouseButton(MouseButton, id: String)
+    case protectedMouseButtonNeedsModifierLeader(MouseButton, id: String)
     case duplicateChord(button: MouseButton, ids: [String])
     case duplicateRuleID(String)
 }
@@ -67,6 +78,12 @@ public struct CompiledRules: Equatable, Sendable {
 
     public var isEmpty: Bool {
         keyRemaps.isEmpty && chordsByButton.isEmpty
+    }
+
+    /// Whether any rule needs the primary or secondary mouse button, which
+    /// are otherwise kept out of the event tap mask.
+    public var observesProtectedButtons: Bool {
+        chordsByButton.keys.contains { $0.isProtected }
     }
 
     public static func compile(_ definitions: [RuleDefinition]) -> Result<CompiledRules, CompileFailure> {
@@ -99,12 +116,16 @@ public struct CompiledRules: Equatable, Sendable {
                     addRemap(first, second)
                     addRemap(second, first)
                 }
-            case let .mouseChord(id, leader, button, action, priority):
+            case let .mouseChord(id, leader, button, action, priority, allowProtected):
                 if !seenIDs.insert(id).inserted {
                     errors.append(.duplicateRuleID(id))
                 }
                 if button.isProtected {
-                    errors.append(.protectedMouseButton(button, id: id))
+                    if !allowProtected {
+                        errors.append(.protectedMouseButton(button, id: id))
+                    } else if case .key = leader {
+                        errors.append(.protectedMouseButtonNeedsModifierLeader(button, id: id))
+                    }
                 }
                 switch leader {
                 case let .modifiers(required):

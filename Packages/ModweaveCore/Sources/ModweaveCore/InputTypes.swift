@@ -123,10 +123,13 @@ public enum ModifierKey: CaseIterable, Sendable {
 
 /// Side-specific modifier state. The core never collapses left and right
 /// into one generic flag until a rule explicitly asks for generic matching.
+///
+/// `function` tracks the Fn/Globe key. It can be matched by chords but is
+/// never remapped or emitted: adapters preserve it from the original event.
 public struct ModifierSet: OptionSet, Hashable, Sendable {
-    public let rawValue: UInt8
+    public let rawValue: UInt16
 
-    public init(rawValue: UInt8) {
+    public init(rawValue: UInt16) {
         self.rawValue = rawValue
     }
 
@@ -138,6 +141,7 @@ public struct ModifierSet: OptionSet, Hashable, Sendable {
     public static let rightOption = ModifierSet(rawValue: 1 << 5)
     public static let leftCommand = ModifierSet(rawValue: 1 << 6)
     public static let rightCommand = ModifierSet(rawValue: 1 << 7)
+    public static let function = ModifierSet(rawValue: 1 << 8)
 
     public var keys: [ModifierKey] {
         ModifierKey.allCases.filter { contains($0.set) }
@@ -149,6 +153,7 @@ public struct ModifierSet: OptionSet, Hashable, Sendable {
         if !intersection([.leftShift, .rightShift]).isEmpty { result.insert(.shift) }
         if !intersection([.leftOption, .rightOption]).isEmpty { result.insert(.option) }
         if !intersection([.leftCommand, .rightCommand]).isEmpty { result.insert(.command) }
+        if contains(.function) { result.insert(.function) }
         return result
     }
 }
@@ -165,6 +170,7 @@ public struct GenericModifiers: OptionSet, Hashable, Sendable {
     public static let shift = GenericModifiers(rawValue: 1 << 1)
     public static let option = GenericModifiers(rawValue: 1 << 2)
     public static let command = GenericModifiers(rawValue: 1 << 3)
+    public static let function = GenericModifiers(rawValue: 1 << 4)
 }
 
 /// A normalized physical input event. Platform adapters convert Quartz
@@ -194,5 +200,7 @@ public struct InputEvent: Equatable, Sendable {
 public enum ActionCommand: Equatable, Sendable {
     case nextWorkspace
     case previousWorkspace
+    case missionControl
+    case applicationWindows
     case shortcut(KeyCode, GenericModifiers)
 }

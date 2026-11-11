@@ -56,6 +56,40 @@ struct ModifierMouseChordTests {
         #expect(h.release(.button5).items == [])
     }
 
+    @Test func fnChordOnPrimaryButtonConsumesOnlyWithFnHeld() throws {
+        var h = try EngineHarness([
+            .mouseChord(id: "fn-left", leader: .modifiers(.function), button: .primary, action: .previousWorkspace, priority: 1, allowProtectedButton: true),
+        ])
+        #expect(h.press(.primary).items == [passThrough], "plain clicks must never be eaten")
+        #expect(h.release(.primary).items == [passThrough])
+        h.physical.insert(.function)
+        let click = h.press(.primary)
+        #expect(click.items == [])
+        #expect(click.actions == [.previousWorkspace])
+        h.physical.remove(.function)
+        #expect(h.release(.primary).items == [], "the up of a consumed click is consumed even after Fn is released")
+        #expect(h.press(.primary).items == [passThrough])
+    }
+
+    @Test func fnStateDoesNotDisturbModifierSwap() throws {
+        var h = try EngineHarness([.swap(.rightCommand, .rightOption)])
+        h.physical.insert(.function)
+        #expect(h.down(.rightCommand).items == [keyDown(.rightOption, [.rightOption])], "Fn is preserved by the adapter, not emitted")
+        h.physical.remove(.function)
+        #expect(h.up(.rightCommand).items == [keyUp(.rightOption, [])])
+    }
+
+    @Test func controlCommandChordMatchesExactly() throws {
+        var h = try EngineHarness([
+            .mouseChord(id: "cc-right", leader: .modifiers([.control, .command]), button: .secondary, action: .nextWorkspace, priority: 1, allowProtectedButton: true),
+        ])
+        h.down(.leftControl)
+        #expect(h.press(.secondary).items == [passThrough], "Control alone is a normal secondary click")
+        h.release(.secondary)
+        h.down(.leftCommand)
+        #expect(h.press(.secondary).actions == [.nextWorkspace])
+    }
+
     @Test func higherPriorityChordWinsDeterministically() throws {
         var h = try EngineHarness([
             .mouseChord(id: "low", leader: .modifiers(.shift), button: .button4, action: .previousWorkspace, priority: 10),
@@ -145,9 +179,9 @@ struct LetterMouseChordTests {
     }
 
     @Test func repeatsWhileBufferedAreSwallowed() throws {
-        var h = try fMouse4(.boundedWindow(milliseconds: 1000))
+        var h = try fMouse4(.boundedWindow(milliseconds: 500))
         h.down(.f)
-        h.advance(ms: 500)
+        h.advance(ms: 400)
         #expect(h.down(.f, repeat: true).items == [])
     }
 
