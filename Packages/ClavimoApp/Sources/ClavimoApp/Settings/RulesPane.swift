@@ -28,10 +28,27 @@ struct RulesPane: View {
     @State private var search = ""
     @State private var filter: Filter = .all
     @State private var errorMessage: String?
+    @State private var profileID = ""
 
-    /// Mouse wheel settings live in Mouse & Scrolling.
+    /// Rules of the selected profile. Mouse wheel settings live in Mouse
+    /// & Scrolling.
     private var rows: [ConfigEditor.Row] {
-        editor.rows.filter { $0.draft?.kind != .wheel }
+        editor.rows.filter { $0.draft?.kind != .wheel && $0.profileID == selectedProfile }
+    }
+
+    private var selectedProfile: String {
+        profileID.isEmpty ? editor.activeProfileID : profileID
+    }
+
+    private var inheritedCount: Int {
+        let ancestors = editor.ancestors(of: selectedProfile)
+        return editor.rows.filter { $0.draft?.kind != .wheel && ancestors.contains($0.profileID) }.count
+    }
+
+    private func newDraft(_ base: RuleDraft = RuleDraft()) -> RuleDraft {
+        var draft = base
+        draft.profileID = selectedProfile
+        return draft
     }
 
     private var visibleRows: [ConfigEditor.Row] {
@@ -53,6 +70,7 @@ struct RulesPane: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: Spacing.m) {
+                ProfilePicker(editor: editor, selection: Binding(get: { selectedProfile }, set: { profileID = $0 }))
                 Picker(String(localized: "Show"), selection: $filter) {
                     ForEach(Filter.allCases) { Text($0.title).tag($0) }
                 }
@@ -60,7 +78,7 @@ struct RulesPane: View {
                 .labelsHidden()
                 .frame(maxWidth: 320)
                 Spacer()
-                Button { editing = Editing(ruleID: nil, draft: RuleDraft()) } label: {
+                Button { editing = Editing(ruleID: nil, draft: newDraft()) } label: {
                     Label(String(localized: "New Rule"), systemImage: "plus")
                 }
                 .buttonStyle(.borderedProminent)
@@ -75,8 +93,18 @@ struct RulesPane: View {
                     .padding(.bottom, Spacing.s)
             }
 
+            if inheritedCount > 0 {
+                Label(String(localized: "This profile also uses \(inheritedCount) rules inherited from \(editor.ancestors(of: selectedProfile).map(editor.profileName).formatted(.list(type: .and)))."),
+                      systemImage: "arrow.turn.down.right")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, Spacing.xl)
+                    .padding(.bottom, Spacing.s)
+            }
+
             if rows.isEmpty {
-                EmptyRulesView { draft in editing = Editing(ruleID: nil, draft: draft) }
+                EmptyRulesView { draft in editing = Editing(ruleID: nil, draft: newDraft(draft)) }
             } else if visibleRows.isEmpty {
                 ContentUnavailableView.search(text: search)
             } else {
@@ -113,7 +141,7 @@ struct RulesPane: View {
     private func consumeRequest() {
         guard let draft = navigation.ruleToCreate else { return }
         navigation.ruleToCreate = nil
-        editing = Editing(ruleID: nil, draft: draft)
+        editing = Editing(ruleID: nil, draft: newDraft(draft))
     }
 
     private func edit(_ row: ConfigEditor.Row) {

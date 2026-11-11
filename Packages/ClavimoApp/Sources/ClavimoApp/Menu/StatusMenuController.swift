@@ -6,11 +6,13 @@ import ServiceManagement
 @MainActor
 final class StatusMenuController: NSObject, NSMenuDelegate {
     private let agent: AgentController
+    private let editor: ConfigEditor
     private let showSettings: () -> Void
     private let statusItem: NSStatusItem
 
-    init(agent: AgentController, showSettings: @escaping () -> Void) {
+    init(agent: AgentController, editor: ConfigEditor, showSettings: @escaping () -> Void) {
         self.agent = agent
+        self.editor = editor
         self.showSettings = showSettings
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
@@ -49,6 +51,20 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
         menu.addItem(item(String(localized: "Emergency Disable")) { [agent] in agent.emergencyDisable() })
         menu.addItem(.separator())
+
+        editor.reload()
+        if editor.profiles.count > 1 {
+            let parent = NSMenuItem(title: String(localized: "Profile: \(editor.profileName(editor.activeProfileID))"), action: nil, keyEquivalent: "")
+            let submenu = NSMenu()
+            for profile in editor.profiles {
+                let entry = item(profile.name) { [editor] in editor.setActiveProfile(profile.id) }
+                entry.state = profile.id == editor.activeProfileID ? .on : .off
+                submenu.addItem(entry)
+            }
+            parent.submenu = submenu
+            menu.addItem(parent)
+            menu.addItem(.separator())
+        }
 
         if !agent.unsupported.isEmpty {
             let parent = NSMenuItem(title: String(localized: "Unsupported Rules (\(agent.unsupported.count))"), action: nil, keyEquivalent: "")

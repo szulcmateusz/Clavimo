@@ -96,6 +96,19 @@ enum Messages {
         }
     }
 
+    static func describe(_ error: ConfigLoadError) -> String {
+        switch error {
+        case let .unsupportedSchemaVersion(version):
+            String(localized: "The configuration was made by a newer version of Clavimo (format \(version)). Update Clavimo to use it.")
+        case let .unknownActiveProfile(id):
+            String(localized: "The active profile \(id) does not exist.")
+        case let .unknownParentProfile(id):
+            String(localized: "A profile inherits from \(id), which does not exist.")
+        case let .profileCycle(id):
+            String(localized: "The profile \(id) inherits from itself through other profiles.")
+        }
+    }
+
     static func describe(_ error: ConfigStore.LoadError, ruleNames: [String: String] = [:]) -> String {
         switch error {
         case let .unreadable(message):
@@ -104,6 +117,8 @@ enum Messages {
             String(localized: "The configuration file is not valid: \(message)")
         case let .rejected(errors):
             errors.map { describe($0, ruleNames: ruleNames) }.joined(separator: "\n")
+        case let .profile(error):
+            describe(error)
         }
     }
 }

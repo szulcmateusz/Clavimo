@@ -15,12 +15,14 @@ struct ConfigStore {
         case unreadable(String)
         case invalid(String)
         case rejected([RuleValidationError])
+        case profile(ConfigLoadError)
 
         var description: String {
             switch self {
             case let .unreadable(message): "Cannot read configuration: \(message)"
             case let .invalid(message): "Invalid configuration: \(message)"
             case let .rejected(errors): "Conflicting rules: \(errors.map { "\($0)" }.joined(separator: ", "))"
+            case let .profile(error): "Profile problem: \(error)"
             }
         }
 
@@ -49,6 +51,8 @@ struct ConfigStore {
             interpreted = try document.interpret()
         } catch let error as DecodingError {
             return .failure(.invalid(Self.describe(error)))
+        } catch let error as ConfigLoadError {
+            return .failure(.profile(error))
         } catch {
             return .failure(.invalid("\(error)"))
         }

@@ -25,7 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menu: StatusMenuController?
 
     func applicationDidFinishLaunching(_: Notification) {
-        let menu = StatusMenuController(agent: agent) { [weak self] in self?.windows.showSettings() }
+        let menu = StatusMenuController(agent: agent, editor: editor) { [weak self] in self?.windows.showSettings() }
         self.menu = menu
         agent.onChange = { [weak menu] in menu?.updateIcon() }
         editor.onSaved = { [weak self] in self?.agent.reloadConfiguration() }

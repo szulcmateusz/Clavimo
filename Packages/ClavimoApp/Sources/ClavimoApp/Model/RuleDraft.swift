@@ -136,6 +136,7 @@ struct RuleDraft: Equatable {
 
     var kind: Kind = .swapKeys
     var name = ""
+    var profileID = "default"
     var enabled = true
     var priority = 50
     var firstKey: UInt16 = KeyCode.rightCommand.rawValue
@@ -254,7 +255,7 @@ extension RuleDraft {
             preconditionFailure("wheel drafts are stored as device settings")
         }
         return ConfigDocument.Rule(
-            id: id, name: displayName, enabled: enabled, priority: priority, profileId: "default",
+            id: id, name: displayName, enabled: enabled, priority: priority, profileId: profileID,
             trigger: trigger, conditions: conditionValues, action: actionValue, behavior: behavior,
             ui: .object(["order": .number(Double(order))])
         )
@@ -265,7 +266,7 @@ extension RuleDraft {
         if let app = onlyApps.first { scope["appBundleId"] = .string(app) }
         return .object([
             "id": .string(id), "name": .string(displayName), "enabled": .bool(enabled),
-            "profileId": .string("default"), "priority": .number(Double(priority)),
+            "profileId": .string(profileID), "priority": .number(Double(priority)),
             "scope": .object(scope),
             "scrolling": .object(["vertical": vertical.json, "horizontal": horizontal.json]),
         ])
@@ -274,6 +275,7 @@ extension RuleDraft {
     /// Returns nil when the rule uses features the form cannot represent.
     init?(rule: ConfigDocument.Rule) {
         name = rule.name
+        profileID = rule.profileId
         enabled = rule.enabled
         priority = rule.priority
         for condition in rule.conditions {
@@ -318,6 +320,7 @@ extension RuleDraft {
         guard let vertical = Axis(json: value["scrolling"]?["vertical"]),
               let horizontal = Axis(json: value["scrolling"]?["horizontal"]) else { return nil }
         kind = .wheel
+        profileID = value["profileId"]?.string ?? "default"
         self.vertical = vertical
         self.horizontal = horizontal
         name = value["name"]?.string ?? ""

@@ -146,4 +146,31 @@ struct ConfigEditorTests {
         #expect(editor.document?.rules.first?.id == "adv")
         #expect(editor.document?.rules.first?.action["macroId"]?.string == "m")
     }
+
+    @Test func profilesCanBeAddedActivatedAndDeleted() throws {
+        let (editor, _) = try makeEditor()
+        var base = RuleDraft()
+        base.profileID = "default"
+        #expect(editor.upsert(base, id: nil) == nil)
+
+        let games = try #require(editor.addProfile(named: "Games"))
+        #expect(editor.profiles.map(\.id) == ["default", games])
+        #expect(editor.ancestors(of: games) == ["default"])
+
+        var override = RuleDraft()
+        override.kind = .remapKey
+        override.firstKey = KeyCode.rightCommand.rawValue
+        override.secondKey = KeyCode.escape.rawValue
+        override.profileID = games
+        #expect(editor.upsert(override, id: nil) == nil, "a profile may override an inherited key")
+        #expect(editor.setActiveProfile(games) == nil)
+        #expect(editor.activeProfileID == games)
+        let interpreted = try #require(editor.document).interpret()
+        #expect(interpreted.definitions.contains(.remap(from: .rightCommand, to: .escape)))
+
+        #expect(editor.deleteProfile(games) == nil)
+        #expect(editor.activeProfileID == "default")
+        #expect(editor.rows.allSatisfy { $0.profileID == "default" })
+        #expect(editor.deleteProfile("default") == nil && editor.profiles.count == 1, "the base profile stays")
+    }
 }
