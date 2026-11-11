@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-11-11
+
+First public release of the 1.1 features below.
+
+### Fixed
+
+- The source builds again with Xcode 16 (Swift 6.0 and 6.1), which did not accept three names in the new trackpad code. Version 1.1.0 was tagged but never published.
+
 ## [1.1.0] - 2026-11-11
 
 ### Added
@@ -53,7 +61,8 @@ First preview release. Most features are experimental: they are covered by autom
 - Opt-in Launch at Login through `SMAppService`; input handling pauses automatically while another macOS account is active.
 - Draft v1 configuration schema, an example configuration and validation tools.
 
-[Unreleased]: https://github.com/szulcmateusz/Clavimo/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/szulcmateusz/Clavimo/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/szulcmateusz/Clavimo/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/szulcmateusz/Clavimo/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/szulcmateusz/Clavimo/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/szulcmateusz/Clavimo/releases/tag/v0.1.0
