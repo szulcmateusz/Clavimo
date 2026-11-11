@@ -4,19 +4,20 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
-## [1.2.1] - 2026-11-12
+## [1.2.2] - 2026-11-12
 
 First public release of the 1.2 features below.
 
 ### Added
 
 - Turn two fingers like a knob: clockwise and counterclockwise are gestures of their own, and every further 15 degrees runs the action again, so volume or brightness change smoothly. Trackpad scrolling is held still while fingers turn.
-- Trackpad zones: a gesture can do different things on the left, right, top or bottom half of the trackpad. A rule for a zone wins over the same gesture anywhere.
+- Trackpad zones: a gesture can do different things on the left, right, top or bottom half of the trackpad, or in one of its corners. A rule for a zone wins over the same gesture anywhere.
 - Trackpad templates for volume and brightness by turning two fingers.
 
 ### Fixed
 
-- Clavimo 1.2.0 quit right after launch while checking keyboards for a leftover Caps Lock mapping, and its Keyboard pane was missing from the settings sidebar. Version 1.2.0 was tagged but never published.
+- Clavimo 1.2.0 quit right after launch while checking keyboards for a leftover Caps Lock mapping, and its Keyboard pane was missing from the settings sidebar. Versions 1.2.0 and 1.2.1 were tagged but never published.
+- Turning two fingers starts only when both fingers move around a center, so a resting thumb or a curved two-finger scroll no longer changes the volume by accident.
 
 ## [1.2.0] - 2026-11-11
 

@@ -388,9 +388,13 @@
                 "left",
                 "right",
                 "top",
-                "bottom"
+                "bottom",
+                "topLeft",
+                "topRight",
+                "bottomLeft",
+                "bottomRight"
               ],
-              "description": "Only when the gesture starts on this half of the trackpad. A rule with a zone wins over the same gesture without one."
+              "description": "Only when the gesture starts on this half or corner (quarter) of the trackpad. A rule with a zone wins over the same gesture without one."
             }
           }
         },

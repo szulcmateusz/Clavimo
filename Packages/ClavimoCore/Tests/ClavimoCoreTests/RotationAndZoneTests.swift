@@ -30,17 +30,48 @@ struct RotationAndZoneTests {
         script.down(1, 0.4, 0.5)
         script.down(2, 0.6, 0.5)
         script.turn(1, 2, degrees: -90, over: 0.6)
-        // 24 degrees to start, then one step every 15 degrees: 1 + 4.
-        #expect(script.events == Array(repeating: .rotate(.clockwise), count: 5))
+        // About 34 degrees to start, then one step every 15 degrees: 1 + 3.
+        #expect(script.events == Array(repeating: .rotate(.clockwise), count: 4))
         #expect(script.recognizer.isRotating)
         script.events = []
-        // 6 degrees were left over clockwise, so 45 back gives two steps.
+        // 11 degrees were left over clockwise, so 45 back gives two steps.
         script.turn(1, 2, degrees: 45, over: 0.3)
         #expect(script.events == Array(repeating: .rotate(.counterclockwise), count: 2))
         script.up(1)
         script.up(2)
         #expect(!script.recognizer.isRotating)
         #expect(script.recognizer.isIdle)
+    }
+
+    @Test func restingThumbWithAMovingFingerIsNotRotation() {
+        var script = TouchScript()
+        script.down(1, 0.3, 0.2)
+        script.down(2, 0.5, 0.25)
+        // The finger sweeps an arc around the resting thumb.
+        script.move([2], dx: -0.05, dy: 0.25, over: 0.4)
+        script.move([2], dx: -0.15, dy: 0.1, over: 0.3)
+        script.up(1)
+        script.up(2)
+        #expect(script.events.isEmpty)
+    }
+
+    @Test func curvedTwoFingerScrollIsNotRotation() {
+        var script = TouchScript()
+        script.down(1, 0.4, 0.3)
+        script.down(2, 0.55, 0.3)
+        // Both fingers scroll up while drifting apart at an angle.
+        script.move([1], dx: 0.0, dy: 0.35, over: 0.35)
+        script.move([2], dx: -0.06, dy: 0.42, over: 0.35)
+        script.up(1)
+        script.up(2)
+        #expect(script.events.isEmpty)
+    }
+
+    @Test func cornersAreQuarters() {
+        #expect(TrackpadZone.topRight.contains(x: 0.8, y: 0.9))
+        #expect(!TrackpadZone.topRight.contains(x: 0.2, y: 0.9))
+        #expect(!TrackpadZone.topRight.contains(x: 0.8, y: 0.1))
+        #expect(TrackpadZone.bottomLeft.contains(x: 0.1, y: 0.1))
     }
 
     @Test func scrollingAndPinchingAreNotRotation() {

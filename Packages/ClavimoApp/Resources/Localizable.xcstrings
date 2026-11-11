@@ -1313,12 +1313,32 @@
         }
       }
     },
+    "Bottom left corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewy dolny róg"
+          }
+        }
+      }
+    },
     "Bottom right": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Prawy dolny"
+          }
+        }
+      }
+    },
+    "Bottom right corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawy dolny róg"
           }
         }
       }
@@ -6467,12 +6487,32 @@
         }
       }
     },
+    "Top left corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewy górny róg"
+          }
+        }
+      }
+    },
     "Top right": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Prawy górny"
+          }
+        }
+      }
+    },
+    "Top right corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawy górny róg"
           }
         }
       }
@@ -6719,12 +6759,12 @@
         }
       }
     },
-    "Turn two fingers like a knob: every 15 degrees run the action once more, so it works well for volume or brightness. Choose a half of the trackpad to give the same gesture different jobs.": {
+    "Turn two fingers like a knob: every 15 degrees run the action once more, so it works well for volume or brightness. To keep it from happening by accident, choose a corner of the trackpad or a key to hold, such as fn.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kręć dwoma palcami jak pokrętłem: co 15 stopni akcja wykonuje się jeszcze raz, więc świetnie nadaje się do głośności albo jasności. Wybierz połowę gładzika, żeby ten sam gest robił w różnych miejscach co innego."
+            "value": "Kręć dwoma palcami jak pokrętłem: co 15 stopni akcja wykonuje się jeszcze raz, więc świetnie nadaje się do głośności albo jasności. Żeby nie zadziałała przypadkiem, wybierz róg gładzika albo klawisz do przytrzymania, np. fn."
           }
         }
       }
@@ -7157,12 +7197,12 @@
         }
       }
     },
-    "With no modifiers selected, the gesture works only while no modifier is held. Choose a half of the trackpad to give the same gesture different jobs.": {
+    "With no modifiers selected, the gesture works only while no modifier is held. Choose a half or a corner of the trackpad to give the same gesture different jobs.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bez zaznaczonych modyfikatorów gest działa tylko wtedy, gdy żaden modyfikator nie jest przytrzymany. Wybierz połowę gładzika, żeby ten sam gest robił w różnych miejscach co innego."
+            "value": "Bez zaznaczonych modyfikatorów gest działa tylko wtedy, gdy żaden modyfikator nie jest przytrzymany. Wybierz połowę albo róg gładzika, żeby ten sam gest robił w różnych miejscach co innego."
           }
         }
       }
@@ -7341,6 +7381,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "odwrócone w poziomie"
+          }
+        }
+      }
+    },
+    "in the bottom left corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "w lewym dolnym rogu"
+          }
+        }
+      }
+    },
+    "in the bottom right corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "w prawym dolnym rogu"
+          }
+        }
+      }
+    },
+    "in the top left corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "w lewym górnym rogu"
+          }
+        }
+      }
+    },
+    "in the top right corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "w prawym górnym rogu"
           }
         }
       }

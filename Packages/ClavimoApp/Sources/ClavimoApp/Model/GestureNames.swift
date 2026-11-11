@@ -30,6 +30,10 @@ enum GestureNames {
         case .right: String(localized: "on the right half")
         case .top: String(localized: "on the top half")
         case .bottom: String(localized: "on the bottom half")
+        case .topLeft: String(localized: "in the top left corner")
+        case .topRight: String(localized: "in the top right corner")
+        case .bottomLeft: String(localized: "in the bottom left corner")
+        case .bottomRight: String(localized: "in the bottom right corner")
         }
     }
 
@@ -40,6 +44,10 @@ enum GestureNames {
         case .right: String(localized: "Right half")
         case .top: String(localized: "Top half")
         case .bottom: String(localized: "Bottom half")
+        case .topLeft: String(localized: "Top left corner")
+        case .topRight: String(localized: "Top right corner")
+        case .bottomLeft: String(localized: "Bottom left corner")
+        case .bottomRight: String(localized: "Bottom right corner")
         }
     }
 

@@ -13,9 +13,9 @@ BUNDLE_ID=${CLAVIMO_BUNDLE_ID_PREFIX:-dev.clavimo}.app
 DISPLAY_NAME=${CLAVIMO_DISPLAY_NAME:-Clavimo}
 # Marketing version (numbers only, as macOS requires), build number, and
 # the release name shown in the app and used for release archives.
-VERSION=1.2.1
-BUILD=7
-RELEASE_NAME=1.2.1
+VERSION=1.2.2
+BUILD=8
+RELEASE_NAME=1.2.2
 APP="$OUT_DIR/Clavimo.app"
 PACKAGE="$ROOT/Packages/ClavimoApp"
 

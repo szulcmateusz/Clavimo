@@ -23,10 +23,12 @@ public enum TrackpadCorner: String, CaseIterable, Sendable {
     case topLeft, topRight, bottomLeft, bottomRight
 }
 
-/// A half of the trackpad surface, so one gesture can do different things
-/// in different places. A gesture belongs to the zone where it started.
+/// A half or a corner (quarter) of the trackpad surface, so one gesture
+/// can do different things in different places. A gesture belongs to the
+/// zone where it started.
 public enum TrackpadZone: String, CaseIterable, Hashable, Sendable {
     case left, right, top, bottom
+    case topLeft, topRight, bottomLeft, bottomRight
 
     /// Whether a point in normalized coordinates (y grows upwards) is in
     /// this zone.
@@ -36,6 +38,17 @@ public enum TrackpadZone: String, CaseIterable, Hashable, Sendable {
         case .right: x >= 0.5
         case .top: y >= 0.5
         case .bottom: y < 0.5
+        case .topLeft: x < 0.5 && y >= 0.5
+        case .topRight: x >= 0.5 && y >= 0.5
+        case .bottomLeft: x < 0.5 && y < 0.5
+        case .bottomRight: x >= 0.5 && y < 0.5
+        }
+    }
+
+    public var isCorner: Bool {
+        switch self {
+        case .topLeft, .topRight, .bottomLeft, .bottomRight: true
+        default: false
         }
     }
 }
@@ -95,11 +108,19 @@ public struct GestureTuning: Equatable, Sendable {
     public var tappedCornerLifetime = 0.4
     /// Turning two fingers this far (radians) starts a rotation, so
     /// scrolling and pinching, which keep the angle, never do.
-    public var rotationStart: Float = 0.42
+    public var rotationStart: Float = 0.6
     /// Each further turn this far (radians) is one more rotation step.
     public var rotationStep: Float = 0.26
     /// Fingers closer than this cannot give a reliable angle.
-    public var minimumRotationSpan: Float = 0.06
+    public var minimumRotationSpan: Float = 0.08
+    /// To start a rotation, the finger that moved less must have moved at
+    /// least this share of the other's distance: both fingers turn. A
+    /// resting thumb with a moving finger is not a knob.
+    public var rotationBalance: Float = 0.4
+    /// To start a rotation, the fingers' midpoint may drift at most this
+    /// share of their average travel: they turn around a center instead
+    /// of scrolling together.
+    public var rotationDrift: Float = 0.5
     /// Width divided by height of the surface, so angles are measured on
     /// the real shape rather than the 1 × 1 normalized square.
     public var surfaceAspect: Float = 1.6
@@ -133,6 +154,8 @@ public struct GestureRecognizer: Sendable {
         var swipeBaseTime = 0.0
         var rotationFingers: [Int32] = []
         var rotationAngle: Float?
+        /// Where the two fingers were when the current turn was measured from.
+        var rotationBase: [Point] = []
         var rotationTurned: Float = 0
         var rotating = false
         var origin = Point(x: 0.5, y: 0.5)
@@ -281,6 +304,7 @@ public struct GestureRecognizer: Sendable {
             session.rotationAngle = angle
             session.rotationFingers = ids
             session.rotationTurned = 0
+            session.rotationBase = [first, second]
             return []
         }
         var delta = angle - previous
@@ -292,6 +316,13 @@ public struct GestureRecognizer: Sendable {
         var events: [GestureEvent] = []
         if !session.rotating {
             guard abs(session.rotationTurned) >= tuning.rotationStart else { return [] }
+            guard isKnobTurn(from: session.rotationBase, to: [first, second]) else {
+                // Turned enough, but like scrolling or with one finger
+                // resting: measure again from here.
+                session.rotationTurned = 0
+                session.rotationBase = [first, second]
+                return []
+            }
             session.rotating = true
             // y grows upwards, so a growing angle turns counterclockwise.
             events.append(.rotate(session.rotationTurned > 0 ? .counterclockwise : .clockwise))
@@ -303,6 +334,22 @@ public struct GestureRecognizer: Sendable {
             session.rotationTurned -= counterclockwise ? tuning.rotationStep : -tuning.rotationStep
         }
         return events
+    }
+
+    /// Both fingers moved by a similar distance around a center that
+    /// stayed roughly in place.
+    private func isKnobTurn(from base: [Point], to now: [Point]) -> Bool {
+        guard base.count == 2, now.count == 2 else { return false }
+        func scaled(_ dx: Float, _ dy: Float) -> Float {
+            let x = dx * tuning.surfaceAspect
+            return (x * x + dy * dy).squareRoot()
+        }
+        let first = scaled(now[0].x - base[0].x, now[0].y - base[0].y)
+        let second = scaled(now[1].x - base[1].x, now[1].y - base[1].y)
+        let longer = max(first, second)
+        guard longer > 0, min(first, second) >= longer * tuning.rotationBalance else { return false }
+        let drift = scaled((now[0].x + now[1].x - base[0].x - base[1].x) / 2, (now[0].y + now[1].y - base[0].y - base[1].y) / 2)
+        return drift <= (first + second) / 2 * tuning.rotationDrift
     }
 
     private mutating func endSession(_ session: Session, at now: Double) -> GestureEvent? {

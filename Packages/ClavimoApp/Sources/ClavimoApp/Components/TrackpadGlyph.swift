@@ -66,6 +66,10 @@ struct TrackpadGlyph: View {
                 case .right: CGRect(x: rect.midX, y: rect.minY, width: rect.width / 2, height: rect.height)
                 case .top: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height / 2)
                 case .bottom: CGRect(x: rect.minX, y: rect.midY, width: rect.width, height: rect.height / 2)
+                case .topLeft: CGRect(x: rect.minX, y: rect.minY, width: rect.width / 2, height: rect.height / 2)
+                case .topRight: CGRect(x: rect.midX, y: rect.minY, width: rect.width / 2, height: rect.height / 2)
+                case .bottomLeft: CGRect(x: rect.minX, y: rect.midY, width: rect.width / 2, height: rect.height / 2)
+                case .bottomRight: CGRect(x: rect.midX, y: rect.midY, width: rect.width / 2, height: rect.height / 2)
                 }
                 context.fill(Path(roundedRect: half, cornerRadius: radius * 0.6), with: .color(Brand.mint.opacity(0.22)))
             }

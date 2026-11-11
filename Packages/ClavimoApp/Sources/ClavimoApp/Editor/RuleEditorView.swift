@@ -170,8 +170,8 @@ struct RuleEditorView: View {
                 Text("When")
             } footer: {
                 trackpadFooter(draft.gesture == .rotate
-                    ? String(localized: "Turn two fingers like a knob: every 15 degrees run the action once more, so it works well for volume or brightness. Choose a half of the trackpad to give the same gesture different jobs.")
-                    : String(localized: "With no modifiers selected, the gesture works only while no modifier is held. Choose a half of the trackpad to give the same gesture different jobs."))
+                    ? String(localized: "Turn two fingers like a knob: every 15 degrees run the action once more, so it works well for volume or brightness. To keep it from happening by accident, choose a corner of the trackpad or a key to hold, such as fn.")
+                    : String(localized: "With no modifiers selected, the gesture works only while no modifier is held. Choose a half or a corner of the trackpad to give the same gesture different jobs."))
             }
         case .trackpadClick:
             Section {
