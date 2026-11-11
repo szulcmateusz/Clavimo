@@ -44,6 +44,8 @@ struct GeneralPane: View {
                 Text(String(localized: "Each macOS account grants permissions separately. Clavimo never records typed text and makes no network connections."))
             }
 
+            BackupSection(editor: editor)
+
             Section(String(localized: "Configuration")) {
                 LabeledContent(String(localized: "File")) {
                     Text(model.configURL.path).font(.callout.monospaced()).textSelection(.enabled).lineLimit(2)

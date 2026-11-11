@@ -111,6 +111,43 @@ final class ConfigEditor {
 
     var enabledOnLaunch: Bool { document?.engine.enabledOnLaunch ?? false }
 
+    // MARK: Import, export and backups
+
+    /// The current configuration as stable, human-readable JSON.
+    func exportData() throws -> Data {
+        guard let document else { throw ConfigStore.LoadError.unreadable(String(localized: "No configuration is loaded.")) }
+        return try document.encoded()
+    }
+
+    struct ReadFailure: Error {
+        let message: String
+    }
+
+    /// Reads a configuration for preview without applying it.
+    func readDocument(at url: URL) -> Result<ConfigDocument, ReadFailure> {
+        do {
+            return .success(try ConfigDocument.decode(Data(contentsOf: url)))
+        } catch let error as ConfigLoadError {
+            return .failure(ReadFailure(message: Messages.describe(error)))
+        } catch let error as DecodingError {
+            return .failure(ReadFailure(message: Messages.describe(ConfigStore.LoadError.invalid(ConfigStore.describeDecoding(error)))))
+        } catch {
+            return .failure(ReadFailure(message: error.localizedDescription))
+        }
+    }
+
+    /// Replaces the whole configuration after validation. The previous
+    /// file becomes the backup.
+    @discardableResult
+    func replace(with incoming: ConfigDocument) -> String? {
+        commit(incoming)
+    }
+
+    var backupDocument: ConfigDocument? {
+        guard let data = try? Data(contentsOf: store.backupURL) else { return nil }
+        return try? ConfigDocument.decode(data)
+    }
+
     // MARK: Profiles
 
     var profiles: [ConfigDocument.Profile] { document?.profiles ?? [] }

@@ -174,3 +174,41 @@ struct ConfigEditorTests {
         #expect(editor.deleteProfile("default") == nil && editor.profiles.count == 1, "the base profile stays")
     }
 }
+
+@Suite("Configuration diff")
+struct ConfigDiffTests {
+    static func document(_ drafts: [(String, RuleDraft)], active: String = "default") -> ConfigDocument {
+        ConfigDocument(activeProfileId: active, rules: drafts.enumerated().map { $1.1.makeRule(id: $1.0, order: $0) })
+    }
+
+    @Test func detectsAddedChangedAndRemovedRules() {
+        var a = RuleDraft(); a.name = "A"
+        var b = RuleDraft(); b.name = "B"; b.firstKey = KeyCode.leftCommand.rawValue; b.secondKey = KeyCode.leftOption.rawValue
+        var bChanged = b; bChanged.enabled = false
+        var c = RuleDraft(); c.name = "C"; c.kind = .remapKey; c.firstKey = 0x69; c.secondKey = KeyCode.escape.rawValue
+
+        let diff = ConfigDiff(from: Self.document([("a", a), ("b", b)]), to: Self.document([("b", bChanged), ("c", c)]))
+        #expect(diff.added.map(\.name) == ["C"])
+        #expect(diff.changed.map(\.name) == ["B"])
+        #expect(diff.removed.map(\.name) == ["A"])
+        #expect(!diff.isEmpty)
+    }
+
+    @Test func identicalDocumentsHaveNoChanges() {
+        var a = RuleDraft(); a.name = "A"
+        let document = Self.document([("a", a)])
+        #expect(ConfigDiff(from: document, to: document).isEmpty)
+    }
+
+    @Test func reportsUnsupportedIncomingRules() {
+        var bad = RuleDraft()
+        bad.kind = .remapKey
+        bad.firstKey = KeyCode.a.rawValue
+        bad.secondKey = KeyCode.g.rawValue
+        var rule = bad.makeRule(id: "x", order: 0)
+        rule.conditions = [.object(["kind": .string("timeOfDay")])]
+        let diff = ConfigDiff(from: nil, to: ConfigDocument(rules: [rule]))
+        #expect(diff.unsupported.map(\.ruleID) == ["x"])
+        #expect(diff.added.map(\.id) == ["x"])
+    }
+}

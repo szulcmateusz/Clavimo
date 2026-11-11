@@ -104,6 +104,10 @@ struct ConfigStore {
         try Data(empty.utf8).write(to: fileURL, options: .atomic)
     }
 
+    static func describeDecoding(_ error: DecodingError) -> String {
+        describe(error)
+    }
+
     private static func describe(_ error: DecodingError) -> String {
         switch error {
         case let .keyNotFound(key, context):
