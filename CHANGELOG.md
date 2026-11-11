@@ -6,7 +6,22 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Added
 
-- Scroll modes for mouse wheels, configured per axis: system, accelerated with a speed multiplier, a fixed number of lines per notch, or (experimental) a fixed number of pixels per notch.
+- Redesigned settings window: Overview, Rules, Mouse & Scrolling, Devices, Diagnostics, General and About, with rules drawn as keycaps, mouse buttons and actions and explained in a sentence.
+- Original app icon and menu bar icon: a keycap and a mouse linked like chain links.
+- First-launch guide for permissions, devices and a first rule from templates.
+- Rule templates and a live preview in the rule editor.
+- Profiles that inherit the Default rules, with a profile switcher in the menu bar.
+- Export, import with a preview of the changes, and restoring the previous configuration.
+- Diagnostics: event tap health, processing time percentiles, an opt-in input inspector kept in memory only, and a copyable diagnostic report without typed text.
+- Pause for 5 minutes or 1 hour from the menu bar.
+- Scroll modes for mouse wheels, configured per axis: system, accelerated with a speed multiplier, a fixed number of lines per notch, (experimental) a fixed number of pixels per notch, and smooth scrolling that glides each notch.
+- Polish interface; the app follows the macOS language.
+- Keyboard and VoiceOver support in the rules list, and Reduce Motion support.
+- Random-input tests of the engine's invariants and a 1000-rule performance test.
+
+### Changed
+
+- Error and validation messages name the rule and keys involved instead of internal identifiers.
 
 ## [0.1.0] - 2026-11-11
 

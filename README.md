@@ -6,7 +6,12 @@
 
 Clavimo is a native, open source menu bar app that remaps keys and combines your keyboard and mouse into shortcuts. Swap Command and Option, switch Spaces with Fn + click, open Mission Control with a side mouse button, hold a letter and click to run an action, or reverse the mouse wheel without touching your trackpad. Rules are created in a visual editor, stored in a readable JSON file, and processed locally on your Mac.
 
-> **Project status: early preview.** Version 0.1.0 is a pre-release. Clavimo is used daily by its maintainer on one Mac, but most features have not been verified on other hardware or macOS versions. See [Compatibility](#compatibility-and-limitations) and [docs/testing.md](docs/testing.md) before relying on it.
+> **Project status: preview, heading for 1.0.** The latest release, 0.1.0, is a pre-release. The `main` branch contains the 1.0 candidate described below; it becomes 1.0 once every feature marked Available has passed the hardware checklist in [docs/testing.md](docs/testing.md). Clavimo is used daily by its maintainer on one Mac. See [Compatibility](#compatibility-and-limitations) before relying on it.
+
+<p align="center">
+  <img src="docs/images/overview-light.png" width="49%" alt="Overview: status card with the remapping switch, rule and device counts, and quick actions">
+  <img src="docs/images/rules-dark.png" width="49%" alt="Rules in dark mode: each rule drawn as keycaps, mouse buttons and actions, with a sentence explaining it">
+</p>
 
 ## Features
 
@@ -16,13 +21,19 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Modifier + mouse button (including Fn, and left or right click with explicit opt-in) | Experimental | Ordinary clicks are never affected. |
 | Letter key + mouse button, with a choice of how the letter is buffered | Experimental | The letter may be slightly delayed while typing; see [leader policies](docs/configuration.md#leader-policies-for-key--mouse-button). |
 | Actions: next and previous Space, Mission Control, application windows | Experimental | Uses the macOS Control + Arrow shortcuts, which must be enabled. |
-| Mouse wheel direction and scroll distance: system, accelerated, a fixed number of lines or pixels per notch; trackpad unchanged | Experimental | Applies to all mouse wheels; per-device scrolling and smooth scrolling are not supported yet. |
+| Reverse the mouse wheel without changing the trackpad | Available | Verified in daily use with a USB Logitech G102. |
+| Scroll distance per axis: system, accelerated, a fixed number of lines or pixels per notch, or smooth scrolling that glides each notch like a trackpad | Experimental | Applies to all mouse wheels; per-device scrolling is not supported yet. |
 | Rules limited to apps or excluded from apps | Experimental | |
 | Rules limited to one keyboard or mouse | Experimental | Works without a driver by asking devices which one is pressing the key; if that is ambiguous, the rule does not apply. Identical devices cannot be told apart. |
-| Visual rule editor with key recording | Experimental | |
-| Pause, emergency disable and safe mode | Experimental | |
+| Visual rule editor with key recording, rule templates and a live preview in words | Experimental | |
+| Profiles that inherit the Default rules, switched from the menu bar | Experimental | |
+| Export, import with a preview of the changes, and restoring the previous configuration | Experimental | |
+| Diagnostics: event tap health, processing time, and an opt-in input inspector kept in memory only | Experimental | |
+| First-launch guide for permissions, devices and a first rule | Experimental | |
+| Pause for 5 minutes, 1 hour or until resumed; emergency disable and safe mode | Experimental | |
+| English and Polish interface | Available | Follows the macOS language setting. |
 | Launch at Login, automatic pause while another macOS account is active | Experimental | Multi-account behavior not yet verified on hardware. |
-| Pointer speed and acceleration, smooth scrolling, macros, layers, tap-hold | Planned | |
+| Per-device pointer speed and scrolling, macros, layers, tap-hold, more languages | Planned | |
 | Remapping at the login window or before FileVault unlock | Unsupported | macOS does not allow it for apps like Clavimo. |
 
 **Available** means implemented, covered by automated tests and verified on real hardware. **Experimental** means implemented and covered by automated tests, but not yet verified on hardware, so it may not work everywhere. **Planned** features do not exist yet.
@@ -66,10 +77,14 @@ open /Applications/Clavimo.app
 
 ## Getting started
 
-1. **Open Clavimo.** On first launch it asks macOS for permissions and opens its settings window. A keyboard icon appears in the menu bar. If your menu bar is full, the icon may be hidden behind the camera notch; open Clavimo again from Finder or Spotlight to show the settings window.
+<p align="center"><img src="docs/images/onboarding-1.png" width="60%" alt="The first-launch guide: welcome page listing what Clavimo does"></p>
+
+1. **Open Clavimo.** On first launch a short guide walks you through permissions, your devices and a first rule. The Clavimo icon (a keycap linked with a mouse) appears in the menu bar. If your menu bar is full, the icon may be hidden behind the camera notch; open Clavimo again from Finder or Spotlight to show the settings window.
 2. **Grant permissions.** Turn on Clavimo in **System Settings > Privacy & Security > Accessibility** and **Input Monitoring**. Clavimo notices within a few seconds; no restart is needed.
-3. **Create a rule.** In **Rules**, click **New Rule**, choose a rule type, pick or record the keys, and click **Add Rule**. Rules apply immediately.
-4. **Turn remapping on** with the switch at the top of the Rules pane, and decide in **General** whether it should be on when Clavimo starts.
+3. **Create a rule.** Pick a template in the guide, or in **Rules** click **New Rule**, choose a rule type, pick or record the keys, and click **Add Rule**. The preview at the top of the editor explains the rule in words. Rules apply immediately.
+4. **Turn remapping on** with the switch in **Overview**, and decide in **General** whether it should be on when Clavimo starts.
+
+<p align="center"><img src="docs/images/editor-light.png" width="55%" alt="Rule editor for a letter key + mouse button rule, with keycap preview and a sentence describing it"></p>
 
 ### Example: swap Command and Option
 
@@ -84,7 +99,8 @@ Only clicks made while Fn is held are replaced. Normal clicks, drags and right-c
 
 ## How rules work
 
-- **Rule types:** swap two keys, remap a key, modifier + mouse button, key + mouse button, and mouse wheel settings (direction and scroll distance per axis).
+- **Rule types:** swap two keys, remap a key, modifier + mouse button, key + mouse button, and mouse wheel settings (direction and scroll distance per axis, set in **Mouse & Scrolling**).
+- **Profiles:** every profile uses its own rules plus the rules of Default; a rule in a profile replaces a Default rule with the same trigger. Switch the active profile from the menu bar or the Rules pane.
 - **Conditions:** only in certain apps, never in certain apps, and (experimental) only for a specific keyboard or mouse. Leave them empty to apply a rule everywhere.
 - **Precedence:** for mouse chords with the same trigger, the higher priority wins, then the more specific conditions. Two rules for the same key need different conditions; the most specific one wins. Conflicting rules are rejected when you save, with an explanation.
 - **Letter key + mouse button** needs a buffering choice, because the letter would otherwise type before Clavimo knows a click is coming: wait briefly then type (default 120 ms), wait until the key is released, or type immediately and accept the stray character. The letter is only held back in apps where its chord can apply.
@@ -92,7 +108,7 @@ Only clicks made while Fn is held are replaced. Normal clicks, drags and right-c
 
 ## Configuration file
 
-Rules are stored per macOS account in `~/Library/Application Support/Clavimo/config.json`, with the previous version kept as `config.backup.json`. You can edit the file by hand and choose **Reload Configuration** from the menu. The format is a draft and may change before the first release.
+Rules are stored per macOS account in `~/Library/Application Support/Clavimo/config.json`, with the previous version kept as `config.backup.json`. **General > Backup and Import** exports the file, imports one after showing what would change, and restores the previous version. You can also edit the file by hand and choose **Reload Configuration** from the menu. The format is a draft and may change before 1.0.
 
 ```sh
 /Applications/Clavimo.app/Contents/MacOS/Clavimo --check-config [path]   # validate a file
@@ -116,7 +132,7 @@ Clavimo processes events in memory to apply your rules. It **does not record typ
 
 ## Safety and emergency disable
 
-- **Menu bar > Pause Remapping** or **Emergency Disable** stops all changes immediately. Keys that Clavimo was holding on your behalf are released.
+- **Menu bar > Pause Remapping** (for 5 minutes, 1 hour or until you resume) or **Emergency Disable** stops all changes immediately. Keys that Clavimo was holding on your behalf are released.
 - **Quit Clavimo** from the menu, or force quit it in Activity Monitor. macOS then delivers input directly again.
 - If macOS disables Clavimo's event tap repeatedly, Clavimo stops and enters **safe mode** instead of retrying forever. Resume from the menu after checking for conflicts.
 - When something is uncertain (permissions removed, configuration invalid, another account in use), Clavimo stops changing input rather than guessing.
@@ -150,7 +166,11 @@ Each macOS account has its own rules, permissions and startup setting. When you 
 
 **A key seems stuck.** Press and release it once. If that does not help, choose **Emergency Disable** in the menu or quit Clavimo. Please report how it happened, without sharing what you typed.
 
-**Typing or the mouse feels sluggish.** Pause remapping to compare, and quit other input tools to rule out conflicts. Letter key chords delay that letter by their window while typing; lower the window or use another policy.
+**Typing or the mouse feels sluggish.** Pause remapping to compare, and quit other input tools to rule out conflicts. **Diagnostics** shows how much time Clavimo adds to each event. Letter key chords delay that letter by their window while typing; lower the window or use another policy.
+
+**I am not sure what a rule does.** Turn on the input inspector in **Diagnostics**: it lists the last keys and buttons and what Clavimo did with them. It is kept in memory only and cleared when you leave the page.
+
+**Reporting a problem.** **Diagnostics > Copy Diagnostic Report** copies versions, settings and measurements, never what you typed, so you can paste it into an issue.
 
 ## Development
 
