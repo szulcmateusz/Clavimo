@@ -124,7 +124,8 @@ public enum RuleDefinition: Equatable, Sendable {
         modifiers: GenericModifiers = [],
         action: ActionCommand,
         priority: Int = 100,
-        conditions: RuleConditions = .always
+        conditions: RuleConditions = .always,
+        zone: TrackpadZone? = nil
     )
     /// A key that does something other than send another key: a shortcut,
     /// modifiers, a layer, a one-shot modifier, a sequence or an action.
@@ -169,6 +170,8 @@ public struct TrackpadRule: Equatable, Sendable {
     public let action: ActionCommand
     public let priority: Int
     public let conditions: RuleConditions
+    /// Nil for the whole surface.
+    public var zone: TrackpadZone? = nil
 }
 
 extension RuleDefinition {
@@ -186,8 +189,8 @@ extension RuleDefinition {
             ["wheel:\(conditions.signature)"]
         case let .trackpadScroll(_, conditions):
             ["trackpadScroll:\(conditions.signature)"]
-        case let .trackpad(_, trigger, modifiers, _, _, conditions):
-            ["trackpad:\(trigger.signature):\(modifiers.rawValue):\(conditions.signature)"]
+        case let .trackpad(_, trigger, modifiers, _, _, conditions, zone):
+            ["trackpad:\(trigger.signature):\(modifiers.rawValue):\(conditions.signature):\(zone?.rawValue ?? "")"]
         case let .keyOutput(_, key, _, conditions), let .tapHold(_, key, _, _, _, _, conditions):
             ["key:\(key.rawValue):\(conditions.signature)"]
         case let .layerKey(_, layer, key, _, conditions):
@@ -214,6 +217,7 @@ extension TrackpadTrigger {
         case let .gesture(.tap(fingers)): "tap\(fingers)"
         case let .gesture(.tipTap(side)): "tiptap-\(side.rawValue)"
         case let .gesture(.swipe(fingers, direction)): "swipe\(fingers)-\(direction.rawValue)"
+        case let .gesture(.rotate(rotation)): "rotate-\(rotation.rawValue)"
         case let .click(fingers): "click\(fingers)"
         case let .cornerClick(corner): "corner-\(corner.rawValue)"
         }
@@ -255,6 +259,8 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     case duplicateTrackpadRule(ids: [String])
     case duplicateTrackpadScroll
     case trackpadScrollWithoutChanges
+    /// Zones work for gestures only; clicks are matched by their fingers.
+    case trackpadZoneOnClick(id: String)
     /// A tap-hold key needs a held output (modifiers or a layer) for its hold.
     case holdOutputNotHeld(id: String)
     /// Modifier keys can only add a tap output; their hold stays the modifier.
@@ -380,15 +386,28 @@ public struct CompiledRules: Equatable, Sendable {
     /// Whether any rule needs trackpad touches, so the touch backend runs.
     public var observesTrackpad: Bool { !trackpadRules.isEmpty }
 
+    /// Whether any rule reacts to two-finger rotation, so trackpad
+    /// scrolling must be held still while fingers turn.
+    public var observesRotation: Bool {
+        trackpadRules.keys.contains { if case .gesture(.rotate) = $0 { true } else { false } }
+    }
+
     /// Whether any rule replaces physical trackpad clicks, which needs the
     /// primary and secondary buttons in the event tap mask.
     public var observesTrackpadClicks: Bool {
         trackpadRules.keys.contains { if case .gesture = $0 { false } else { true } }
     }
 
-    /// The rule for a gesture under the held modifiers in `app`.
-    public func trackpadRule(for trigger: TrackpadTrigger, modifiers: GenericModifiers, app: String?) -> TrackpadRule? {
-        trackpadRules[trigger]?.first { $0.modifiers == modifiers && $0.conditions.matches(app: app, device: nil) }
+    /// The rule for a gesture under the held modifiers in `app`. A rule
+    /// limited to a zone applies only when the gesture started there.
+    public func trackpadRule(for trigger: TrackpadTrigger, modifiers: GenericModifiers, app: String?,
+                             at point: TrackpadPoint? = nil) -> TrackpadRule? {
+        trackpadRules[trigger]?.first { rule in
+            guard rule.modifiers == modifiers, rule.conditions.matches(app: app, device: nil) else { return false }
+            guard let zone = rule.zone else { return true }
+            guard let point else { return false }
+            return zone.contains(x: point.x, y: point.y)
+        }
     }
 
     /// Unconditional remaps, for inspection and tests.
@@ -573,7 +592,7 @@ public struct CompiledRules: Equatable, Sendable {
                 } else {
                     continuous.append((ContinuousScrollRule(settings: settings, conditions: conditions), order))
                 }
-            case let .trackpad(id, trigger, modifiers, action, priority, conditions):
+            case let .trackpad(id, trigger, modifiers, action, priority, conditions, zone):
                 if !seenIDs.insert(id).inserted {
                     errors.append(.duplicateRuleID(id))
                 }
@@ -581,20 +600,23 @@ public struct CompiledRules: Equatable, Sendable {
                 case let .gesture(.tap(fingers)): TrackpadTrigger.tapFingers.contains(fingers)
                 case let .gesture(.swipe(fingers, _)): TrackpadTrigger.swipeFingers.contains(fingers)
                 case let .click(fingers): TrackpadTrigger.clickFingers.contains(fingers)
-                case .gesture(.tipTap), .cornerClick: true
+                case .gesture(.tipTap), .gesture(.rotate), .cornerClick: true
                 }
                 if !fingersValid {
                     errors.append(.trackpadFingersOutOfRange(id: id))
                 } else if trigger == .gesture(.tap(fingers: 2)), modifiers.isEmpty {
                     errors.append(.twoFingerTapNeedsModifiers(id: id))
                 }
+                if zone != nil, case .gesture = trigger {} else if zone != nil {
+                    errors.append(.trackpadZoneOnClick(id: id))
+                }
                 if let other = trackpad.first(where: {
-                    $0.0.trigger == trigger && $0.0.modifiers == modifiers && $0.0.conditions == conditions
+                    $0.0.trigger == trigger && $0.0.modifiers == modifiers && $0.0.conditions == conditions && $0.0.zone == zone
                 }) {
                     errors.append(.duplicateTrackpadRule(ids: [other.0.id, id]))
                 }
                 trackpad.append((TrackpadRule(id: id, trigger: trigger, modifiers: modifiers, action: action,
-                                              priority: priority, conditions: conditions), order))
+                                              priority: priority, conditions: conditions, zone: zone), order))
             case let .keyOutput(id, key, output, conditions):
                 claim(id)
                 if key.modifierKey != nil {
@@ -767,6 +789,8 @@ public struct CompiledRules: Equatable, Sendable {
             wheelSettings: bySpecificity(wheel) { $0.conditions },
             trackpadRules: Dictionary(grouping: trackpad.sorted { lhs, rhs in
                 if lhs.0.priority != rhs.0.priority { return lhs.0.priority > rhs.0.priority }
+                // A rule for one zone wins over the same gesture anywhere.
+                if (lhs.0.zone != nil) != (rhs.0.zone != nil) { return lhs.0.zone != nil }
                 let left = lhs.0.conditions.specificity
                 let right = rhs.0.conditions.specificity
                 return left != right ? left > right : lhs.1 < rhs.1

@@ -76,13 +76,14 @@ struct RuleDraft: Equatable {
     }
 
     enum Gesture: String, CaseIterable, Identifiable {
-        case tap, tipTap, swipe
+        case tap, tipTap, swipe, rotate
         var id: String { rawValue }
         var title: String {
             switch self {
             case .tap: String(localized: "Tap")
             case .tipTap: String(localized: "Tip tap")
             case .swipe: String(localized: "Swipe")
+            case .rotate: String(localized: "Rotate")
             }
         }
 
@@ -90,7 +91,7 @@ struct RuleDraft: Equatable {
             switch self {
             case .tap: TrackpadTrigger.tapFingers
             case .swipe: TrackpadTrigger.swipeFingers
-            case .tipTap: 2...2
+            case .tipTap, .rotate: 2...2
             }
         }
     }
@@ -180,6 +181,9 @@ struct RuleDraft: Equatable {
     var fingers = 3
     var direction: GestureEvent.Direction = .left
     var side: GestureEvent.Side = .right
+    var rotation: GestureEvent.Rotation = .clockwise
+    /// Nil for the whole trackpad. Gestures only.
+    var zone: TrackpadZone?
     var clickPlace: ClickPlace = .fingers
     var corner: TrackpadCorner = .topRight
     var trackpadModifiers: Set<Modifier> = []
@@ -231,6 +235,7 @@ struct RuleDraft: Equatable {
         case .tap: return .gesture(.tap(fingers: fingers))
         case .tipTap: return .gesture(.tipTap(side))
         case .swipe: return .gesture(.swipe(fingers: fingers, direction))
+        case .rotate: return .gesture(.rotate(rotation))
         }
     }
 
@@ -403,6 +408,10 @@ extension RuleDraft {
                 object["gesture"] = .string("swipe")
                 object["fingers"] = .number(Double(count))
                 object["direction"] = .string(direction.rawValue)
+            case let .gesture(.rotate(turn)):
+                object["kind"] = .string("trackpadGesture")
+                object["gesture"] = .string("rotate")
+                object["direction"] = .string(turn.rawValue)
             case let .click(count):
                 object["kind"] = .string("trackpadClick")
                 object["fingers"] = .number(Double(count))
@@ -410,6 +419,7 @@ extension RuleDraft {
                 object["kind"] = .string("trackpadClick")
                 object["corner"] = .string(corner.rawValue)
             }
+            if kind == .trackpadGesture, let zone { object["zone"] = .string(zone.rawValue) }
             trigger = .object(object)
             actionValue = actionJSON
         case .wheel, .trackpadScroll:
@@ -580,6 +590,15 @@ extension RuleDraft {
         case .tipTap:
             guard let side = trigger["side"]?.string.flatMap(GestureEvent.Side.init(rawValue:)) else { return false }
             self.side = side
+        case .rotate:
+            guard count == nil || count == 2,
+                  let turn = trigger["direction"]?.string.flatMap(GestureEvent.Rotation.init(rawValue:)) else { return false }
+            rotation = turn
+            fingers = 2
+        }
+        if let name = trigger["zone"]?.string {
+            guard let zone = TrackpadZone(rawValue: name) else { return false }
+            self.zone = zone
         }
         return true
     }

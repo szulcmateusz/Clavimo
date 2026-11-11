@@ -69,6 +69,7 @@ enum RuleTemplates {
             case let .gesture(.tipTap(side)): draft.kind = .trackpadGesture; draft.gesture = .tipTap; draft.side = side
             case let .gesture(.swipe(count, direction)):
                 draft.kind = .trackpadGesture; draft.gesture = .swipe; draft.fingers = count; draft.direction = direction
+            case let .gesture(.rotate(turn)): draft.kind = .trackpadGesture; draft.gesture = .rotate; draft.rotation = turn
             case let .click(count): draft.kind = .trackpadClick; draft.clickPlace = .fingers; draft.fingers = count
             case let .cornerClick(corner): draft.kind = .trackpadClick; draft.clickPlace = .corner; draft.corner = corner
             }
@@ -76,6 +77,12 @@ enum RuleTemplates {
             return draft
         }
         return [
+            RuleTemplate(id: "rotate-volume-up", title: String(localized: "Turn two fingers clockwise: volume up"),
+                         draft: gesture(.gesture(.rotate(.clockwise)), .media) { $0.mediaKey = .volumeUp }),
+            RuleTemplate(id: "rotate-volume-down", title: String(localized: "Turn two fingers counterclockwise: volume down"),
+                         draft: gesture(.gesture(.rotate(.counterclockwise)), .media) { $0.mediaKey = .volumeDown }),
+            RuleTemplate(id: "rotate-brightness-up", title: String(localized: "Right half, turn clockwise: brighter"),
+                         draft: gesture(.gesture(.rotate(.clockwise)), .media) { $0.mediaKey = .brightnessUp; $0.zone = .right }),
             RuleTemplate(id: "tap3-middle", title: String(localized: "Three-finger tap: middle click"),
                          draft: gesture(.gesture(.tap(fingers: 3)), .middleClick)),
             RuleTemplate(id: "click3-middle", title: String(localized: "Three-finger click: middle click"),

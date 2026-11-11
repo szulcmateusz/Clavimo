@@ -1054,10 +1054,11 @@ public struct InputEngine: Sendable {
 
     /// Runs the action of the rule matching a recognized gesture under the
     /// currently held modifiers. Gestures never produce key events.
-    public mutating func handleGesture(_ gesture: GestureEvent) -> EngineOutput {
+    /// `point` is where the gesture started, for rules limited to a zone.
+    public mutating func handleGesture(_ gesture: GestureEvent, at point: TrackpadPoint? = nil) -> EngineOutput {
         var output = EngineOutput()
         let modifiers = physicalModifiers.union(heldModifiers).union(oneShot)
-        if let rule = rules.trackpadRule(for: .gesture(gesture), modifiers: modifiers.generic, app: frontmostApp) {
+        if let rule = rules.trackpadRule(for: .gesture(gesture), modifiers: modifiers.generic, app: frontmostApp, at: point) {
             output.actions.append(rule.action)
             oneShot = []
         }

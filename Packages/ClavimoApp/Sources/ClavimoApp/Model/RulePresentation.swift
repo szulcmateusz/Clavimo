@@ -19,6 +19,8 @@ struct TrackpadGlyphModel: Equatable {
     var arrow: GestureEvent.Direction?
     var corner: TrackpadCorner?
     var tipTapSide: GestureEvent.Side?
+    var rotation: GestureEvent.Rotation?
+    var zone: TrackpadZone?
     /// A physical click rather than a light tap.
     var pressed = false
 
@@ -27,6 +29,7 @@ struct TrackpadGlyphModel: Equatable {
         case let .gesture(.tap(count)): fingers = count
         case let .gesture(.tipTap(side)): fingers = 2; tipTapSide = side
         case let .gesture(.swipe(count, direction)): fingers = count; arrow = direction
+        case let .gesture(.rotate(turn)): fingers = 2; rotation = turn
         case let .click(count): fingers = count; pressed = true
         case let .cornerClick(place): fingers = 1; corner = place; pressed = true
         }
@@ -123,6 +126,13 @@ extension RuleDraft {
     }
 
     /// A compact visual summary: trigger, then result.
+    /// The trackpad drawing of this rule, with its zone.
+    var glyphModel: TrackpadGlyphModel {
+        var model = TrackpadGlyphModel(trackpadTrigger)
+        if kind == .trackpadGesture { model.zone = zone }
+        return model
+    }
+
     var tokens: [RuleToken] {
         switch kind {
         case .swapKeys:
@@ -135,7 +145,7 @@ extension RuleDraft {
             [key(firstKey), .text("+"), .mouse(KeyNames.shortButtonName(button)), .symbol("arrow.right"), actionToken]
         case .trackpadGesture, .trackpadClick:
             Modifier.allCases.filter { trackpadModifiers.contains($0) }.flatMap { [RuleToken.key($0.symbol, caption: nil), .text("+")] }
-                + [.trackpad(TrackpadGlyphModel(trackpadTrigger), title: trackpadTriggerTitle), .symbol("arrow.right"), actionToken]
+                + [.trackpad(glyphModel, title: trackpadTriggerTitle), .symbol("arrow.right"), actionToken]
         case .wheel:
             [.mouse(String(localized: "Wheel")), .symbol("arrow.right"),
              .action(wheelSummary, symbol: "arrow.up.and.down")]
@@ -194,9 +204,14 @@ extension RuleDraft {
             }
         case .trackpadGesture, .trackpadClick:
             let held = Modifier.allCases.filter { trackpadModifiers.contains($0) }.map(\.localizedName).formatted(.list(type: .and))
+            var trigger = trackpadTriggerTitle
+            if kind == .trackpadGesture, let zone { trigger += " " + GestureNames.zone(zone) }
             text = trackpadModifiers.isEmpty
-                ? String(localized: "\(trackpadTriggerTitle) runs \(actionTitle).")
-                : String(localized: "While you hold \(held), \(trackpadTriggerTitle.lowercasedFirst) runs \(actionTitle).")
+                ? String(localized: "\(trigger) runs \(actionTitle).")
+                : String(localized: "While you hold \(held), \(trigger.lowercasedFirst) runs \(actionTitle).")
+            if kind == .trackpadGesture, gesture == .rotate {
+                text += " " + String(localized: "Keep turning to repeat it, like a knob; the page does not scroll meanwhile.")
+            }
             if kind == .trackpadClick {
                 text += " " + String(localized: "The click itself does not reach the app.")
             }

@@ -88,9 +88,9 @@ struct TrackpadGesturesTests {
     @Test func gesturesAreRecognizedPerDevice() {
         let gestures = TrackpadGestures()
         var events: [GestureEvent] = []
-        events += gestures.process(device: 1, frame: frame(1, [(1, 0.3, 0.5), (2, 0.4, 0.5), (3, 0.5, 0.5)]), now: 1)
-        events += gestures.process(device: 2, frame: frame(1.01, [(9, 0.5, 0.5)]), now: 2)
-        events += gestures.process(device: 1, frame: frame(1.08, []), now: 3)
+        events += gestures.process(device: 1, frame: frame(1, [(1, 0.3, 0.5), (2, 0.4, 0.5), (3, 0.5, 0.5)]), now: 1).map(\.0)
+        events += gestures.process(device: 2, frame: frame(1.01, [(9, 0.5, 0.5)]), now: 2).map(\.0)
+        events += gestures.process(device: 1, frame: frame(1.08, []), now: 3).map(\.0)
         #expect(events == [.tap(fingers: 3)])
     }
 }

@@ -620,13 +620,19 @@ extension ConfigDocument {
 
         case ("trackpadGesture", _), ("trackpadClick", _):
             guard conditions.devices.isEmpty else { throw Unsupported(.unsupportedCondition("physicalDeviceIs")) }
+            var zone: TrackpadZone?
+            if let name = rule.trigger["zone"]?.string {
+                guard let parsed = TrackpadZone(rawValue: name) else { throw Unsupported(.invalidTrackpadTrigger) }
+                zone = parsed
+            }
             return .trackpad(
                 id: rule.id,
                 trigger: try trackpadTrigger(rule.trigger),
                 modifiers: try genericModifiers(rule.trigger["requiredModifiers"]),
                 action: try action(rule.action),
                 priority: rule.priority,
-                conditions: conditions
+                conditions: conditions,
+                zone: zone
             )
 
         default:
@@ -658,6 +664,12 @@ extension ConfigDocument {
                 throw Unsupported(.invalidTrackpadTrigger)
             }
             return .gesture(.swipe(fingers: fingers, direction))
+        case "rotate":
+            guard fingers == nil || fingers == 2,
+                  let rotation = trigger["direction"]?.string.flatMap(GestureEvent.Rotation.init(rawValue:)) else {
+                throw Unsupported(.invalidTrackpadTrigger)
+            }
+            return .gesture(.rotate(rotation))
         default:
             throw Unsupported(.invalidTrackpadTrigger)
         }

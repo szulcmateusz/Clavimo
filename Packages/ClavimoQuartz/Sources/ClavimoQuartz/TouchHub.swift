@@ -156,21 +156,34 @@ final class TrackpadGestures: @unchecked Sendable {
     private var recognizers: [UInt64: GestureRecognizer] = [:]
     private var snapshot = TouchSnapshot.empty
     private var snapshotTime: UInt64 = 0
+    /// When fingers last turned as a rotation, for holding scrolling still.
+    private var lastRotationTime: UInt64 = 0
+    private var rotating = false
+
+    /// Scrolling and its momentum stay still this long after a rotation.
+    static let rotationScrollHold: UInt64 = 600_000_000
 
     /// A snapshot with fingers down is trusted this long without frames.
     static let fingersMaximumAge: UInt64 = 250_000_000
     /// A corner tap counts for tap to click this long.
     static let tappedCornerMaximumAge: UInt64 = 400_000_000
 
-    func process(device: UInt64, frame: TouchFrame, now: UInt64) -> [GestureEvent] {
+    func process(device: UInt64, frame: TouchFrame, now: UInt64) -> [(GestureEvent, TrackpadPoint?)] {
         lock.withLock {
             var recognizer = recognizers[device] ?? GestureRecognizer()
             let events = recognizer.process(frame)
             recognizers[device] = recognizer
             snapshot = recognizer.snapshot
             snapshotTime = now
-            return events
+            rotating = recognizers.values.contains { $0.isRotating }
+            if rotating { lastRotationTime = now }
+            return events.map { ($0, recognizer.lastGesturePoint) }
         }
+    }
+
+    /// Whether fingers are turning as a rotation, or just stopped.
+    func holdsScrolling(now: UInt64) -> Bool {
+        lock.withLock { rotating || (lastRotationTime != 0 && now &- lastRotationTime < Self.rotationScrollHold) }
     }
 
     func currentSnapshot(now: UInt64) -> TouchSnapshot {

@@ -47,6 +47,28 @@ struct TrackpadGlyph: View {
             if let arrow = model.arrow {
                 drawArrow(&context, arrow, in: rect, fingersWidth: totalWidth + dot)
             }
+            if let rotation = model.rotation {
+                // A circular arrow around the two fingers.
+                let ring = rect.height * 0.36
+                let center = CGPoint(x: rect.midX, y: rect.midY)
+                let clockwise = rotation == .clockwise
+                var arc = Path()
+                arc.addArc(center: center, radius: ring, startAngle: .degrees(clockwise ? 200 : -20),
+                           endAngle: .degrees(clockwise ? 340 : 160), clockwise: !clockwise)
+                context.stroke(arc, with: .color(Brand.mint), lineWidth: 1.2)
+                let tipAngle = (clockwise ? 340.0 : 160.0) * .pi / 180
+                let tip = CGPoint(x: center.x + ring * cos(tipAngle), y: center.y + ring * sin(tipAngle))
+                context.fill(Path(ellipseIn: CGRect(x: tip.x - 1.6, y: tip.y - 1.6, width: 3.2, height: 3.2)), with: .color(Brand.mint))
+            }
+            if let zone = model.zone {
+                let half: CGRect = switch zone {
+                case .left: CGRect(x: rect.minX, y: rect.minY, width: rect.width / 2, height: rect.height)
+                case .right: CGRect(x: rect.midX, y: rect.minY, width: rect.width / 2, height: rect.height)
+                case .top: CGRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height / 2)
+                case .bottom: CGRect(x: rect.minX, y: rect.midY, width: rect.width, height: rect.height / 2)
+                }
+                context.fill(Path(roundedRect: half, cornerRadius: radius * 0.6), with: .color(Brand.mint.opacity(0.22)))
+            }
         }
         .frame(width: size.width, height: size.height)
         .accessibilityHidden(true)

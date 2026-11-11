@@ -71,7 +71,7 @@ public final class EventTapController: @unchecked Sendable {
         if rules.observesProtectedButtons || rules.observesTrackpadClicks {
             result |= mask(of: [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp])
         }
-        if rules.observesScrollWheel {
+        if rules.observesScrollWheel || rules.observesRotation {
             result |= mask(of: [.scrollWheel])
         }
         return result
@@ -96,6 +96,8 @@ public final class EventTapController: @unchecked Sendable {
     private let buttonsNeedingDevice: Set<MouseButton>
     private let usesDeviceConditions: Bool
     private let observesTrackpad: Bool
+    /// Rotation rules hold trackpad scrolling still while fingers turn.
+    private let observesRotation: Bool
     private let observesTrackpadClicks: Bool
     private let gestures = TrackpadGestures()
     private var touchSubscription: TouchHub.Subscription?
@@ -136,6 +138,7 @@ public final class EventTapController: @unchecked Sendable {
         buttonsNeedingDevice = rules.buttonsNeedingDevice
         usesDeviceConditions = rules.usesDeviceConditions
         observesTrackpad = rules.observesTrackpad
+        observesRotation = rules.observesRotation
         observesTrackpadClicks = rules.observesTrackpadClicks
         self.flagRewrite = flagRewrite
         self.actionHandler = actionHandler
@@ -271,14 +274,14 @@ public final class EventTapController: @unchecked Sendable {
     private func receiveTouch(device: UInt64, frame: TouchFrame) {
         let events = gestures.process(device: device, frame: frame, now: clock_gettime_nsec_np(CLOCK_UPTIME_RAW))
         for gesture in events {
-            perform { [self] in handleGesture(gesture) }
+            perform { [self] in handleGesture(gesture.0, at: gesture.1) }
         }
     }
 
-    private func handleGesture(_ gesture: GestureEvent) {
+    private func handleGesture(_ gesture: GestureEvent, at point: TrackpadPoint?) {
         guard tap != nil, !paused else { return }
         gesturesRecognized += 1
-        let output = engine.handleGesture(gesture)
+        let output = engine.handleGesture(gesture, at: point)
         dispatchActions(output.actions)
         if inspectorEnabled {
             var event = InspectedEvent(kind: .gesture, code: 0, isDown: true,
@@ -326,6 +329,15 @@ public final class EventTapController: @unchecked Sendable {
         }
         let start = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
         eventsSeen &+= 1
+        if type == .scrollWheel, observesRotation, event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0,
+           gestures.holdsScrolling(now: start) {
+            // Turning two fingers also scrolls; keep the page still while
+            // the fingers act as a knob. Phases stay, so apps see a whole gesture.
+            Self.clear(event, .scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1)
+            Self.clear(event, .scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2)
+            passThroughLatency.record(clock_gettime_nsec_np(CLOCK_UPTIME_RAW) &- start)
+            return Unmanaged.passUnretained(event)
+        }
         if type == .scrollWheel {
             let keep = applyWheelSettings(event)
             passThroughLatency.record(clock_gettime_nsec_np(CLOCK_UPTIME_RAW) &- start)

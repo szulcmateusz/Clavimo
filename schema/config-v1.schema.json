@@ -355,7 +355,8 @@
               "enum": [
                 "tap",
                 "tipTap",
-                "swipe"
+                "swipe",
+                "rotate"
               ]
             },
             "fingers": {
@@ -374,11 +375,22 @@
                 "up",
                 "down",
                 "left",
-                "right"
+                "right",
+                "clockwise",
+                "counterclockwise"
               ]
             },
             "requiredModifiers": {
               "$ref": "#/$defs/mods"
+            },
+            "zone": {
+              "enum": [
+                "left",
+                "right",
+                "top",
+                "bottom"
+              ],
+              "description": "Only when the gesture starts on this half of the trackpad. A rule with a zone wins over the same gesture without one."
             }
           }
         },

@@ -139,8 +139,14 @@ struct RuleEditorView: View {
                 }
                 .pickerStyle(.segmented)
                 .onChange(of: draft.gesture) { clampFingers() }
-                if draft.gesture != .tipTap {
+                if draft.gesture != .tipTap, draft.gesture != .rotate {
                     FingerPicker(fingers: $draft.fingers, choices: draft.gesture.fingerChoices)
+                }
+                if draft.gesture == .rotate {
+                    Picker(String(localized: "Turn"), selection: $draft.rotation) {
+                        ForEach(GestureEvent.Rotation.allCases, id: \.self) { Text(GestureNames.rotation($0)).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
                 }
                 if draft.gesture == .swipe {
                     Picker(String(localized: "Direction"), selection: $draft.direction) {
@@ -154,11 +160,18 @@ struct RuleEditorView: View {
                         Text(String(localized: "Right of the resting finger")).tag(GestureEvent.Side.right)
                     }
                 }
+                Picker(String(localized: "Where on the trackpad"), selection: $draft.zone) {
+                    ForEach([TrackpadZone?.none] + TrackpadZone.allCases.map(Optional.some), id: \.self) { zone in
+                        Text(GestureNames.zoneName(zone)).tag(zone)
+                    }
+                }
                 ModifierToggles(title: String(localized: "While holding"), selection: $draft.trackpadModifiers)
             } header: {
                 Text("When")
             } footer: {
-                trackpadFooter(String(localized: "With no modifiers selected, the gesture works only while no modifier is held."))
+                trackpadFooter(draft.gesture == .rotate
+                    ? String(localized: "Turn two fingers like a knob: every 15 degrees run the action once more, so it works well for volume or brightness. Choose a half of the trackpad to give the same gesture different jobs.")
+                    : String(localized: "With no modifiers selected, the gesture works only while no modifier is held. Choose a half of the trackpad to give the same gesture different jobs."))
             }
         case .trackpadClick:
             Section {

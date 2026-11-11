@@ -6,7 +6,7 @@ import Foundation
 /// a rule using the same movement would do two things at once.
 enum SystemTrackpadGestures {
     enum Gesture: CaseIterable {
-        case threeFingerDrag, lookUp, threeFingerHorizontal, threeFingerVertical, fourFingerHorizontal, fourFingerVertical
+        case threeFingerDrag, lookUp, threeFingerHorizontal, threeFingerVertical, fourFingerHorizontal, fourFingerVertical, rotate
 
         var title: String {
             switch self {
@@ -16,6 +16,7 @@ enum SystemTrackpadGestures {
             case .threeFingerVertical: String(localized: "Mission Control and App Exposé with three fingers")
             case .fourFingerHorizontal: String(localized: "Swipe between full-screen apps with four fingers")
             case .fourFingerVertical: String(localized: "Mission Control and App Exposé with four fingers")
+            case .rotate: String(localized: "Rotate (turns photos and maps in apps that support it)")
             }
         }
 
@@ -28,6 +29,7 @@ enum SystemTrackpadGestures {
             case .threeFingerVertical: ("TrackpadThreeFingerVertSwipeGesture", 2)
             case .fourFingerHorizontal: ("TrackpadFourFingerHorizSwipeGesture", 2)
             case .fourFingerVertical: ("TrackpadFourFingerVertSwipeGesture", 2)
+            case .rotate: ("TrackpadRotate", 1)
             }
         }
     }
@@ -56,6 +58,7 @@ enum SystemTrackpadGestures {
         case let .gesture(.swipe(4, direction)):
             direction == .left || direction == .right ? [.fourFingerHorizontal] : [.fourFingerVertical]
         case .click(fingers: 3): [.threeFingerDrag]
+        case .gesture(.rotate): [.rotate]
         default: []
         }
         return candidates.filter(enabled.contains)

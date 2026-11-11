@@ -11,6 +11,35 @@ enum GestureNames {
         case let .swipe(fingers, .down): String(localized: "Swipe down with \(fingers) fingers")
         case let .swipe(fingers, .left): String(localized: "Swipe left with \(fingers) fingers")
         case let .swipe(fingers, .right): String(localized: "Swipe right with \(fingers) fingers")
+        case .rotate(.clockwise): String(localized: "Turn two fingers clockwise")
+        case .rotate(.counterclockwise): String(localized: "Turn two fingers counterclockwise")
+        }
+    }
+
+    static func rotation(_ rotation: GestureEvent.Rotation) -> String {
+        switch rotation {
+        case .clockwise: String(localized: "Clockwise")
+        case .counterclockwise: String(localized: "Counterclockwise")
+        }
+    }
+
+    /// "on the left half" and so on, for sentences.
+    static func zone(_ zone: TrackpadZone) -> String {
+        switch zone {
+        case .left: String(localized: "on the left half")
+        case .right: String(localized: "on the right half")
+        case .top: String(localized: "on the top half")
+        case .bottom: String(localized: "on the bottom half")
+        }
+    }
+
+    static func zoneName(_ zone: TrackpadZone?) -> String {
+        switch zone {
+        case nil: String(localized: "Anywhere")
+        case .left: String(localized: "Left half")
+        case .right: String(localized: "Right half")
+        case .top: String(localized: "Top half")
+        case .bottom: String(localized: "Bottom half")
         }
     }
 

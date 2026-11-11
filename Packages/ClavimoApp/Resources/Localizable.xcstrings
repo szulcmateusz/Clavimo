@@ -365,6 +365,16 @@
         }
       }
     },
+    "%@: a half of the trackpad can be chosen for gestures only, not for clicks.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: połowę gładzika można wybrać tylko dla gestów, nie dla kliknięć."
+          }
+        }
+      }
+    },
     "%@: a modifier key keeps working as itself when held; only its tap can be changed.": {
       "localizations": {
         "pl": {
@@ -1123,6 +1133,16 @@
         }
       }
     },
+    "Anywhere": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cały gładzik"
+          }
+        }
+      }
+    },
     "App": {
       "localizations": {
         "pl": {
@@ -1269,6 +1289,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Działa w obie strony: każdy z klawiszy daje drugi, także w skrótach. Lewe i prawe modyfikatory to osobne klawisze."
+          }
+        }
+      }
+    },
+    "Bottom half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dolna połowa"
           }
         }
       }
@@ -1723,6 +1753,16 @@
         }
       }
     },
+    "Clockwise": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W prawo"
+          }
+        }
+      }
+    },
     "Combine keys and mouse buttons": {
       "localizations": {
         "pl": {
@@ -1879,6 +1919,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nie udało się zapisać"
+          }
+        }
+      }
+    },
+    "Counterclockwise": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W lewo"
           }
         }
       }
@@ -3049,6 +3099,16 @@
         }
       }
     },
+    "Keep turning to repeat it, like a knob; the page does not scroll meanwhile.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kręć dalej, żeby powtarzać, jak pokrętłem; strona w tym czasie się nie przewija."
+          }
+        }
+      }
+    },
     "Key": {
       "localizations": {
         "pl": {
@@ -3341,6 +3401,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "lewy Shift"
+          }
+        }
+      }
+    },
+    "Left half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewa połowa"
           }
         }
       }
@@ -5017,12 +5087,52 @@
         }
       }
     },
+    "Right half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawa połowa"
+          }
+        }
+      }
+    },
+    "Right half, turn clockwise: brighter": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawa połowa, obrót w prawo: jaśniej"
+          }
+        }
+      }
+    },
     "Right of the resting finger": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Po prawej od opartego palca"
+          }
+        }
+      }
+    },
+    "Rotate": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót"
+          }
+        }
+      }
+    },
+    "Rotate (turns photos and maps in apps that support it)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obracanie (obraca zdjęcia i mapy w aplikacjach, które to obsługują)"
           }
         }
       }
@@ -6337,6 +6447,16 @@
         }
       }
     },
+    "Top half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Górna połowa"
+          }
+        }
+      }
+    },
     "Top left": {
       "localizations": {
         "pl": {
@@ -6499,6 +6619,16 @@
         }
       }
     },
+    "Turn": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót"
+          }
+        }
+      }
+    },
     "Turn a layer on or off": {
       "localizations": {
         "pl": {
@@ -6545,6 +6675,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "Włączaj działanie przy starcie Clavimo"
+          }
+        }
+      }
+    },
+    "Turn two fingers clockwise": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót dwoma palcami w prawo"
+          }
+        }
+      }
+    },
+    "Turn two fingers clockwise: volume up": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót dwoma palcami w prawo: głośniej"
+          }
+        }
+      }
+    },
+    "Turn two fingers counterclockwise": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót dwoma palcami w lewo"
+          }
+        }
+      }
+    },
+    "Turn two fingers counterclockwise: volume down": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót dwoma palcami w lewo: ciszej"
+          }
+        }
+      }
+    },
+    "Turn two fingers like a knob: every 15 degrees run the action once more, so it works well for volume or brightness. Choose a half of the trackpad to give the same gesture different jobs.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kręć dwoma palcami jak pokrętłem: co 15 stopni akcja wykonuje się jeszcze raz, więc świetnie nadaje się do głośności albo jasności. Wybierz połowę gładzika, żeby ten sam gest robił w różnych miejscach co innego."
           }
         }
       }
@@ -6869,6 +7049,16 @@
         }
       }
     },
+    "Where on the trackpad": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdzie na gładziku"
+          }
+        }
+      }
+    },
     "While holding": {
       "localizations": {
         "pl": {
@@ -6967,12 +7157,12 @@
         }
       }
     },
-    "With no modifiers selected, the gesture works only while no modifier is held.": {
+    "With no modifiers selected, the gesture works only while no modifier is held. Choose a half of the trackpad to give the same gesture different jobs.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bez zaznaczonych modyfikatorów gest działa tylko wtedy, gdy żaden modyfikator nie jest wciśnięty."
+            "value": "Bez zaznaczonych modyfikatorów gest działa tylko wtedy, gdy żaden modyfikator nie jest przytrzymany. Wybierz połowę gładzika, żeby ten sam gest robił w różnych miejscach co innego."
           }
         }
       }
@@ -7221,6 +7411,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "bez bezwładności"
+          }
+        }
+      }
+    },
+    "on the bottom half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na dolnej połowie"
+          }
+        }
+      }
+    },
+    "on the left half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na lewej połowie"
+          }
+        }
+      }
+    },
+    "on the right half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na prawej połowie"
+          }
+        }
+      }
+    },
+    "on the top half": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na górnej połowie"
           }
         }
       }

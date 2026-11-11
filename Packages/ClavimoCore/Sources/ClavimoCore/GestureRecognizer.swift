@@ -1,3 +1,5 @@
+import Foundation
+
 /// A trackpad gesture recognized from touch frames.
 public enum GestureEvent: Equatable, Hashable, Sendable {
     /// Several fingers touched down together and lifted quickly without
@@ -7,14 +9,46 @@ public enum GestureEvent: Equatable, Hashable, Sendable {
     case tipTap(Side)
     /// Three or more fingers moved together in one direction.
     case swipe(fingers: Int, Direction)
+    /// Two fingers turned like a knob. Reported again for every further
+    /// step of rotation while the fingers keep turning.
+    case rotate(Rotation)
 
     public enum Side: String, CaseIterable, Sendable { case left, right }
     public enum Direction: String, CaseIterable, Sendable { case up, down, left, right }
+    public enum Rotation: String, CaseIterable, Sendable { case clockwise, counterclockwise }
 }
 
 /// A corner of the trackpad surface.
 public enum TrackpadCorner: String, CaseIterable, Sendable {
     case topLeft, topRight, bottomLeft, bottomRight
+}
+
+/// A half of the trackpad surface, so one gesture can do different things
+/// in different places. A gesture belongs to the zone where it started.
+public enum TrackpadZone: String, CaseIterable, Hashable, Sendable {
+    case left, right, top, bottom
+
+    /// Whether a point in normalized coordinates (y grows upwards) is in
+    /// this zone.
+    public func contains(x: Float, y: Float) -> Bool {
+        switch self {
+        case .left: x < 0.5
+        case .right: x >= 0.5
+        case .top: y >= 0.5
+        case .bottom: y < 0.5
+        }
+    }
+}
+
+/// Where on the trackpad a gesture started, in normalized coordinates.
+public struct TrackpadPoint: Equatable, Sendable {
+    public var x: Float
+    public var y: Float
+
+    public init(x: Float, y: Float) {
+        self.x = x
+        self.y = y
+    }
 }
 
 /// What is on the trackpad right now, used to interpret physical clicks.
@@ -59,6 +93,16 @@ public struct GestureTuning: Equatable, Sendable {
     public var cornerSize: Float = 0.2
     /// How long a finished one-finger tap counts for tap to click.
     public var tappedCornerLifetime = 0.4
+    /// Turning two fingers this far (radians) starts a rotation, so
+    /// scrolling and pinching, which keep the angle, never do.
+    public var rotationStart: Float = 0.42
+    /// Each further turn this far (radians) is one more rotation step.
+    public var rotationStep: Float = 0.26
+    /// Fingers closer than this cannot give a reliable angle.
+    public var minimumRotationSpan: Float = 0.06
+    /// Width divided by height of the surface, so angles are measured on
+    /// the real shape rather than the 1 × 1 normalized square.
+    public var surfaceAspect: Float = 1.6
 
     public init() {}
 
@@ -87,6 +131,11 @@ public struct GestureRecognizer: Sendable {
         var swipeBase: Point?
         var swipeBaseCount = 0
         var swipeBaseTime = 0.0
+        var rotationFingers: [Int32] = []
+        var rotationAngle: Float?
+        var rotationTurned: Float = 0
+        var rotating = false
+        var origin = Point(x: 0.5, y: 0.5)
     }
 
     public let tuning: GestureTuning
@@ -94,12 +143,17 @@ public struct GestureRecognizer: Sendable {
     private var session: Session?
     private var lastTap: (corner: TrackpadCorner?, at: Double)?
     public private(set) var snapshot = TouchSnapshot.empty
+    /// Where the gestures returned by the last `process` call started.
+    public private(set) var lastGesturePoint: TrackpadPoint?
 
     public init(tuning: GestureTuning = .standard) {
         self.tuning = tuning
     }
 
     public var isIdle: Bool { tracks.isEmpty && session == nil }
+
+    /// Two fingers are turning as a recognized rotation right now.
+    public var isRotating: Bool { session?.rotating == true && tracks.count == 2 }
 
     /// Forgets every finger, e.g. after the device was restarted.
     public mutating func reset() {
@@ -111,6 +165,7 @@ public struct GestureRecognizer: Sendable {
 
     public mutating func process(_ frame: TouchFrame) -> [GestureEvent] {
         var events: [GestureEvent] = []
+        let origin = session?.origin
         let now = frame.time
         let down = Dictionary(frame.down.map { ($0.id, Point(x: $0.x, y: $0.y)) }, uniquingKeysWith: { first, _ in first })
 
@@ -134,6 +189,8 @@ public struct GestureRecognizer: Sendable {
             if tracks.count > current.peak {
                 current.peak = tracks.count
                 current.peakReachedAt = now
+                // Where the fingers landed, for trackpad zones.
+                current.origin = Point.centroid(tracks.values.map(\.start))
             }
             if tracks.values.contains(where: { $0.movement > tuning.maximumTapMovement }) {
                 current.everMoved = true
@@ -141,6 +198,11 @@ public struct GestureRecognizer: Sendable {
             if !current.fired, let swipe = swipe(in: &current, at: now) {
                 current.fired = true
                 events.append(swipe)
+            }
+            let turns = rotation(in: &current)
+            if !turns.isEmpty {
+                current.fired = true
+                events += turns
             }
             if tracks.isEmpty {
                 if let tap = endSession(current, at: now) { events.append(tap) }
@@ -154,6 +216,10 @@ public struct GestureRecognizer: Sendable {
         }
 
         updateSnapshot(at: now)
+        if !events.isEmpty {
+            let point = session?.origin ?? origin ?? lastSingleFinger ?? Point(x: 0.5, y: 0.5)
+            lastGesturePoint = TrackpadPoint(x: point.x, y: point.y)
+        }
         return events
     }
 
@@ -194,6 +260,49 @@ public struct GestureRecognizer: Sendable {
             return .swipe(fingers: count, dy > 0 ? .up : .down)
         }
         return nil
+    }
+
+    /// Steps of a two-finger rotation since the last frame. The angle of
+    /// the line between the two fingers is followed; the first step needs
+    /// a larger turn than the next ones.
+    private func rotation(in session: inout Session) -> [GestureEvent] {
+        let ids = tracks.keys.sorted()
+        guard ids.count == 2, let first = tracks[ids[0]]?.last, let second = tracks[ids[1]]?.last else {
+            session.rotationAngle = nil
+            session.rotationFingers = []
+            session.rotationTurned = 0
+            return []
+        }
+        let dx = (second.x - first.x) * tuning.surfaceAspect
+        let dy = second.y - first.y
+        guard (dx * dx + dy * dy).squareRoot() >= tuning.minimumRotationSpan else { return [] }
+        let angle = atan2(dy, dx)
+        guard let previous = session.rotationAngle, session.rotationFingers == ids else {
+            session.rotationAngle = angle
+            session.rotationFingers = ids
+            session.rotationTurned = 0
+            return []
+        }
+        var delta = angle - previous
+        if delta > .pi { delta -= 2 * .pi }
+        if delta < -.pi { delta += 2 * .pi }
+        session.rotationAngle = angle
+        session.rotationTurned += delta
+
+        var events: [GestureEvent] = []
+        if !session.rotating {
+            guard abs(session.rotationTurned) >= tuning.rotationStart else { return [] }
+            session.rotating = true
+            // y grows upwards, so a growing angle turns counterclockwise.
+            events.append(.rotate(session.rotationTurned > 0 ? .counterclockwise : .clockwise))
+            session.rotationTurned = 0
+        }
+        while abs(session.rotationTurned) >= tuning.rotationStep {
+            let counterclockwise = session.rotationTurned > 0
+            events.append(.rotate(counterclockwise ? .counterclockwise : .clockwise))
+            session.rotationTurned -= counterclockwise ? tuning.rotationStep : -tuning.rotationStep
+        }
+        return events
     }
 
     private mutating func endSession(_ session: Session, at now: Double) -> GestureEvent? {

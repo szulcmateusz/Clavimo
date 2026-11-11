@@ -15,7 +15,7 @@ struct MessagesTests {
         .duplicateTrackpadScroll, .trackpadScrollWithoutChanges,
         .holdOutputNotHeld(id: "r1"), .modifierTapHoldChangesHold(id: "r1"), .tapHoldTimingOutOfRange(id: "r1"),
         .layerNeverActivated("nav"), .emptyLayerName(id: "r1"), .invalidCombo(id: "r1"), .invalidSequence(id: "r1"),
-        .ambiguousSequence(ids: ["r1", "r2"]), .sequenceWithoutLeader(id: "r1"), .modifierKeyNotAllowed(.leftShift, id: "r1"),
+        .ambiguousSequence(ids: ["r1", "r2"]), .trackpadZoneOnClick(id: "r1"), .sequenceWithoutLeader(id: "r1"), .modifierKeyNotAllowed(.leftShift, id: "r1"),
     ]
 
     static let reasons: [UnsupportedReason] = [

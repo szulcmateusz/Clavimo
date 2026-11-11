@@ -271,7 +271,7 @@ struct GestureRecognizerTests {
                 switch event {
                 case let .tap(fingers): #expect((2...maxDown).contains(fingers), "seed \(seed)")
                 case let .swipe(fingers, _): #expect((3...maxDown).contains(fingers), "seed \(seed)")
-                case .tipTap: #expect(maxDown >= 2, "seed \(seed)")
+                case .tipTap, .rotate: #expect(maxDown >= 2, "seed \(seed)")
                 }
             }
         }

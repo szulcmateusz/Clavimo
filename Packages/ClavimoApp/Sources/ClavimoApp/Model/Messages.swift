@@ -108,6 +108,8 @@ enum Messages {
             return String(localized: "Two trackpad scrolling settings apply in the same situation. Keep one.")
         case .trackpadScrollWithoutChanges:
             return String(localized: "The trackpad scrolling setting changes nothing.")
+        case let .trackpadZoneOnClick(id):
+            return String(localized: "\(rule(id)): a half of the trackpad can be chosen for gestures only, not for clicks.")
         case let .holdOutputNotHeld(id):
             return String(localized: "\(rule(id)): holding the key must send a key, modifiers or a layer.")
         case let .modifierTapHoldChangesHold(id):

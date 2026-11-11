@@ -65,6 +65,16 @@ struct RuleDraftTests {
         tipTap.action = .launchApp
         tipTap.appBundleID = "com.apple.Safari"
 
+        var rotate = RuleDraft()
+        rotate.kind = .trackpadGesture
+        rotate.name = "Knob"
+        rotate.gesture = .rotate
+        rotate.fingers = 2
+        rotate.rotation = .counterclockwise
+        rotate.zone = .left
+        rotate.action = .media
+        rotate.mediaKey = .volumeDown
+
         var corner = RuleDraft()
         corner.kind = .trackpadClick
         corner.name = "Corner"
@@ -78,7 +88,7 @@ struct RuleDraftTests {
         click.clickPlace = .fingers
         click.fingers = 4
         click.action = .forwardClick
-        return [swap, remap, fnClick, keyClick, shortcutClick, tap, swipe, tipTap, corner, click]
+        return [swap, remap, fnClick, keyClick, shortcutClick, tap, swipe, tipTap, rotate, corner, click]
     }
 
     @Test func trackpadScrollDraftBecomesTrackpadSetting() throws {
