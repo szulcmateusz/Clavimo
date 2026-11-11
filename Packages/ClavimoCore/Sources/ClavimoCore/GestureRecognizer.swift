@@ -215,7 +215,7 @@ public struct GestureRecognizer: Sendable {
 
     private mutating func updateSnapshot(at now: Double) {
         if tracks.count == 1 { lastSingleFinger = tracks.values.first?.last }
-        let corner = tracks.count == 1 ? tracks.values.first.flatMap { corner(of: $0.last) } : nil
+        let corner: TrackpadCorner? = tracks.count == 1 ? tracks.values.first.flatMap { corner(of: $0.last) } : nil
         var tapped: TrackpadCorner?
         if let lastTap, now - lastTap.at <= tuning.tappedCornerLifetime, tracks.isEmpty {
             tapped = lastTap.corner

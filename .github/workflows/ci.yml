@@ -30,9 +30,13 @@ jobs:
         run: scripts/ci-test.sh Packages/ClavimoCore
 
       - name: Test ClavimoQuartz
+        # Runs even when an earlier package fails, so one run shows every failure.
+        if: ${{ !cancelled() }}
         run: scripts/ci-test.sh Packages/ClavimoQuartz
 
       - name: Test ClavimoApp
+        # Runs even when an earlier package fails, so one run shows every failure.
+        if: ${{ !cancelled() }}
         run: scripts/ci-test.sh Packages/ClavimoApp
 
       - name: Build universal app bundle (ad-hoc signed)
