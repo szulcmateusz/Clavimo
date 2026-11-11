@@ -1,0 +1,656 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "%@ cannot be mapped to itself.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nie może być przypisany sam do siebie."
+          }
+        }
+      }
+    },
+    "%@ cannot be remapped yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nie da się jeszcze przemapować."
+          }
+        }
+      }
+    },
+    "%@ is a modifier. Use a modifier + mouse button rule instead.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ to modyfikator. Użyj reguły modyfikator + przycisk myszy."
+          }
+        }
+      }
+    },
+    "%@ is already used by another rule with the same conditions.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ jest już używany przez inną regułę z tymi samymi warunkami."
+          }
+        }
+      }
+    },
+    "%@ is both remapped and used in a mouse shortcut. Keep only one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ jest jednocześnie przemapowany i użyty w skrócie z myszą. Zostaw tylko jedno."
+          }
+        }
+      }
+    },
+    "%@ is running and may conflict": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa %@ i może powodować konflikty"
+          }
+        }
+      }
+    },
+    "%@ needs at least one modifier.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ wymaga co najmniej jednego modyfikatora."
+          }
+        }
+      }
+    },
+    "%@ use the same shortcut with the %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ używają tego samego skrótu z przyciskiem „%@”."
+          }
+        }
+      }
+    },
+    "%@ uses the %@ without allowing it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ używa przycisku „%@” bez zezwolenia."
+          }
+        }
+      }
+    },
+    "%@: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: %@"
+          }
+        }
+      }
+    },
+    "%@: key + mouse button shortcuts cannot be limited to a device.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: skrótów klawisz + przycisk myszy nie można ograniczyć do urządzenia."
+          }
+        }
+      }
+    },
+    "%@: the %@ can only be combined with modifiers.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: przycisk „%@” można łączyć tylko z modyfikatorami."
+          }
+        }
+      }
+    },
+    "Active": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktywne"
+          }
+        }
+      }
+    },
+    "Choose how the key behaves while Clavimo waits for the click.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz, jak klawisz ma się zachowywać, gdy Clavimo czeka na kliknięcie."
+          }
+        }
+      }
+    },
+    "Clavimo: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clavimo: %@"
+          }
+        }
+      }
+    },
+    "Combining %@ with %@ is not supported yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Połączenie %@ z %@ nie jest jeszcze obsługiwane."
+          }
+        }
+      }
+    },
+    "Configuration error": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Błąd konfiguracji"
+          }
+        }
+      }
+    },
+    "Disabled": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączone"
+          }
+        }
+      }
+    },
+    "Emergency Disable": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłącz awaryjnie"
+          }
+        }
+      }
+    },
+    "Enabled": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączone"
+          }
+        }
+      }
+    },
+    "For 1 Hour": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na 1 godzinę"
+          }
+        }
+      }
+    },
+    "For 5 Minutes": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na 5 minut"
+          }
+        }
+      }
+    },
+    "Grant Permissions...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nadaj uprawnienia…"
+          }
+        }
+      }
+    },
+    "Leave Safe Mode and Resume": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyjdź z trybu bezpiecznego i wznów"
+          }
+        }
+      }
+    },
+    "Modifier + key shortcuts are not supported yet; use a mouse button.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty modyfikator + klawisz nie są jeszcze obsługiwane; użyj przycisku myszy."
+          }
+        }
+      }
+    },
+    "Mouse shortcuts cannot require a specific left or right modifier yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty z myszą nie mogą jeszcze wymagać konkretnie lewego ani prawego modyfikatora."
+          }
+        }
+      }
+    },
+    "Mouse shortcuts must run once when pressed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty z myszą muszą uruchamiać się raz, przy naciśnięciu."
+          }
+        }
+      }
+    },
+    "Mouse shortcuts with %@ use different waiting behaviors. Use the same one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty z myszą używające %@ mają różne sposoby oczekiwania. Użyj jednego."
+          }
+        }
+      }
+    },
+    "Needs approval in System Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wymaga zatwierdzenia w Ustawieniach systemowych"
+          }
+        }
+      }
+    },
+    "Pause Remapping": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstrzymaj działanie"
+          }
+        }
+      }
+    },
+    "Paused": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstrzymane"
+          }
+        }
+      }
+    },
+    "Paused while another user is active": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstrzymane, bo aktywny jest inny użytkownik"
+          }
+        }
+      }
+    },
+    "Pointer speed and acceleration are set in System Settings > Mouse.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybkość i przyspieszenie wskaźnika ustawisz w Ustawieniach systemowych > Mysz."
+          }
+        }
+      }
+    },
+    "Quit Clavimo": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakończ Clavimo"
+          }
+        }
+      }
+    },
+    "Reload Configuration": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wczytaj konfigurację ponownie"
+          }
+        }
+      }
+    },
+    "Resume Remapping": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wznów działanie"
+          }
+        }
+      }
+    },
+    "Resumes at %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wznowienie o %@"
+          }
+        }
+      }
+    },
+    "Scroll settings cannot be limited to one mouse yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawień przewijania nie można jeszcze ograniczyć do jednej myszy."
+          }
+        }
+      }
+    },
+    "Settings per display are not supported.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia dla poszczególnych ekranów nie są obsługiwane."
+          }
+        }
+      }
+    },
+    "Settings...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia…"
+          }
+        }
+      }
+    },
+    "Stopped (safe mode)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zatrzymane (tryb bezpieczny)"
+          }
+        }
+      }
+    },
+    "Swapping both sides at once is not supported. Add one rule for each side.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamiana obu stron naraz nie jest obsługiwana. Dodaj osobną regułę dla każdej strony."
+          }
+        }
+      }
+    },
+    "The %@ condition has no value.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warunek %@ nie ma wartości."
+          }
+        }
+      }
+    },
+    "The action %@ is not supported yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akcja %@ nie jest jeszcze obsługiwana."
+          }
+        }
+      }
+    },
+    "The condition %@ is not supported.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warunek %@ nie jest obsługiwany."
+          }
+        }
+      }
+    },
+    "The configuration file cannot be read: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie można odczytać pliku konfiguracji: %@"
+          }
+        }
+      }
+    },
+    "The configuration file is not valid: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plik konfiguracji jest nieprawidłowy: %@"
+          }
+        }
+      }
+    },
+    "The key must be held before the mouse button is pressed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz musi być wciśnięty przed naciśnięciem przycisku myszy."
+          }
+        }
+      }
+    },
+    "The key uses a code format Clavimo does not read yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz ma zapis kodu, którego Clavimo jeszcze nie odczytuje."
+          }
+        }
+      }
+    },
+    "The mouse button number is not valid.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numer przycisku myszy jest nieprawidłowy."
+          }
+        }
+      }
+    },
+    "The mouse wheel setting changes nothing.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To ustawienie kółka myszy niczego nie zmienia."
+          }
+        }
+      }
+    },
+    "The rule is incomplete. Edit or delete it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguła jest niekompletna. Popraw ją albo usuń."
+          }
+        }
+      }
+    },
+    "The scroll distance or speed is outside the allowed range.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odległość lub szybkość przewijania jest poza dozwolonym zakresem."
+          }
+        }
+      }
+    },
+    "The scroll mode %@ is not supported yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryb przewijania %@ nie jest jeszcze obsługiwany."
+          }
+        }
+      }
+    },
+    "The scroll option %@ is not supported yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opcja przewijania %@ nie jest jeszcze obsługiwana."
+          }
+        }
+      }
+    },
+    "The scroll setting changes nothing.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To ustawienie przewijania niczego nie zmienia."
+          }
+        }
+      }
+    },
+    "The waiting time for %@ (%lld ms) must be between 50 and 500 ms.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czas oczekiwania dla %@ (%lld ms) musi mieścić się między 50 a 500 ms."
+          }
+        }
+      }
+    },
+    "Trackpad settings are not changed by Clavimo.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clavimo nie zmienia ustawień gładzika."
+          }
+        }
+      }
+    },
+    "Two mouse wheel settings apply in the same situation. Keep one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dwa ustawienia kółka myszy działają w tej samej sytuacji. Zostaw jedno."
+          }
+        }
+      }
+    },
+    "Two rules share the ID %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dwie reguły mają ten sam identyfikator %@."
+          }
+        }
+      }
+    },
+    "Unavailable for this copy of the app": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niedostępne dla tej kopii aplikacji"
+          }
+        }
+      }
+    },
+    "Unknown": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieznany"
+          }
+        }
+      }
+    },
+    "Unsupported Rules (%lld)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieobsługiwane reguły (%lld)"
+          }
+        }
+      }
+    },
+    "Until I Resume": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do czasu wznowienia"
+          }
+        }
+      }
+    },
+    "Waiting for permissions": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czeka na uprawnienia"
+          }
+        }
+      }
+    }
+  }
+}

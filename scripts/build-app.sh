@@ -28,6 +28,11 @@ ICONS="$OUT_DIR/icons"
 swift "$ROOT/scripts/render-icon.swift" "$ICONS" >/dev/null
 cp "$ICONS/AppIcon.icns" "$ICONS"/MenuBarIcon*.pdf "$APP/Contents/Resources/"
 
+# Localizations: English is the source language; other languages come
+# from the string catalog.
+xcrun xcstringstool compile "$PACKAGE/Resources/Localizable.xcstrings" --output-directory "$APP/Contents/Resources"
+mkdir -p "$APP/Contents/Resources/en.lproj"
+
 cat > "$APP/Contents/Info.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -35,6 +40,13 @@ cat > "$APP/Contents/Info.plist" <<EOF
 <dict>
     <key>CFBundleExecutable</key>
     <string>Clavimo</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>pl</string>
+    </array>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
