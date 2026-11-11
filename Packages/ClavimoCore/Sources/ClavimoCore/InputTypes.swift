@@ -218,6 +218,8 @@ public enum ActionCommand: Equatable, Sendable {
     case launchApp(String)
     /// Presses a media or brightness key.
     case media(MediaKey)
+    /// Turns Caps Lock on or off.
+    case toggleCapsLock
 }
 
 /// Keys from the top row of Apple keyboards.

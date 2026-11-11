@@ -69,9 +69,13 @@ struct CompilerTests {
         #expect(errors([.swap(.leftCommand, .leftOption), .remap(from: .leftOption, to: .a)]) == [.duplicateRemapSource(.leftOption)])
     }
 
-    @Test func rejectsCapsLockAndFnRemaps() {
-        #expect(errors([.remap(from: .capsLock, to: .escape)]) == [.unsupportedKey(.capsLock)])
+    @Test func capsLockIsASourceButNeverATarget() throws {
+        let rules = try CompiledRules.compile([.remap(from: .capsLock, to: .escape)]).get()
+        #expect(rules.usesCapsLock)
+        #expect(rules.keyRemaps == [.capsLockProxy: .escape])
+        #expect(errors([.remap(from: .escape, to: .capsLock)]) == [.unsupportedKey(.capsLock)])
         #expect(errors([.remap(from: .a, to: .function)]) == [.unsupportedKey(.function)])
+        #expect(errors([.remap(from: .function, to: .a)]) == [.unsupportedKey(.function)])
     }
 
     @Test func rejectsSelfMappings() {

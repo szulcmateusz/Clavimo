@@ -240,6 +240,7 @@ public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
     case unsupportedScrollMode(String)
     case scrollValueOutOfRange(mode: String)
     case invalidTrackpadTrigger
+    case invalidKeyBehavior(String)
 
     public var description: String {
         switch self {
@@ -265,6 +266,7 @@ public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
         case let .unsupportedScrollMode(mode): "scroll mode \(mode) is not supported yet"
         case let .scrollValueOutOfRange(mode): "the \(mode) value is out of range"
         case .invalidTrackpadTrigger: "the trackpad gesture is incomplete or not supported"
+        case let .invalidKeyBehavior(detail): "the keyboard rule is incomplete: \(detail)"
         }
     }
 }
@@ -482,6 +484,9 @@ extension ConfigDocument {
                     throw Unsupported(.invalidCondition("physicalDeviceIs"))
                 }
                 result.devices.insert(device)
+            case "inputSourceIs":
+                guard let id = value["inputSourceId"]?.string, !id.isEmpty else { throw Unsupported(.invalidCondition("inputSourceIs")) }
+                result.inputSources.insert(id)
             case let kind:
                 throw Unsupported(.unsupportedCondition(kind ?? "unknown"))
             }
@@ -510,6 +515,61 @@ extension ConfigDocument {
             let from = try key(rule.trigger["key"])
             let to = try key(rule.action["key"])
             return .remap(from: from, to: to, conditions: conditions)
+
+        case ("key", _):
+            guard rule.trigger["phase"] == nil || rule.trigger["phase"]?.string == "down" else {
+                throw Unsupported(.invalidKeyBehavior("only key presses can trigger an output"))
+            }
+            return .keyOutput(id: rule.id, key: try key(rule.trigger["key"]), output: try keyOutput(rule.action), conditions: conditions)
+
+        case ("tapHold", "tapHold"):
+            guard let threshold = rule.trigger["thresholdMs"]?.int, let tapValue = rule.action["tap"],
+                  let holdValue = rule.action["hold"] else {
+                throw Unsupported(.invalidKeyBehavior("tap, hold and thresholdMs are required"))
+            }
+            let interrupt: TapHoldSettings.Interrupt
+            switch rule.trigger["interruptPolicy"]?.string ?? "anyOtherKey" {
+            case "anyOtherKey": interrupt = .holdOnOtherKey
+            case "permissiveHold": interrupt = .permissive
+            case "none": interrupt = .timeOnly
+            case let other: throw Unsupported(.invalidKeyBehavior("unknown interruptPolicy \(other)"))
+            }
+            let settings = TapHoldSettings(
+                holdAfterMilliseconds: threshold,
+                interrupt: interrupt,
+                oppositeHandsOnly: rule.trigger["oppositeHandsOnly"] == .bool(true),
+                typingStreakMilliseconds: rule.trigger["typingStreakMs"]?.int ?? 0,
+                doubleTapMilliseconds: rule.trigger["doubleTapMs"]?.int ?? 250
+            )
+            return .tapHold(
+                id: rule.id, key: try key(rule.trigger["key"]),
+                tap: try keyOutput(tapValue), hold: try keyOutput(holdValue),
+                doubleTap: try rule.action["doubleTap"].map(keyOutput),
+                settings: settings, conditions: conditions
+            )
+
+        case ("layerKey", _):
+            guard let layer = rule.trigger["layerId"]?.string, !layer.isEmpty else {
+                throw Unsupported(.invalidKeyBehavior("layerId is required"))
+            }
+            return .layerKey(id: rule.id, layer: layer, key: try key(rule.trigger["key"]), output: try keyOutput(rule.action),
+                             conditions: conditions)
+
+        case ("keyCombo", _):
+            let keys = try (rule.trigger["keys"]?.array ?? []).map { try key($0) }
+            guard ComboRule.keyCount.contains(keys.count), Set(keys).count == keys.count else {
+                throw Unsupported(.invalidKeyBehavior("a combo needs two or three different keys"))
+            }
+            return .combo(id: rule.id, keys: Set(keys), output: try keyOutput(rule.action),
+                          windowMilliseconds: rule.trigger["windowMs"]?.int ?? ComboRule.defaultWindowMilliseconds,
+                          conditions: conditions)
+
+        case ("keySequence", _):
+            let keys = try (rule.trigger["keys"]?.array ?? []).map { try key($0) }
+            guard SequenceRule.keyCount.contains(keys.count) else {
+                throw Unsupported(.invalidKeyBehavior("a sequence needs one to four keys"))
+            }
+            return .sequence(id: rule.id, keys: keys, output: try keyOutput(rule.action), conditions: conditions)
 
         case ("modifierChord", _):
             guard rule.trigger["key"] == nil, let number = rule.trigger["mouseButton"]?.int,
@@ -603,6 +663,53 @@ extension ConfigDocument {
         }
     }
 
+    /// What a keyboard rule produces. Anything that is not a key, modifier,
+    /// layer or sequence output is an action.
+    private static func keyOutput(_ value: JSONValue) throws -> KeyOutput {
+        switch value["kind"]?.string {
+        case "sendKey":
+            return .key(try key(value["key"]), [])
+        case "sendShortcut":
+            return .key(try key(value["key"]), try genericModifiers(value["modifiers"]))
+        case "holdModifiers":
+            return .modifiers(try sideModifiers(value["modifiers"]))
+        case "oneShotModifiers":
+            return .oneShot(try sideModifiers(value["modifiers"]))
+        case "holdLayer":
+            guard let layer = value["layerId"]?.string, !layer.isEmpty else { throw Unsupported(.invalidKeyBehavior("layerId is required")) }
+            return .layer(layer)
+        case "toggleLayer":
+            guard let layer = value["layerId"]?.string, !layer.isEmpty else { throw Unsupported(.invalidKeyBehavior("layerId is required")) }
+            return .toggleLayer(layer)
+        case "startSequence":
+            return .startSequence
+        case "none", "disableInput":
+            return .none
+        default:
+            return .action(try action(value))
+        }
+    }
+
+    /// Side-specific modifiers for output; generic names mean the left key.
+    private static func sideModifiers(_ value: JSONValue?) throws -> ModifierSet {
+        var result: ModifierSet = []
+        for item in value?.array ?? [] {
+            switch item.string {
+            case "command", "leftCommand": result.insert(.leftCommand)
+            case "option", "leftOption": result.insert(.leftOption)
+            case "control", "leftControl": result.insert(.leftControl)
+            case "shift", "leftShift": result.insert(.leftShift)
+            case "rightCommand": result.insert(.rightCommand)
+            case "rightOption": result.insert(.rightOption)
+            case "rightControl": result.insert(.rightControl)
+            case "rightShift": result.insert(.rightShift)
+            default: throw Unsupported(.invalidKeyBehavior("unknown modifier"))
+            }
+        }
+        guard !result.isEmpty else { throw Unsupported(.invalidKeyBehavior("no modifiers")) }
+        return result
+    }
+
     private static func requireFireOnceOnDown(_ behavior: Behavior) throws {
         guard behavior.consumeTrigger, behavior.fireOn == "down", behavior.repeat == "once" else {
             throw Unsupported(.chordBehavior)
@@ -652,6 +759,8 @@ extension ConfigDocument {
         case "mediaKey":
             guard let key = value["key"]?.string.flatMap(MediaKey.init(rawValue:)) else { throw Unsupported(.unsupportedAction("mediaKey")) }
             return .media(key)
+        case "toggleCapsLock":
+            return .toggleCapsLock
         case let kind:
             throw Unsupported(.unsupportedAction(kind ?? "unknown"))
         }

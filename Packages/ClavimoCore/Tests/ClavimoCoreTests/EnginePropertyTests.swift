@@ -16,7 +16,21 @@ struct EnginePropertyTests {
     static let keys: [KeyCode] = [
         .a, .c, .f, .escape, .leftArrow,
         .leftCommand, .leftOption, .rightCommand, .rightOption, .leftShift, .leftControl,
+        .capsLockProxy, .space, j, k, h, section,
     ]
+    static let j = KeyCode(0x26)
+    static let k = KeyCode(0x28)
+    static let h = KeyCode(0x04)
+    static let section = KeyCode(0x0A)
+    /// Outputs that no generated key produces physically.
+    static let forwardDelete = KeyCode(0x75)
+    static let end = KeyCode(0x77)
+    static let home = KeyCode(0x73)
+    static let f1 = KeyCode(0x7A)
+    static let keypad1 = KeyCode(0x53)
+    /// Rule sets whose outputs add modifiers to single keys (shortcuts,
+    /// one-shot modifiers): flags may then exceed the modifier keys down.
+    static let addsFlags: Set<Int> = [6]
     static let buttons: [MouseButton] = [.primary, .secondary, .middle, .button4, .button5]
     static let apps: [String?] = [nil, "com.apple.Safari", "com.apple.Terminal"]
 
@@ -59,17 +73,42 @@ struct EnginePropertyTests {
             .mouseChord(id: "ctrl", leader: .modifiers(.control), button: .primary, action: .nextWorkspace, priority: 1,
                         allowProtectedButton: true),
         ],
+        [
+            .tapHold(id: "caps", key: .capsLock, tap: .key(forwardDelete), hold: .modifiers(.hyper)),
+            .tapHold(id: "f", key: .f, tap: .key(.f), hold: .modifiers(.leftCommand), settings: .homeRow),
+            .tapHold(id: "j", key: j, tap: .key(j), hold: .modifiers(.rightCommand), settings: .homeRow),
+            .tapHold(id: "space", key: .space, tap: .key(.space), hold: .layer("nav"), doubleTap: .key(.tab)),
+            .layerKey(id: "h", layer: "nav", key: h, output: .key(.downArrow)),
+            .layerKey(id: "nj", layer: "nav", key: j, output: .key(.upArrow)),
+            .combo(id: "ck", keys: [.c, k], output: .key(end)),
+            .keyOutput(id: "lead", key: section, output: .startSequence),
+            .sequence(id: "a", keys: [.a], output: .key(home)),
+            .sequence(id: "hk", keys: [h, k], output: .action(.missionControl)),
+            .mouseChord(id: "ctrl", leader: .modifiers(.control), button: .button4, action: .nextWorkspace, priority: 1),
+        ],
+        [
+            .swap(.leftCommand, .leftOption),
+            .keyOutput(id: "os", key: section, output: .oneShot(.leftShift)),
+            .keyOutput(id: "sc", key: .escape, output: .key(f1, [.command])),
+            .keyOutput(id: "tg", key: h, output: .toggleLayer("num")),
+            .tapHold(id: "caps", key: .capsLock, tap: .oneShot(.leftCommand), hold: .layer("num")),
+            .tapHold(id: "cmd", key: .rightCommand, tap: .key(.jisEisu), hold: .modifiers(.rightCommand)),
+            .layerKey(id: "a", layer: "num", key: .a, output: .key(keypad1, [.shift])),
+            .combo(id: "fk", keys: [.f, k], output: .action(.missionControl)),
+            .tapHold(id: "space", key: .space, tap: .key(.space), hold: .modifiers(.leftShift),
+                     settings: TapHoldSettings(interrupt: .permissive)),
+        ],
     ]
 
     static let compiled: [CompiledRules] = ruleSets.map { try! CompiledRules.compile($0).get() }
 
-    @Test(arguments: 0..<5)
+    @Test(arguments: 0..<7)
     func randomSequencesStayBalanced(ruleSet: Int) {
-        for seed in 0..<150 {
-            var run = Run(seed: UInt64(ruleSet * 1000 + seed), rules: ruleSet)
+        for seed in 0..<300 {
+            var run = Run(seed: UInt64(ruleSet * 100_000 + seed), rules: ruleSet)
             run.play(steps: 400)
             run.releaseEverything()
-            #expect(run.violations.isEmpty, "seed \(seed): \(run.violations.prefix(3))")
+            #expect(run.violations.isEmpty, "seed \(seed): \(run.violations.prefix(3))\n\(run.traceBeforeFirstViolation)")
             #expect(run.logicalKeys.isEmpty, "seed \(seed): still down \(run.logicalKeys)")
             #expect(run.logicalButtons.isEmpty, "seed \(seed): buttons still down \(run.logicalButtons)")
             #expect(!run.engine.hasTransientState, "seed \(seed): engine not idle")
@@ -89,8 +128,20 @@ struct EnginePropertyTests {
         var logicalKeys: Set<KeyCode> = []
         var logicalButtons: Set<MouseButton> = []
         var violations: [String] = []
+        /// The last events and outputs, shown when a run fails.
+        var trace: [String] = []
+        var firstViolationAt: Int?
+
+        var traceBeforeFirstViolation: String {
+            guard let at = firstViolationAt else { return "" }
+            return trace[max(0, at - 30)..<min(trace.count, at + 2)].joined(separator: "\n")
+        }
+        /// Cleared for good once a rule set that adds flags was active:
+        /// its held outputs can outlive a rule reload.
+        var strictFlags: Bool
 
         init(seed: UInt64, rules: Int) {
+            strictFlags = !EnginePropertyTests.addsFlags.contains(rules)
             rng = SplitMix64(seed: seed)
             engine = InputEngine(rules: EnginePropertyTests.compiled[rules])
         }
@@ -103,10 +154,19 @@ struct EnginePropertyTests {
                 case 45..<52: repeatHeldKey()
                 case 52..<72: toggleButton(EnginePropertyTests.buttons[rng.next(EnginePropertyTests.buttons.count)])
                 case 72..<88: now += UInt64(rng.next(300)) * 1_000_000
-                case 88..<93: engine.setFrontmostApp(EnginePropertyTests.apps[rng.next(EnginePropertyTests.apps.count)])
-                case 93..<96: engine.install(EnginePropertyTests.compiled[rng.next(EnginePropertyTests.compiled.count)])
+                case 88..<93:
+                    let app = EnginePropertyTests.apps[rng.next(EnginePropertyTests.apps.count)]
+                    trace.append("app \(app ?? "none")")
+                    engine.setFrontmostApp(app)
+                case 93..<96:
+                    let index = rng.next(EnginePropertyTests.compiled.count)
+                    if EnginePropertyTests.addsFlags.contains(index) { strictFlags = false }
+                    trace.append("install \(index)")
+                    engine.install(EnginePropertyTests.compiled[index])
                 case 96: _ = engine.handleGesture(.tap(fingers: 3))
-                default: reset()
+                default:
+                    trace.append("reset")
+                    reset()
                 }
                 if rng.next(2) == 0 { fireTimerIfDue() }
             }
@@ -116,7 +176,7 @@ struct EnginePropertyTests {
             for (key, device) in heldKeys { send(.key(key, isDown: false, isRepeat: false), key: key, device: device) }
             for button in heldButtons { send(.mouseButton(button, isDown: false), button: button) }
             heldButtons = []
-            now += 2_000_000_000
+            now += 5_000_000_000
             fireTimerIfDue()
         }
 
@@ -147,17 +207,19 @@ struct EnginePropertyTests {
         private mutating func fireTimerIfDue() {
             guard let due = deadline, now >= due else { return }
             let output = engine.handleDeadline(now: now)
+            trace.append("t=\((now - 1_000_000_000) / 1_000_000) deadline -> \(Self.describe(output))")
             apply(output, original: nil, physicalAfter: physical)
             deadline = output.nextDeadline
         }
 
         private mutating func reset() {
             let output = engine.reset()
+            trace.append("  -> \(Self.describe(output))")
             apply(output, original: nil, physicalAfter: physical)
             deadline = output.nextDeadline
             let logicalModifiers = Self.modifiers(of: logicalKeys)
             if logicalModifiers != physical {
-                violations.append("after reset logical modifiers \(logicalModifiers.rawValue) != physical \(physical.rawValue)")
+                noteViolation("after reset logical modifiers \(logicalModifiers.rawValue) != physical \(physical.rawValue)")
             }
         }
 
@@ -179,6 +241,7 @@ struct EnginePropertyTests {
                 isDown = down
             }
             let output = engine.handle(InputEvent(kind: kind, modifiers: physical, time: now, device: device, touch: touch))
+            trace.append("t=\((now - 1_000_000_000) / 1_000_000) \(kind) phys=\(physical.rawValue) -> \(Self.describe(output))")
             apply(output, original: key.map { (.key($0), isDown, isRepeat) } ?? button.map { (.button($0), isDown, false) },
                   physicalAfter: physical)
             deadline = output.nextDeadline
@@ -194,7 +257,7 @@ struct EnginePropertyTests {
                     checkFlags(flags, context: "emitted \(key) \(isDown ? "down" : "up")")
                 case let .original(flags):
                     guard let (source, isDown, isRepeat) = original else {
-                        violations.append("pass-through with no incoming event")
+                        noteViolation("pass-through with no incoming event")
                         continue
                     }
                     switch source {
@@ -205,7 +268,7 @@ struct EnginePropertyTests {
                         if isDown {
                             logicalButtons.insert(button)
                         } else if logicalButtons.remove(button) == nil {
-                            violations.append("button \(button) up without down")
+                            noteViolation("button \(button) up without down")
                         }
                     }
                 }
@@ -215,11 +278,11 @@ struct EnginePropertyTests {
         private mutating func record(_ key: KeyCode, isDown: Bool, isRepeat: Bool) {
             if isDown {
                 if logicalKeys.contains(key) != isRepeat {
-                    violations.append(isRepeat ? "repeat of \(key) while up" : "duplicate down \(key)")
+                    noteViolation(isRepeat ? "repeat of \(key) while up" : "duplicate down \(key)")
                 }
                 logicalKeys.insert(key)
             } else if logicalKeys.remove(key) == nil {
-                violations.append("up without down \(key)")
+                noteViolation("up without down \(key)")
             }
         }
 
@@ -228,9 +291,24 @@ struct EnginePropertyTests {
         private mutating func checkFlags(_ flags: ModifierSet, context: String) {
             let expected = Self.modifiers(of: logicalKeys)
             let actual = flags.subtracting(.function)
-            if actual != expected {
-                violations.append("\(context): flags \(actual.rawValue), keys say \(expected.rawValue)")
+            if strictFlags ? actual != expected : !actual.isSuperset(of: expected) {
+                noteViolation("\(context): flags \(actual.rawValue), keys say \(expected.rawValue)")
             }
+        }
+
+        mutating func noteViolation(_ text: String) {
+            if firstViolationAt == nil { firstViolationAt = trace.count }
+            violations.append(text)
+        }
+
+        static func describe(_ output: EngineOutput) -> String {
+            let items = output.items.map { item -> String in
+                switch item {
+                case let .original(flags): "orig(\(flags.map { String($0.rawValue) } ?? "-"))"
+                case let .key(code, isDown, isRepeat, flags): "\(code.rawValue)\(isRepeat ? "r" : isDown ? "v" : "^")(\(flags.rawValue))"
+                }
+            }
+            return items.joined(separator: " ") + (output.actions.isEmpty ? "" : " actions \(output.actions.count)")
         }
 
         static func modifiers(of keys: Set<KeyCode>) -> ModifierSet {

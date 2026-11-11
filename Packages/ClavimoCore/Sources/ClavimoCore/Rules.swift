@@ -60,23 +60,30 @@ public struct RuleConditions: Hashable, Sendable {
     /// When non-empty, the triggering input must be attributed to one of
     /// these devices. Unknown attribution never matches.
     public var devices: Set<DeviceID>
+    /// When non-empty, the selected keyboard input source (for example
+    /// `com.apple.keylayout.Polish`) must be one of these.
+    public var inputSources: Set<String>
 
-    public init(onlyApps: Set<String> = [], exceptApps: Set<String> = [], devices: Set<DeviceID> = []) {
+    public init(onlyApps: Set<String> = [], exceptApps: Set<String> = [], devices: Set<DeviceID> = [], inputSources: Set<String> = []) {
         self.onlyApps = onlyApps
         self.exceptApps = exceptApps
         self.devices = devices
+        self.inputSources = inputSources
     }
 
     public static let always = RuleConditions()
 
-    public var isEmpty: Bool { onlyApps.isEmpty && exceptApps.isEmpty && devices.isEmpty }
+    public var isEmpty: Bool { onlyApps.isEmpty && exceptApps.isEmpty && devices.isEmpty && inputSources.isEmpty }
 
     /// More specific rules win over general ones with the same trigger.
     var specificity: Int {
-        (onlyApps.isEmpty ? 0 : 2) + (exceptApps.isEmpty ? 0 : 1) + (devices.isEmpty ? 0 : 4)
+        (onlyApps.isEmpty ? 0 : 2) + (exceptApps.isEmpty ? 0 : 1) + (devices.isEmpty ? 0 : 4) + (inputSources.isEmpty ? 0 : 8)
     }
 
-    public func matches(app: String?, device: DeviceID?) -> Bool {
+    public func matches(app: String?, device: DeviceID?, inputSource: String? = nil) -> Bool {
+        if !inputSources.isEmpty {
+            guard let inputSource, inputSources.contains(inputSource) else { return false }
+        }
         if !onlyApps.isEmpty {
             guard let app, onlyApps.contains(app) else { return false }
         }
@@ -119,6 +126,26 @@ public enum RuleDefinition: Equatable, Sendable {
         priority: Int = 100,
         conditions: RuleConditions = .always
     )
+    /// A key that does something other than send another key: a shortcut,
+    /// modifiers, a layer, a one-shot modifier, a sequence or an action.
+    case keyOutput(id: String, key: KeyCode, output: KeyOutput, conditions: RuleConditions = .always)
+    /// A key with one output when tapped and another when held.
+    case tapHold(
+        id: String,
+        key: KeyCode,
+        tap: KeyOutput,
+        hold: KeyOutput,
+        doubleTap: KeyOutput? = nil,
+        settings: TapHoldSettings = TapHoldSettings(),
+        conditions: RuleConditions = .always
+    )
+    /// What a key does while a layer is active.
+    case layerKey(id: String, layer: String, key: KeyCode, output: KeyOutput, conditions: RuleConditions = .always)
+    /// Keys pressed together within a short window.
+    case combo(id: String, keys: Set<KeyCode>, output: KeyOutput,
+               windowMilliseconds: Int = ComboRule.defaultWindowMilliseconds, conditions: RuleConditions = .always)
+    /// Keys typed one after another after a leader key.
+    case sequence(id: String, keys: [KeyCode], output: KeyOutput, conditions: RuleConditions = .always)
 }
 
 /// What a trackpad rule reacts to.
@@ -161,6 +188,14 @@ extension RuleDefinition {
             ["trackpadScroll:\(conditions.signature)"]
         case let .trackpad(_, trigger, modifiers, _, _, conditions):
             ["trackpad:\(trigger.signature):\(modifiers.rawValue):\(conditions.signature)"]
+        case let .keyOutput(_, key, _, conditions), let .tapHold(_, key, _, _, _, _, conditions):
+            ["key:\(key.rawValue):\(conditions.signature)"]
+        case let .layerKey(_, layer, key, _, conditions):
+            ["layer:\(layer):\(key.rawValue):\(conditions.signature)"]
+        case let .combo(_, keys, _, _, conditions):
+            ["combo:\(keys.map(\.rawValue).sorted()):\(conditions.signature)"]
+        case let .sequence(_, keys, _, conditions):
+            ["sequence:\(keys.map(\.rawValue)):\(conditions.signature)"]
         }
     }
 }
@@ -168,7 +203,8 @@ extension RuleDefinition {
 extension RuleConditions {
     var signature: String {
         [onlyApps.sorted().joined(separator: ","), exceptApps.sorted().joined(separator: ","),
-         devices.sorted().map(\.description).joined(separator: ",")].joined(separator: "|")
+         devices.sorted().map(\.description).joined(separator: ","),
+         inputSources.sorted().joined(separator: ",")].joined(separator: "|")
     }
 }
 
@@ -219,6 +255,21 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     case duplicateTrackpadRule(ids: [String])
     case duplicateTrackpadScroll
     case trackpadScrollWithoutChanges
+    /// A tap-hold key needs a held output (modifiers or a layer) for its hold.
+    case holdOutputNotHeld(id: String)
+    /// Modifier keys can only add a tap output; their hold stays the modifier.
+    case modifierTapHoldChangesHold(id: String)
+    case tapHoldTimingOutOfRange(id: String)
+    /// A layer key whose layer no rule can switch on.
+    case layerNeverActivated(String)
+    case emptyLayerName(id: String)
+    case invalidCombo(id: String)
+    case invalidSequence(id: String)
+    /// A sequence that is the start of another one could never complete.
+    case ambiguousSequence(ids: [String])
+    case sequenceWithoutLeader(id: String)
+    /// Modifier keys and Fn cannot be part of a combo, a sequence or a layer.
+    case modifierKeyNotAllowed(KeyCode, id: String)
 }
 
 public struct ContinuousScrollRule: Equatable, Sendable {
@@ -263,6 +314,17 @@ public struct CompiledRules: Equatable, Sendable {
     public let trackpadRules: [TrackpadTrigger: [TrackpadRule]]
     /// Continuous scroll settings, most specific first.
     public let trackpadScroll: [ContinuousScrollRule]
+    /// Key behaviors other than plain remaps, most specific first. Caps
+    /// Lock is stored as `KeyCode.capsLockProxy`.
+    public let keyBindings: [KeyCode: [KeyBinding]]
+    /// Per layer, per key, most specific first.
+    public let layerBindings: [String: [KeyCode: [LayerBinding]]]
+    public let combos: [ComboRule]
+    public let comboKeys: Set<KeyCode>
+    public let sequences: [SequenceRule]
+    /// Whether any rule reacts to Caps Lock, which needs it moved to
+    /// `KeyCode.capsLockProxy` at the HID level while rules are active.
+    public let usesCapsLock: Bool
 
     public init(
         remapCandidates: [KeyCode: [RemapCandidate]],
@@ -270,9 +332,20 @@ public struct CompiledRules: Equatable, Sendable {
         leaderPolicies: [KeyCode: LeaderPolicy],
         wheelSettings: [WheelSettings],
         trackpadRules: [TrackpadTrigger: [TrackpadRule]] = [:],
-        trackpadScroll: [ContinuousScrollRule] = []
+        trackpadScroll: [ContinuousScrollRule] = [],
+        keyBindings: [KeyCode: [KeyBinding]] = [:],
+        layerBindings: [String: [KeyCode: [LayerBinding]]] = [:],
+        combos: [ComboRule] = [],
+        sequences: [SequenceRule] = [],
+        usesCapsLock: Bool = false
     ) {
         self.trackpadScroll = trackpadScroll
+        self.keyBindings = keyBindings
+        self.layerBindings = layerBindings
+        self.combos = combos
+        comboKeys = Set(combos.flatMap(\.keys))
+        self.sequences = sequences
+        self.usesCapsLock = usesCapsLock
         self.remapCandidates = remapCandidates
         self.chordsByButton = chordsByButton
         self.leaderPolicies = leaderPolicies
@@ -284,7 +357,24 @@ public struct CompiledRules: Equatable, Sendable {
 
     public var isEmpty: Bool {
         remapCandidates.isEmpty && chordsByButton.isEmpty && wheelSettings.isEmpty && trackpadRules.isEmpty
-            && trackpadScroll.isEmpty
+            && trackpadScroll.isEmpty && keyBindings.isEmpty && layerBindings.isEmpty && combos.isEmpty && sequences.isEmpty
+    }
+
+    /// Whether any rule depends on the keyboard input source.
+    public var usesInputSources: Bool {
+        remapCandidates.values.contains { $0.contains { !$0.conditions.inputSources.isEmpty } }
+            || keyBindings.values.contains { $0.contains { !$0.conditions.inputSources.isEmpty } }
+            || layerBindings.values.contains { $0.values.contains { $0.contains { !$0.conditions.inputSources.isEmpty } } }
+            || combos.contains { !$0.conditions.inputSources.isEmpty }
+            || sequences.contains { !$0.conditions.inputSources.isEmpty }
+    }
+
+    public func keyBinding(for key: KeyCode, app: String?, device: DeviceID?, inputSource: String?) -> KeyBinding? {
+        keyBindings[key]?.first { $0.conditions.matches(app: app, device: device, inputSource: inputSource) }
+    }
+
+    public func layerBinding(layer: String, key: KeyCode, app: String?, inputSource: String?) -> LayerBinding? {
+        layerBindings[layer]?[key]?.first { $0.conditions.matches(app: app, device: nil, inputSource: inputSource) }
     }
 
     /// Whether any rule needs trackpad touches, so the touch backend runs.
@@ -326,21 +416,23 @@ public struct CompiledRules: Equatable, Sendable {
         remapCandidates.values.contains { $0.contains { !$0.conditions.devices.isEmpty } }
             || chordsByButton.values.contains { $0.contains { !$0.conditions.devices.isEmpty } }
             || wheelSettings.contains { !$0.conditions.devices.isEmpty }
+            || keyBindings.values.contains { $0.contains { !$0.conditions.devices.isEmpty } }
     }
 
     /// Keys whose rules have device conditions; only these need a device
     /// lookup on the event path.
     public var keysNeedingDevice: Set<KeyCode> {
         Set(remapCandidates.filter { $0.value.contains { !$0.conditions.devices.isEmpty } }.keys)
+            .union(keyBindings.filter { $0.value.contains { !$0.conditions.devices.isEmpty } }.keys)
     }
 
     public var buttonsNeedingDevice: Set<MouseButton> {
         Set(chordsByButton.filter { $0.value.contains { !$0.conditions.devices.isEmpty } }.keys)
     }
 
-    public func remapTarget(for key: KeyCode, app: String?, device: DeviceID?) -> KeyCode? {
+    public func remapTarget(for key: KeyCode, app: String?, device: DeviceID?, inputSource: String? = nil) -> KeyCode? {
         guard let candidates = remapCandidates[key] else { return nil }
-        return candidates.first { $0.conditions.matches(app: app, device: device) }?.target
+        return candidates.first { $0.conditions.matches(app: app, device: device, inputSource: inputSource) }?.target
     }
 
     /// The leader policy for `key` if any chord using it as leader can
@@ -367,18 +459,87 @@ public struct CompiledRules: Equatable, Sendable {
         var wheel: [(WheelSettings, Int)] = []
         var trackpad: [(TrackpadRule, Int)] = []
         var continuous: [(ContinuousScrollRule, Int)] = []
+        var bindings: [KeyCode: [(KeyBinding, Int)]] = [:]
+        var layers: [String: [KeyCode: [(LayerBinding, Int)]]] = [:]
+        var combos: [ComboRule] = []
+        var sequences: [SequenceRule] = []
+        var activatedLayers: Set<String> = []
+        var startsSequence = false
+        var usesCapsLock = false
         var seenIDs: Set<String> = []
 
+        /// Caps Lock listens to its proxy key; it cannot be produced.
+        func source(_ key: KeyCode) -> KeyCode {
+            if key == .capsLock {
+                usesCapsLock = true
+                return .capsLockProxy
+            }
+            return key
+        }
+
+        func claim(_ id: String) {
+            if !seenIDs.insert(id).inserted { errors.append(.duplicateRuleID(id)) }
+        }
+
+        func isTaken(_ key: KeyCode, _ conditions: RuleConditions) -> Bool {
+            remaps[key]?.contains(where: { $0.0.conditions == conditions }) == true
+                || bindings[key]?.contains(where: { $0.0.conditions == conditions }) == true
+        }
+
+        /// Checks an output; returns false when it is invalid.
+        func checkOutput(_ output: KeyOutput, id: String) -> Bool {
+            switch output {
+            case let .key(code, _):
+                if code == .capsLock || code == .function {
+                    errors.append(.unsupportedKey(code))
+                    return false
+                }
+            case let .layer(name), let .toggleLayer(name):
+                if name.isEmpty {
+                    errors.append(.emptyLayerName(id: id))
+                    return false
+                }
+                activatedLayers.insert(name)
+            case .startSequence:
+                startsSequence = true
+            default:
+                break
+            }
+            return true
+        }
+
         func addRemap(_ from: KeyCode, _ to: KeyCode, _ conditions: RuleConditions, _ order: Int) {
-            for key in [from, to] where key == .capsLock || key == .function {
-                errors.append(.unsupportedKey(key))
+            if from == .function || to == .capsLock || to == .function {
+                errors.append(.unsupportedKey(from == .function ? from : to))
                 return
             }
-            if remaps[from]?.contains(where: { $0.0.conditions == conditions }) == true {
-                errors.append(.duplicateRemapSource(from))
+            let from = source(from)
+            if isTaken(from, conditions) {
+                errors.append(.duplicateRemapSource(from == .capsLockProxy ? .capsLock : from))
             } else {
                 remaps[from, default: []].append((RemapCandidate(target: to, conditions: conditions), order))
             }
+        }
+
+        func addBinding(_ key: KeyCode, _ behavior: KeyBehavior, _ conditions: RuleConditions, _ order: Int) {
+            if key == .function {
+                errors.append(.unsupportedKey(key))
+                return
+            }
+            let key = source(key)
+            if isTaken(key, conditions) {
+                errors.append(.duplicateRemapSource(key == .capsLockProxy ? .capsLock : key))
+            } else {
+                bindings[key, default: []].append((KeyBinding(behavior: behavior, conditions: conditions), order))
+            }
+        }
+
+        func plainKey(_ key: KeyCode, id: String) -> Bool {
+            if key.modifierKey != nil || key == .function {
+                errors.append(.modifierKeyNotAllowed(key, id: id))
+                return false
+            }
+            return true
         }
 
         for (order, definition) in definitions.enumerated() {
@@ -434,6 +595,76 @@ public struct CompiledRules: Equatable, Sendable {
                 }
                 trackpad.append((TrackpadRule(id: id, trigger: trigger, modifiers: modifiers, action: action,
                                               priority: priority, conditions: conditions), order))
+            case let .keyOutput(id, key, output, conditions):
+                claim(id)
+                if key.modifierKey != nil {
+                    errors.append(.modifierKeyNotAllowed(key, id: id))
+                } else if checkOutput(output, id: id) {
+                    addBinding(key, .output(id: id, output), conditions, order)
+                }
+            case let .tapHold(id, key, tap, hold, doubleTap, settings, conditions):
+                claim(id)
+                var valid = checkOutput(tap, id: id) && checkOutput(hold, id: id)
+                if let doubleTap, !checkOutput(doubleTap, id: id) { valid = false }
+                if let modifier = key.modifierKey {
+                    // A modifier key keeps working as itself; only a tap
+                    // output on its own can be added.
+                    if hold != .modifiers(modifier.set) || doubleTap != nil {
+                        errors.append(.modifierTapHoldChangesHold(id: id))
+                        valid = false
+                    }
+                } else {
+                    switch hold {
+                    case .modifiers, .layer, .key: break
+                    default:
+                        errors.append(.holdOutputNotHeld(id: id))
+                        valid = false
+                    }
+                }
+                if !TapHoldSettings.holdRange.contains(settings.holdAfterMilliseconds)
+                    || !TapHoldSettings.typingStreakRange.contains(settings.typingStreakMilliseconds)
+                    || !TapHoldSettings.doubleTapRange.contains(settings.doubleTapMilliseconds) {
+                    errors.append(.tapHoldTimingOutOfRange(id: id))
+                    valid = false
+                }
+                if valid {
+                    let binding = TapHoldBinding(id: id, tap: tap, hold: hold, doubleTap: doubleTap, settings: settings)
+                    addBinding(key, .tapHold(binding), conditions, order)
+                }
+            case let .layerKey(id, layer, key, output, conditions):
+                claim(id)
+                if layer.isEmpty {
+                    errors.append(.emptyLayerName(id: id))
+                } else if plainKey(key, id: id), checkOutput(output, id: id) {
+                    let key = source(key)
+                    if layers[layer]?[key]?.contains(where: { $0.0.conditions == conditions }) == true {
+                        errors.append(.duplicateRemapSource(key == .capsLockProxy ? .capsLock : key))
+                    } else {
+                        layers[layer, default: [:]][key, default: []]
+                            .append((LayerBinding(id: id, output: output, conditions: conditions), order))
+                    }
+                }
+            case let .combo(id, keys, output, window, conditions):
+                claim(id)
+                if !ComboRule.keyCount.contains(keys.count) || !ComboRule.windowRange.contains(window) {
+                    errors.append(.invalidCombo(id: id))
+                } else if keys.allSatisfy({ plainKey($0, id: id) }), checkOutput(output, id: id) {
+                    if combos.contains(where: { $0.keys == Set(keys.map(source)) && $0.conditions == conditions }) {
+                        errors.append(.invalidCombo(id: id))
+                    } else {
+                        combos.append(ComboRule(id: id, keys: Set(keys.map(source)), output: output,
+                                                windowMilliseconds: window, conditions: conditions))
+                    }
+                }
+            case let .sequence(id, keys, output, conditions):
+                claim(id)
+                if !SequenceRule.keyCount.contains(keys.count) {
+                    errors.append(.invalidSequence(id: id))
+                } else if keys.allSatisfy({ plainKey($0, id: id) && $0 != .escape }), checkOutput(output, id: id) {
+                    sequences.append(SequenceRule(id: id, keys: keys.map(source), output: output, conditions: conditions))
+                } else if keys.contains(.escape) {
+                    errors.append(.invalidSequence(id: id))
+                }
             case let .mouseChord(id, leader, button, action, priority, allowProtected, conditions):
                 if !seenIDs.insert(id).inserted {
                     errors.append(.duplicateRuleID(id))
@@ -470,8 +701,23 @@ public struct CompiledRules: Equatable, Sendable {
             }
         }
 
-        for key in leaderPolicies.keys where remaps[key] != nil {
+        for key in leaderPolicies.keys where remaps[key] != nil || bindings[key] != nil {
             errors.append(.leaderAlsoRemapped(key))
+        }
+        for layer in layers.keys.sorted() where !activatedLayers.contains(layer) {
+            errors.append(.layerNeverActivated(layer))
+        }
+        if !startsSequence, let first = sequences.first {
+            errors.append(.sequenceWithoutLeader(id: first.id))
+        }
+        for (index, sequence) in sequences.enumerated() {
+            for other in sequences[(index + 1)...] where other.conditions == sequence.conditions {
+                let shorter = sequence.keys.count <= other.keys.count ? sequence : other
+                let longer = sequence.keys.count <= other.keys.count ? other : sequence
+                if Array(longer.keys.prefix(shorter.keys.count)) == shorter.keys {
+                    errors.append(.ambiguousSequence(ids: [sequence.id, other.id]))
+                }
+            }
         }
 
         func bySpecificity<T>(_ items: [(T, Int)], _ conditions: (T) -> RuleConditions) -> [T] {
@@ -525,7 +771,12 @@ public struct CompiledRules: Equatable, Sendable {
                 let right = rhs.0.conditions.specificity
                 return left != right ? left > right : lhs.1 < rhs.1
             }.map(\.0), by: \.trigger),
-            trackpadScroll: bySpecificity(continuous) { $0.conditions }
+            trackpadScroll: bySpecificity(continuous) { $0.conditions },
+            keyBindings: bindings.mapValues { bySpecificity($0) { $0.conditions } },
+            layerBindings: layers.mapValues { $0.mapValues { bySpecificity($0) { $0.conditions } } },
+            combos: combos.sorted { $0.keys.count > $1.keys.count },
+            sequences: sequences,
+            usesCapsLock: usesCapsLock
         ))
     }
 }
