@@ -212,11 +212,64 @@ public enum ConfigLoadError: Error, Equatable, Sendable {
     case unknownActiveProfile(String)
 }
 
+/// Why an enabled rule or device setting cannot run in the current engine.
+/// The app turns these into localized sentences; `description` is the
+/// English text used by the command line tools.
+public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
+    case invalidRule
+    case invalidCondition(String)
+    case unsupportedCondition(String)
+    case unsupportedCombination(trigger: String, action: String)
+    case bothSidesSwap
+    case modifierKeyChord
+    case chordOrder
+    case invalidMouseButton
+    case missingLeaderPolicy
+    case chordBehavior
+    case keyNamespace
+    case sideSpecificChordModifiers
+    case unsupportedAction(String)
+    case trackpadSettings
+    case pointerSettings
+    case noScrollChange
+    case perDeviceScrolling
+    case displayScope
+    case unsupportedScrollField(String)
+    case unsupportedScrollMode(String)
+    case scrollValueOutOfRange(mode: String)
+
+    public var description: String {
+        switch self {
+        case .invalidRule: "the rule is incomplete or malformed"
+        case let .invalidCondition(kind): "the \(kind) condition is missing its value"
+        case let .unsupportedCondition(kind): "condition \(kind) is not supported"
+        case let .unsupportedCombination(trigger, action): "\(trigger) -> \(action) is not supported yet"
+        case .bothSidesSwap: "sideMode both is not supported yet; add one rule per side"
+        case .modifierKeyChord: "only modifier + mouse button chords are supported yet"
+        case .chordOrder: "only leaderThenMouse order is supported"
+        case .invalidMouseButton: "invalid mouse button"
+        case .missingLeaderPolicy: "letter key chords need an explicit leaderPolicy"
+        case .chordBehavior: "chords currently require consumeTrigger, fireOn down and repeat once"
+        case .keyNamespace: "only macVirtualKeyCode keys are supported"
+        case .sideSpecificChordModifiers: "side-specific chord modifiers are not supported yet"
+        case let .unsupportedAction(kind): "action \(kind) is not supported yet"
+        case .trackpadSettings: "only mouse device settings are supported; trackpad behavior is never changed"
+        case .pointerSettings: "pointer speed and acceleration are not supported yet"
+        case .noScrollChange: "no supported scroll change in this setting"
+        case .perDeviceScrolling: "per-device scrolling is not supported yet"
+        case .displayScope: "display scope is not supported"
+        case let .unsupportedScrollField(field): "scroll \(field) is not supported yet"
+        case let .unsupportedScrollMode(mode): "scroll mode \(mode) is not supported yet"
+        case let .scrollValueOutOfRange(mode): "the \(mode) value is out of range"
+        }
+    }
+}
+
 /// Why an enabled rule is not active in the current engine.
 public struct ConfigIssue: Equatable, Sendable, CustomStringConvertible {
     public let ruleID: String
     public let ruleName: String
-    public let reason: String
+    public let reason: UnsupportedReason
 
     public var description: String { "\(ruleName): \(reason)" }
 }
@@ -242,7 +295,7 @@ extension ConfigDocument {
             case let .success(definition):
                 result.definitions.append(definition)
             case let .failure(reason):
-                result.unsupported.append(ConfigIssue(ruleID: rule.id, ruleName: rule.name, reason: reason.message))
+                result.unsupported.append(ConfigIssue(ruleID: rule.id, ruleName: rule.name, reason: reason.reason))
             }
         }
         for setting in deviceSettings ?? [] {
@@ -252,9 +305,9 @@ extension ConfigDocument {
             do {
                 result.definitions.append(try Self.translateDeviceSetting(setting))
             } catch let error as Unsupported {
-                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: error.message))
+                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: error.reason))
             } catch {
-                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: "invalid device setting"))
+                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: .invalidRule))
             }
         }
         return result
@@ -264,28 +317,28 @@ extension ConfigDocument {
     /// settings and smoothed scrolling are reported as unsupported.
     private static func translateDeviceSetting(_ setting: JSONValue) throws -> RuleDefinition {
         guard setting["scope"]?["deviceClass"]?.string == "mouse" else {
-            throw Unsupported(message: "only mouse device settings are supported; trackpad behavior is never changed")
+            throw Unsupported(.trackpadSettings)
         }
         if let pointer = setting["pointer"], pointer["accelerationMode"]?.string != "system" || pointer["speedMultiplier"] != nil {
-            throw Unsupported(message: "pointer speed and acceleration are not supported yet")
+            throw Unsupported(.pointerSettings)
         }
         let vertical = try scrollAxis(setting["scrolling"]?["vertical"])
         let horizontal = try scrollAxis(setting["scrolling"]?["horizontal"])
         guard vertical.changesEvents || horizontal.changesEvents else {
-            throw Unsupported(message: "no supported scroll change in this setting")
+            throw Unsupported(.noScrollChange)
         }
         var conditions = RuleConditions()
         let scope = setting["scope"]
         if scope?["vendorId"] != nil || scope?["productId"] != nil {
             // Scroll events cannot be attributed to a device yet; applying
             // the setting to every wheel would silently widen its scope.
-            throw Unsupported(message: "per-device scrolling is not supported yet; remove vendorId/productId to apply it to all mouse wheels")
+            throw Unsupported(.perDeviceScrolling)
         }
         if let app = scope?["appBundleId"]?.string {
             conditions.onlyApps = [app]
         }
         if scope?["displayId"] != nil {
-            throw Unsupported(message: "display scope is not supported")
+            throw Unsupported(.displayScope)
         }
         return .wheel(vertical: vertical, horizontal: horizontal, conditions: conditions)
     }
@@ -293,7 +346,7 @@ extension ConfigDocument {
     private static func scrollAxis(_ config: JSONValue?) throws -> ScrollAxisSettings {
         guard let config else { return .unchanged }
         for key in ["acceleration", "smoothing"] where config[key] != nil {
-            throw Unsupported(message: "scroll \(key) is not supported yet")
+            throw Unsupported(.unsupportedScrollField(key))
         }
         let mode: ScrollMode
         switch config["mode"]?.string ?? "system" {
@@ -301,27 +354,28 @@ extension ConfigDocument {
             mode = .system
         case "accelerated":
             guard let speed = config["speedMultiplier"]?.number, ScrollMode.speedRange.contains(speed) else {
-                throw Unsupported(message: "accelerated scrolling needs speedMultiplier between 0.1 and 10")
+                throw Unsupported(.scrollValueOutOfRange(mode: "accelerated"))
             }
             mode = .accelerated(speed: speed)
         case "byLines":
             guard let lines = config["distanceLines"]?.int, ScrollMode.linesRange.contains(lines) else {
-                throw Unsupported(message: "scrolling by lines needs distanceLines between 1 and 30")
+                throw Unsupported(.scrollValueOutOfRange(mode: "byLines"))
             }
             mode = .byLines(lines)
         case "byPixels":
             guard let pixels = config["distancePixels"]?.number, ScrollMode.pixelsRange.contains(pixels) else {
-                throw Unsupported(message: "scrolling by pixels needs distancePixels between 1 and 512")
+                throw Unsupported(.scrollValueOutOfRange(mode: "byPixels"))
             }
             mode = .byPixels(pixels)
         case let other:
-            throw Unsupported(message: "scroll mode \(other) is not supported yet")
+            throw Unsupported(.unsupportedScrollMode(other))
         }
         return ScrollAxisSettings(reverse: config["reverse"] == .bool(true), mode: mode)
     }
 
     private struct Unsupported: Error {
-        let message: String
+        let reason: UnsupportedReason
+        init(_ reason: UnsupportedReason) { self.reason = reason }
     }
 
     private static func translate(_ rule: Rule) -> Result<RuleDefinition, Unsupported> {
@@ -330,7 +384,7 @@ extension ConfigDocument {
         } catch let error as Unsupported {
             return .failure(error)
         } catch {
-            return .failure(Unsupported(message: "invalid rule"))
+            return .failure(Unsupported(.invalidRule))
         }
     }
 
@@ -339,18 +393,18 @@ extension ConfigDocument {
         for value in values {
             switch value["kind"]?.string {
             case "appIs":
-                guard let id = value["bundleId"]?.string, !id.isEmpty else { throw Unsupported(message: "appIs needs a bundleId") }
+                guard let id = value["bundleId"]?.string, !id.isEmpty else { throw Unsupported(.invalidCondition("appIs")) }
                 result.onlyApps.insert(id)
             case "appIsNot":
-                guard let id = value["bundleId"]?.string, !id.isEmpty else { throw Unsupported(message: "appIsNot needs a bundleId") }
+                guard let id = value["bundleId"]?.string, !id.isEmpty else { throw Unsupported(.invalidCondition("appIsNot")) }
                 result.exceptApps.insert(id)
             case "physicalDeviceIs":
                 guard let text = value["deviceId"]?.string, let device = DeviceID(string: text) else {
-                    throw Unsupported(message: "deviceId must be \"<vendorId>:<productId>\"")
+                    throw Unsupported(.invalidCondition("physicalDeviceIs"))
                 }
                 result.devices.insert(device)
             case let kind:
-                throw Unsupported(message: "condition \(kind ?? "unknown") is not supported")
+                throw Unsupported(.unsupportedCondition(kind ?? "unknown"))
             }
         }
         return result
@@ -359,7 +413,7 @@ extension ConfigDocument {
     private static func translateOrThrow(_ rule: Rule) throws -> RuleDefinition {
         let conditions = try conditions(rule.conditions)
         guard let triggerKind = rule.trigger["kind"]?.string, let actionKind = rule.action["kind"]?.string else {
-            throw Unsupported(message: "missing trigger or action kind")
+            throw Unsupported(.invalidRule)
         }
         let behavior = rule.behavior
 
@@ -369,7 +423,7 @@ extension ConfigDocument {
             let second = try key(rule.trigger["second"])
             let sideMode = rule.action["sideMode"]?.string ?? "asSpecified"
             guard sideMode != "both" else {
-                throw Unsupported(message: "sideMode both is not supported yet; add one rule per side")
+                throw Unsupported(.bothSidesSwap)
             }
             return .swap(first, second, conditions: conditions)
 
@@ -381,7 +435,7 @@ extension ConfigDocument {
         case ("modifierChord", _):
             guard rule.trigger["key"] == nil, let number = rule.trigger["mouseButton"]?.int,
                   let button = MouseButton(userFacingNumber: number) else {
-                throw Unsupported(message: "only modifier + mouse button chords are supported yet")
+                throw Unsupported(.modifierKeyChord)
             }
             try requireFireOnceOnDown(behavior)
             let modifiers = try genericModifiers(rule.trigger["requiredModifiers"])
@@ -397,10 +451,10 @@ extension ConfigDocument {
 
         case ("keyMouseChord", _):
             guard rule.trigger["order"]?.string == "leaderThenMouse" else {
-                throw Unsupported(message: "only leaderThenMouse order is supported")
+                throw Unsupported(.chordOrder)
             }
             guard let number = rule.trigger["mouseButton"]?.int, let button = MouseButton(userFacingNumber: number) else {
-                throw Unsupported(message: "invalid mouse button")
+                throw Unsupported(.invalidMouseButton)
             }
             try requireFireOnceOnDown(behavior)
             let leader = try key(rule.trigger["leaderKey"])
@@ -413,7 +467,7 @@ extension ConfigDocument {
             case "nonConsuming":
                 policy = .nonConsuming
             default:
-                throw Unsupported(message: "letter key chords need an explicit leaderPolicy")
+                throw Unsupported(.missingLeaderPolicy)
             }
             return .mouseChord(
                 id: rule.id,
@@ -426,20 +480,20 @@ extension ConfigDocument {
             )
 
         default:
-            throw Unsupported(message: "\(triggerKind) -> \(actionKind) is not supported yet")
+            throw Unsupported(.unsupportedCombination(trigger: triggerKind, action: actionKind))
         }
     }
 
     private static func requireFireOnceOnDown(_ behavior: Behavior) throws {
         guard behavior.consumeTrigger, behavior.fireOn == "down", behavior.repeat == "once" else {
-            throw Unsupported(message: "chords currently require consumeTrigger, fireOn down and repeat once")
+            throw Unsupported(.chordBehavior)
         }
     }
 
     private static func key(_ value: JSONValue?) throws -> KeyCode {
         guard let value, value["codeNamespace"]?.string == "macVirtualKeyCode",
               let code = value["code"]?.int, (0...Int(UInt16.max)).contains(code) else {
-            throw Unsupported(message: "only macVirtualKeyCode keys are supported")
+            throw Unsupported(.keyNamespace)
         }
         return KeyCode(UInt16(code))
     }
@@ -454,7 +508,7 @@ extension ConfigDocument {
             case "shift": result.insert(.shift)
             case "function": result.insert(.function)
             default:
-                throw Unsupported(message: "side-specific chord modifiers are not supported yet")
+                throw Unsupported(.sideSpecificChordModifiers)
             }
         }
         return result
@@ -469,7 +523,7 @@ extension ConfigDocument {
         case "sendShortcut":
             return .shortcut(try key(value["key"]), try genericModifiers(value["modifiers"]))
         case let kind:
-            throw Unsupported(message: "action \(kind ?? "unknown") is not supported yet")
+            throw Unsupported(.unsupportedAction(kind ?? "unknown"))
         }
     }
 }
