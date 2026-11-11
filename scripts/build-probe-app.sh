@@ -3,8 +3,8 @@
 # macOS attributes Accessibility and Input Monitoring to the probe itself
 # instead of to the terminal that launched it.
 #
-# The bundle is ad-hoc signed. macOS ties privacy permissions to the code
-# signature, so permissions must be granted again after every rebuild.
+# Signing uses scripts/sign-app.sh: a local development identity when
+# available, otherwise ad-hoc (permissions then reset on every rebuild).
 #
 # Usage: scripts/build-probe-app.sh [output-dir]   (default: build)
 set -eu
@@ -48,6 +48,5 @@ cat > "$APP/Contents/Info.plist" <<EOF
 </plist>
 EOF
 
-codesign --force --sign - --identifier "$BUNDLE_ID" "$APP"
-codesign --verify --strict "$APP"
+"$ROOT/scripts/sign-app.sh" "$APP" "$BUNDLE_ID"
 echo "Built $APP ($(lipo -archs "$APP/Contents/MacOS/modweave-probe"))"
