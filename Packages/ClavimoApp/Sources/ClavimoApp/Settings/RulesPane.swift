@@ -25,6 +25,7 @@ struct RulesPane: View {
     @Bindable var editor: ConfigEditor
     @Bindable var navigation: SettingsNavigation
     @State private var editing: Editing?
+    @State private var selection: String?
     @State private var search = ""
     @State private var filter: Filter = .all
     @State private var errorMessage: String?
@@ -108,23 +109,33 @@ struct RulesPane: View {
             } else if visibleRows.isEmpty {
                 ContentUnavailableView.search(text: search)
             } else {
-                List {
+                List(selection: $selection) {
                     ForEach(visibleRows) { row in
                         RuleRow(row: row, issue: model.unsupported.first { $0.ruleID == row.id },
                                 engineActive: model.status == .active) { enabled in
                             errorMessage = editor.setEnabled(enabled, id: row.id)
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture(count: 2) { edit(row) }
-                        .contextMenu {
-                            Button(String(localized: "Edit...")) { edit(row) }.disabled(row.draft == nil)
-                            Button(String(localized: "Duplicate")) { duplicate(row) }.disabled(row.draft == nil)
-                            Divider()
-                            Button(String(localized: "Delete"), role: .destructive) { errorMessage = editor.delete(id: row.id) }
-                        }
+                        .tag(row.id)
+                        .accessibilityAction(named: Text(String(localized: "Edit..."))) { edit(row) }
+                        .accessibilityAction(named: Text(String(localized: "Duplicate"))) { duplicate(row) }
+                        .accessibilityAction(named: Text(String(localized: "Delete"))) { errorMessage = editor.delete(id: row.id) }
                     }
                 }
                 .listStyle(.inset(alternatesRowBackgrounds: false))
+                // Double-click or Return edits; Delete removes the selected rule.
+                .contextMenu(forSelectionType: String.self) { ids in
+                    if let row = row(for: ids) {
+                        Button(String(localized: "Edit...")) { edit(row) }.disabled(row.draft == nil)
+                        Button(String(localized: "Duplicate")) { duplicate(row) }.disabled(row.draft == nil)
+                        Divider()
+                        Button(String(localized: "Delete"), role: .destructive) { errorMessage = editor.delete(id: row.id) }
+                    }
+                } primaryAction: { ids in
+                    if let row = row(for: ids) { edit(row) }
+                }
+                .onDeleteCommand {
+                    if let row = row(for: selection.map { [$0] } ?? []) { errorMessage = editor.delete(id: row.id) }
+                }
             }
         }
         .searchable(text: $search, placement: .toolbar, prompt: Text(String(localized: "Search rules")))
@@ -142,6 +153,11 @@ struct RulesPane: View {
         guard let draft = navigation.ruleToCreate else { return }
         navigation.ruleToCreate = nil
         editing = Editing(ruleID: nil, draft: newDraft(draft))
+    }
+
+    private func row(for ids: Set<String>) -> ConfigEditor.Row? {
+        guard ids.count == 1, let id = ids.first else { return nil }
+        return rows.first { $0.id == id }
     }
 
     private func edit(_ row: ConfigEditor.Row) {
@@ -194,7 +210,7 @@ struct RuleRow: View {
         }
         .padding(.vertical, Spacing.s)
         .accessibilityElement(children: .combine)
-        .accessibilityHint(String(localized: "Double-click to edit"))
+        .accessibilityHint(String(localized: "Double-click or press Return to edit"))
     }
 
     private var status: (text: String, kind: StatusChip.Kind) {

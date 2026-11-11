@@ -1219,12 +1219,12 @@
         }
       }
     },
-    "Double-click to edit": {
+    "Double-click or press Return to edit": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kliknij dwukrotnie, aby edytować"
+            "value": "Kliknij dwukrotnie lub naciśnij Return, aby edytować"
           }
         }
       }

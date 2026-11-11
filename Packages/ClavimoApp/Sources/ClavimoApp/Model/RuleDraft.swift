@@ -10,24 +10,6 @@ struct RuleDraft: Equatable {
         enum Mode: String, CaseIterable, Identifiable {
             case system, accelerated, byLines, byPixels, smoothed
             var id: String { rawValue }
-            var title: String {
-                switch self {
-                case .system: "System"
-                case .accelerated: "Accelerated"
-                case .byLines: "By lines"
-                case .byPixels: "By pixels"
-                case .smoothed: "Smooth"
-                }
-            }
-            var explanation: String {
-                switch self {
-                case .system: "Distance and acceleration as set in macOS."
-                case .accelerated: "The macOS acceleration curve, faster or slower."
-                case .byLines: "The same number of lines for every wheel notch, without acceleration."
-                case .byPixels: "The same distance in pixels for every wheel notch, without acceleration. Experimental."
-                case .smoothed: "Each notch glides a fixed distance over a short animation, like a trackpad."
-                }
-            }
         }
 
         var reverse = false

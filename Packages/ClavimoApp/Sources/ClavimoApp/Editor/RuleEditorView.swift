@@ -11,6 +11,7 @@ struct RuleEditorView: View {
     let save: (RuleDraft) -> String?
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var errorMessage: String?
     @State private var devices = HIDDeviceCatalog.connectedDevices()
 
@@ -77,7 +78,7 @@ struct RuleEditorView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Spacing.l)
         .background(Brand.violet.opacity(0.08))
-        .animation(.easeOut(duration: 0.15), value: draft)
+        .animation(reduceMotion ? nil : .easeOut(duration: 0.15), value: draft)
     }
 
     @ViewBuilder
