@@ -191,12 +191,17 @@ public struct InputEvent: Equatable, Sendable {
     /// The physical device, only when the adapter could attribute it
     /// reliably. Nil never matches a device-scoped rule.
     public var device: DeviceID?
+    /// Fingers on the trackpad when a button event came from a trackpad
+    /// click, if the adapter knows it. Nil means unknown, which never
+    /// matches a trackpad click rule.
+    public var touch: TouchSnapshot?
 
-    public init(kind: Kind, modifiers: ModifierSet, time: UInt64, device: DeviceID? = nil) {
+    public init(kind: Kind, modifiers: ModifierSet, time: UInt64, device: DeviceID? = nil, touch: TouchSnapshot? = nil) {
         self.kind = kind
         self.modifiers = modifiers
         self.time = time
         self.device = device
+        self.touch = touch
     }
 }
 
@@ -207,4 +212,17 @@ public enum ActionCommand: Equatable, Sendable {
     case missionControl
     case applicationWindows
     case shortcut(KeyCode, GenericModifiers)
+    /// Clicks a mouse button at the pointer.
+    case click(MouseButton)
+    /// Opens or activates the app with this bundle identifier.
+    case launchApp(String)
+    /// Presses a media or brightness key.
+    case media(MediaKey)
 }
+
+/// Keys from the top row of Apple keyboards.
+public enum MediaKey: String, CaseIterable, Hashable, Sendable {
+    case playPause, nextTrack, previousTrack, volumeUp, volumeDown, mute, brightnessUp, brightnessDown
+}
+
+extension ActionCommand: Hashable {}

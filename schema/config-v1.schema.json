@@ -323,6 +323,78 @@
               ]
             }
           }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "gesture"
+          ],
+          "description": "A trackpad gesture: tap with 2 to 5 fingers (2 only with modifiers), tip tap beside a resting finger, or swipe with 3 to 5 fingers.",
+          "properties": {
+            "kind": {
+              "const": "trackpadGesture"
+            },
+            "gesture": {
+              "enum": [
+                "tap",
+                "tipTap",
+                "swipe"
+              ]
+            },
+            "fingers": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5
+            },
+            "side": {
+              "enum": [
+                "left",
+                "right"
+              ]
+            },
+            "direction": {
+              "enum": [
+                "up",
+                "down",
+                "left",
+                "right"
+              ]
+            },
+            "requiredModifiers": {
+              "$ref": "#/$defs/mods"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "description": "A physical trackpad click with 3 to 5 fingers, or a click or tap to click by one finger in a corner.",
+          "properties": {
+            "kind": {
+              "const": "trackpadClick"
+            },
+            "fingers": {
+              "type": "integer",
+              "minimum": 3,
+              "maximum": 5
+            },
+            "corner": {
+              "enum": [
+                "topLeft",
+                "topRight",
+                "bottomLeft",
+                "bottomRight"
+              ]
+            },
+            "requiredModifiers": {
+              "$ref": "#/$defs/mods"
+            }
+          }
         }
       ]
     },
@@ -472,6 +544,49 @@
             },
             "macroId": {
               "$ref": "#/$defs/uuid"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "mouseButton"
+          ],
+          "properties": {
+            "kind": {
+              "const": "mouseClick"
+            },
+            "mouseButton": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 32
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "key"
+          ],
+          "properties": {
+            "kind": {
+              "const": "mediaKey"
+            },
+            "key": {
+              "enum": [
+                "playPause",
+                "nextTrack",
+                "previousTrack",
+                "volumeUp",
+                "volumeDown",
+                "mute",
+                "brightnessUp",
+                "brightnessDown"
+              ]
             }
           }
         }

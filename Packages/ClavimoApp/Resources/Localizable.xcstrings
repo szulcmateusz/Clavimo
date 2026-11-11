@@ -211,6 +211,16 @@
         }
       }
     },
+    "%@ use the same trackpad gesture in the same situation.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ używają tego samego gestu gładzika w tej samej sytuacji."
+          }
+        }
+      }
+    },
     "%@ uses the %@ without allowing it.": {
       "localizations": {
         "pl": {
@@ -257,6 +267,16 @@
         }
       }
     },
+    "%@: a two-finger tap is the macOS secondary click. Add a modifier, such as Fn.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: stuknięcie dwoma palcami to w macOS kliknięcie prawym przyciskiem. Dodaj modyfikator, np. Fn."
+          }
+        }
+      }
+    },
     "%@: key + mouse button shortcuts cannot be limited to a device.": {
       "localizations": {
         "pl": {
@@ -273,6 +293,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@: przycisk „%@” można łączyć tylko z modyfikatorami."
+          }
+        }
+      }
+    },
+    "%@: this gesture cannot use that number of fingers.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: ten gest nie może używać takiej liczby palców."
           }
         }
       }
@@ -4073,6 +4103,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "To ustawienie przewijania niczego nie zmienia."
+          }
+        }
+      }
+    },
+    "The trackpad gesture is incomplete or not supported.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gest gładzika jest niepełny albo nieobsługiwany."
           }
         }
       }

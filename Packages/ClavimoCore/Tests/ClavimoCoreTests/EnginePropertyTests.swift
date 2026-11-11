@@ -51,11 +51,19 @@ struct EnginePropertyTests {
             .mouseChord(id: "a", leader: .key(.f, .boundedWindow(milliseconds: 80)), button: .button4,
                         action: .shortcut(.c, .command), priority: 1),
         ],
+        [
+            .swap(.leftCommand, .leftOption),
+            .trackpad(id: "click3", trigger: .click(fingers: 3), action: .click(.middle)),
+            .trackpad(id: "corner", trigger: .cornerClick(.topRight), modifiers: .command, action: .missionControl),
+            .trackpad(id: "tap3", trigger: .gesture(.tap(fingers: 3)), action: .missionControl),
+            .mouseChord(id: "ctrl", leader: .modifiers(.control), button: .primary, action: .nextWorkspace, priority: 1,
+                        allowProtectedButton: true),
+        ],
     ]
 
     static let compiled: [CompiledRules] = ruleSets.map { try! CompiledRules.compile($0).get() }
 
-    @Test(arguments: 0..<4)
+    @Test(arguments: 0..<5)
     func randomSequencesStayBalanced(ruleSet: Int) {
         for seed in 0..<150 {
             var run = Run(seed: UInt64(ruleSet * 1000 + seed), rules: ruleSet)
@@ -96,7 +104,8 @@ struct EnginePropertyTests {
                 case 52..<72: toggleButton(EnginePropertyTests.buttons[rng.next(EnginePropertyTests.buttons.count)])
                 case 72..<88: now += UInt64(rng.next(300)) * 1_000_000
                 case 88..<93: engine.setFrontmostApp(EnginePropertyTests.apps[rng.next(EnginePropertyTests.apps.count)])
-                case 93..<97: engine.install(EnginePropertyTests.compiled[rng.next(EnginePropertyTests.compiled.count)])
+                case 93..<96: engine.install(EnginePropertyTests.compiled[rng.next(EnginePropertyTests.compiled.count)])
+                case 96: _ = engine.handleGesture(.tap(fingers: 3))
                 default: reset()
                 }
                 if rng.next(2) == 0 { fireTimerIfDue() }
@@ -130,7 +139,9 @@ struct EnginePropertyTests {
         private mutating func toggleButton(_ button: MouseButton) {
             let isDown = !heldButtons.contains(button)
             if isDown { heldButtons.insert(button) } else { heldButtons.remove(button) }
-            send(.mouseButton(button, isDown: isDown), button: button)
+            let touches: [TouchSnapshot?] = [nil, TouchSnapshot(fingers: 1), TouchSnapshot(fingers: 3),
+                                             TouchSnapshot(fingers: 1, corner: .topRight), TouchSnapshot(fingers: 0, tappedCorner: .topRight)]
+            send(.mouseButton(button, isDown: isDown), button: button, touch: touches[rng.next(touches.count)])
         }
 
         private mutating func fireTimerIfDue() {
@@ -150,7 +161,8 @@ struct EnginePropertyTests {
             }
         }
 
-        private mutating func send(_ kind: InputEvent.Kind, key: KeyCode? = nil, button: MouseButton? = nil, device: DeviceID? = nil) {
+        private mutating func send(_ kind: InputEvent.Kind, key: KeyCode? = nil, button: MouseButton? = nil, device: DeviceID? = nil,
+                                   touch: TouchSnapshot? = nil) {
             var isDown = false
             var isRepeat = false
             switch kind {
@@ -166,7 +178,7 @@ struct EnginePropertyTests {
             case let .mouseButton(_, down):
                 isDown = down
             }
-            let output = engine.handle(InputEvent(kind: kind, modifiers: physical, time: now, device: device))
+            let output = engine.handle(InputEvent(kind: kind, modifiers: physical, time: now, device: device, touch: touch))
             apply(output, original: key.map { (.key($0), isDown, isRepeat) } ?? button.map { (.button($0), isDown, false) },
                   physicalAfter: physical)
             deadline = output.nextDeadline

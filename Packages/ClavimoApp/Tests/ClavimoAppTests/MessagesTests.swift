@@ -10,7 +10,8 @@ struct MessagesTests {
         .conflictingLeaderPolicies(.f), .emptyModifierLeader(id: "r1"), .protectedMouseButton(.primary, id: "r1"),
         .protectedMouseButtonNeedsModifierLeader(.secondary, id: "r1"), .duplicateChord(button: .button4, ids: ["r1", "r2"]),
         .duplicateRuleID("r1"), .deviceConditionOnLetterLeader(id: "r1"), .unsupportedKey(.capsLock),
-        .duplicateWheelRule, .wheelRuleWithoutChanges,
+        .duplicateWheelRule, .wheelRuleWithoutChanges, .trackpadFingersOutOfRange(id: "r1"),
+        .twoFingerTapNeedsModifiers(id: "r1"), .duplicateTrackpadRule(ids: ["r1", "r2"]),
     ]
 
     static let reasons: [UnsupportedReason] = [
@@ -18,7 +19,7 @@ struct MessagesTests {
         .bothSidesSwap, .modifierKeyChord, .chordOrder, .invalidMouseButton, .missingLeaderPolicy, .chordBehavior,
         .keyNamespace, .sideSpecificChordModifiers, .unsupportedAction("x"), .trackpadSettings, .pointerSettings,
         .noScrollChange, .perDeviceScrolling, .displayScope, .unsupportedScrollField("x"), .unsupportedScrollMode("x"),
-        .scrollValueOutOfRange(mode: "byLines"),
+        .scrollValueOutOfRange(mode: "byLines"), .invalidTrackpadTrigger,
     ]
 
     @Test(arguments: validationErrors)

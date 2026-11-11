@@ -107,6 +107,39 @@ public enum RuleDefinition: Equatable, Sendable {
     /// Changes discrete (mouse wheel) scrolling per axis. Continuous
     /// scrolling from trackpads is never changed.
     case wheel(vertical: ScrollAxisSettings, horizontal: ScrollAxisSettings, conditions: RuleConditions = .always)
+    /// A trackpad gesture or click, with the exact set of modifiers that
+    /// must be held (empty means none).
+    case trackpad(
+        id: String,
+        trigger: TrackpadTrigger,
+        modifiers: GenericModifiers = [],
+        action: ActionCommand,
+        priority: Int = 100,
+        conditions: RuleConditions = .always
+    )
+}
+
+/// What a trackpad rule reacts to.
+public enum TrackpadTrigger: Hashable, Sendable {
+    /// A recognized gesture: multi-finger tap, tip tap or swipe.
+    case gesture(GestureEvent)
+    /// A physical click while this many fingers touch the trackpad.
+    case click(fingers: Int)
+    /// A click, or a tap with tap to click, by one finger in a corner.
+    case cornerClick(TrackpadCorner)
+
+    public static let tapFingers = 2...5
+    public static let swipeFingers = 3...5
+    public static let clickFingers = 3...5
+}
+
+public struct TrackpadRule: Equatable, Sendable {
+    public let id: String
+    public let trigger: TrackpadTrigger
+    public let modifiers: GenericModifiers
+    public let action: ActionCommand
+    public let priority: Int
+    public let conditions: RuleConditions
 }
 
 extension RuleDefinition {
@@ -122,6 +155,8 @@ extension RuleDefinition {
             ["chord:\(leader.signature):\(button.rawValue):\(conditions.signature)"]
         case let .wheel(_, _, conditions):
             ["wheel:\(conditions.signature)"]
+        case let .trackpad(_, trigger, modifiers, _, _, conditions):
+            ["trackpad:\(trigger.signature):\(modifiers.rawValue):\(conditions.signature)"]
         }
     }
 }
@@ -130,6 +165,18 @@ extension RuleConditions {
     var signature: String {
         [onlyApps.sorted().joined(separator: ","), exceptApps.sorted().joined(separator: ","),
          devices.sorted().map(\.description).joined(separator: ",")].joined(separator: "|")
+    }
+}
+
+extension TrackpadTrigger {
+    var signature: String {
+        switch self {
+        case let .gesture(.tap(fingers)): "tap\(fingers)"
+        case let .gesture(.tipTap(side)): "tiptap-\(side.rawValue)"
+        case let .gesture(.swipe(fingers, direction)): "swipe\(fingers)-\(direction.rawValue)"
+        case let .click(fingers): "click\(fingers)"
+        case let .cornerClick(corner): "corner-\(corner.rawValue)"
+        }
     }
 }
 
@@ -161,6 +208,11 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     case unsupportedKey(KeyCode)
     case duplicateWheelRule
     case wheelRuleWithoutChanges
+    /// A trackpad gesture with a finger count it cannot have.
+    case trackpadFingersOutOfRange(id: String)
+    /// A two-finger tap is the macOS secondary click; it needs modifiers.
+    case twoFingerTapNeedsModifiers(id: String)
+    case duplicateTrackpadRule(ids: [String])
 }
 
 public struct ChordRule: Equatable, Sendable {
@@ -195,11 +247,42 @@ public struct CompiledRules: Equatable, Sendable {
     public let leaderPolicies: [KeyCode: LeaderPolicy]
     /// Wheel settings, most specific first.
     public let wheelSettings: [WheelSettings]
+    /// Trackpad rules per trigger: higher priority first, then more
+    /// specific conditions, then definition order.
+    public let trackpadRules: [TrackpadTrigger: [TrackpadRule]]
+
+    public init(
+        remapCandidates: [KeyCode: [RemapCandidate]],
+        chordsByButton: [MouseButton: [ChordRule]],
+        leaderPolicies: [KeyCode: LeaderPolicy],
+        wheelSettings: [WheelSettings],
+        trackpadRules: [TrackpadTrigger: [TrackpadRule]] = [:]
+    ) {
+        self.remapCandidates = remapCandidates
+        self.chordsByButton = chordsByButton
+        self.leaderPolicies = leaderPolicies
+        self.wheelSettings = wheelSettings
+        self.trackpadRules = trackpadRules
+    }
 
     public static let empty = CompiledRules(remapCandidates: [:], chordsByButton: [:], leaderPolicies: [:], wheelSettings: [])
 
     public var isEmpty: Bool {
-        remapCandidates.isEmpty && chordsByButton.isEmpty && wheelSettings.isEmpty
+        remapCandidates.isEmpty && chordsByButton.isEmpty && wheelSettings.isEmpty && trackpadRules.isEmpty
+    }
+
+    /// Whether any rule needs trackpad touches, so the touch backend runs.
+    public var observesTrackpad: Bool { !trackpadRules.isEmpty }
+
+    /// Whether any rule replaces physical trackpad clicks, which needs the
+    /// primary and secondary buttons in the event tap mask.
+    public var observesTrackpadClicks: Bool {
+        trackpadRules.keys.contains { if case .gesture = $0 { false } else { true } }
+    }
+
+    /// The rule for a gesture under the held modifiers in `app`.
+    public func trackpadRule(for trigger: TrackpadTrigger, modifiers: GenericModifiers, app: String?) -> TrackpadRule? {
+        trackpadRules[trigger]?.first { $0.modifiers == modifiers && $0.conditions.matches(app: app, device: nil) }
     }
 
     /// Unconditional remaps, for inspection and tests.
@@ -262,6 +345,7 @@ public struct CompiledRules: Equatable, Sendable {
         var chords: [ChordRule] = []
         var leaderPolicies: [KeyCode: LeaderPolicy] = [:]
         var wheel: [(WheelSettings, Int)] = []
+        var trackpad: [(TrackpadRule, Int)] = []
         var seenIDs: Set<String> = []
 
         func addRemap(_ from: KeyCode, _ to: KeyCode, _ conditions: RuleConditions, _ order: Int) {
@@ -299,6 +383,28 @@ public struct CompiledRules: Equatable, Sendable {
                 } else {
                     wheel.append((WheelSettings(vertical: vertical, horizontal: horizontal, conditions: conditions), order))
                 }
+            case let .trackpad(id, trigger, modifiers, action, priority, conditions):
+                if !seenIDs.insert(id).inserted {
+                    errors.append(.duplicateRuleID(id))
+                }
+                let fingersValid = switch trigger {
+                case let .gesture(.tap(fingers)): TrackpadTrigger.tapFingers.contains(fingers)
+                case let .gesture(.swipe(fingers, _)): TrackpadTrigger.swipeFingers.contains(fingers)
+                case let .click(fingers): TrackpadTrigger.clickFingers.contains(fingers)
+                case .gesture(.tipTap), .cornerClick: true
+                }
+                if !fingersValid {
+                    errors.append(.trackpadFingersOutOfRange(id: id))
+                } else if trigger == .gesture(.tap(fingers: 2)), modifiers.isEmpty {
+                    errors.append(.twoFingerTapNeedsModifiers(id: id))
+                }
+                if let other = trackpad.first(where: {
+                    $0.0.trigger == trigger && $0.0.modifiers == modifiers && $0.0.conditions == conditions
+                }) {
+                    errors.append(.duplicateTrackpadRule(ids: [other.0.id, id]))
+                }
+                trackpad.append((TrackpadRule(id: id, trigger: trigger, modifiers: modifiers, action: action,
+                                              priority: priority, conditions: conditions), order))
             case let .mouseChord(id, leader, button, action, priority, allowProtected, conditions):
                 if !seenIDs.insert(id).inserted {
                     errors.append(.duplicateRuleID(id))
@@ -383,7 +489,13 @@ public struct CompiledRules: Equatable, Sendable {
             remapCandidates: remaps.mapValues { bySpecificity($0) { $0.conditions } },
             chordsByButton: byButton,
             leaderPolicies: leaderPolicies,
-            wheelSettings: bySpecificity(wheel) { $0.conditions }
+            wheelSettings: bySpecificity(wheel) { $0.conditions },
+            trackpadRules: Dictionary(grouping: trackpad.sorted { lhs, rhs in
+                if lhs.0.priority != rhs.0.priority { return lhs.0.priority > rhs.0.priority }
+                let left = lhs.0.conditions.specificity
+                let right = rhs.0.conditions.specificity
+                return left != right ? left > right : lhs.1 < rhs.1
+            }.map(\.0), by: \.trigger)
         ))
     }
 }

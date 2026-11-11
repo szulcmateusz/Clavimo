@@ -239,6 +239,7 @@ public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
     case unsupportedScrollField(String)
     case unsupportedScrollMode(String)
     case scrollValueOutOfRange(mode: String)
+    case invalidTrackpadTrigger
 
     public var description: String {
         switch self {
@@ -263,6 +264,7 @@ public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
         case let .unsupportedScrollField(field): "scroll \(field) is not supported yet"
         case let .unsupportedScrollMode(mode): "scroll mode \(mode) is not supported yet"
         case let .scrollValueOutOfRange(mode): "the \(mode) value is out of range"
+        case .invalidTrackpadTrigger: "the trackpad gesture is incomplete or not supported"
         }
     }
 }
@@ -518,8 +520,48 @@ extension ConfigDocument {
                 conditions: conditions
             )
 
+        case ("trackpadGesture", _), ("trackpadClick", _):
+            guard conditions.devices.isEmpty else { throw Unsupported(.unsupportedCondition("physicalDeviceIs")) }
+            return .trackpad(
+                id: rule.id,
+                trigger: try trackpadTrigger(rule.trigger),
+                modifiers: try genericModifiers(rule.trigger["requiredModifiers"]),
+                action: try action(rule.action),
+                priority: rule.priority,
+                conditions: conditions
+            )
+
         default:
             throw Unsupported(.unsupportedCombination(trigger: triggerKind, action: actionKind))
+        }
+    }
+
+    private static func trackpadTrigger(_ trigger: JSONValue) throws -> TrackpadTrigger {
+        let fingers = trigger["fingers"]?.int
+        if trigger["kind"]?.string == "trackpadClick" {
+            if let corner = trigger["corner"]?.string {
+                guard fingers == nil, let corner = TrackpadCorner(rawValue: corner) else { throw Unsupported(.invalidTrackpadTrigger) }
+                return .cornerClick(corner)
+            }
+            guard let fingers else { throw Unsupported(.invalidTrackpadTrigger) }
+            return .click(fingers: fingers)
+        }
+        switch trigger["gesture"]?.string {
+        case "tap":
+            guard let fingers else { throw Unsupported(.invalidTrackpadTrigger) }
+            return .gesture(.tap(fingers: fingers))
+        case "tipTap":
+            guard let side = trigger["side"]?.string.flatMap(GestureEvent.Side.init(rawValue:)) else {
+                throw Unsupported(.invalidTrackpadTrigger)
+            }
+            return .gesture(.tipTap(side))
+        case "swipe":
+            guard let fingers, let direction = trigger["direction"]?.string.flatMap(GestureEvent.Direction.init(rawValue:)) else {
+                throw Unsupported(.invalidTrackpadTrigger)
+            }
+            return .gesture(.swipe(fingers: fingers, direction))
+        default:
+            throw Unsupported(.invalidTrackpadTrigger)
         }
     }
 
@@ -561,6 +603,17 @@ extension ConfigDocument {
         case "applicationWindows": return .applicationWindows
         case "sendShortcut":
             return .shortcut(try key(value["key"]), try genericModifiers(value["modifiers"]))
+        case "mouseClick":
+            guard let number = value["mouseButton"]?.int, let button = MouseButton(userFacingNumber: number) else {
+                throw Unsupported(.invalidMouseButton)
+            }
+            return .click(button)
+        case "launchApp":
+            guard let bundleID = value["bundleId"]?.string, !bundleID.isEmpty else { throw Unsupported(.unsupportedAction("launchApp")) }
+            return .launchApp(bundleID)
+        case "mediaKey":
+            guard let key = value["key"]?.string.flatMap(MediaKey.init(rawValue:)) else { throw Unsupported(.unsupportedAction("mediaKey")) }
+            return .media(key)
         case let kind:
             throw Unsupported(.unsupportedAction(kind ?? "unknown"))
         }

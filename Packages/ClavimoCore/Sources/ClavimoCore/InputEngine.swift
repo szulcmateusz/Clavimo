@@ -106,7 +106,7 @@ public struct InputEngine: Sendable {
                 handleKey(code, isDown: isDown, isRepeat: isRepeat, physical: event.modifiers, time: event.time, device: event.device, into: &output)
             }
         case let .mouseButton(button, isDown):
-            handleMouse(button, isDown: isDown, physical: event.modifiers, device: event.device, into: &output)
+            handleMouse(button, isDown: isDown, physical: event.modifiers, device: event.device, touch: event.touch, into: &output)
         }
 
         output.nextDeadline = pendingDeadline
@@ -353,6 +353,7 @@ public struct InputEngine: Sendable {
         isDown: Bool,
         physical: ModifierSet,
         device: DeviceID?,
+        touch: TouchSnapshot?,
         into output: inout EngineOutput
     ) {
         physicalModifiers = physical
@@ -369,6 +370,12 @@ public struct InputEngine: Sendable {
             return // a second down without an up; keep it consumed
         }
 
+        if button.isProtected, let touch, let rule = trackpadClickRule(for: touch, physical: physical) {
+            consumedButtons.insert(button)
+            output.actions.append(rule.action)
+            return
+        }
+
         for chord in rules.chordsByButton[button] ?? []
         where chordLeaderIsHeld(chord.leader, physical: physical) && chord.conditions.matches(app: frontmostApp, device: device) {
             if case let .key(key, _) = chord.leader, leader?.key == key {
@@ -380,6 +387,34 @@ public struct InputEngine: Sendable {
             return
         }
         output.items.append(.original(flags: overrideFlags(flags)))
+    }
+
+    /// A trackpad click rule for the fingers on the trackpad: several
+    /// fingers first, then a finger resting in or just tapping a corner.
+    private func trackpadClickRule(for touch: TouchSnapshot, physical: ModifierSet) -> TrackpadRule? {
+        guard rules.observesTrackpadClicks else { return nil }
+        var triggers: [TrackpadTrigger] = []
+        if TrackpadTrigger.clickFingers.contains(touch.fingers) { triggers.append(.click(fingers: touch.fingers)) }
+        if let corner = touch.corner ?? (touch.fingers == 0 ? touch.tappedCorner : nil) {
+            triggers.append(.cornerClick(corner))
+        }
+        for trigger in triggers {
+            if let rule = rules.trackpadRule(for: trigger, modifiers: physical.generic, app: frontmostApp) { return rule }
+        }
+        return nil
+    }
+
+    // MARK: - Trackpad gestures
+
+    /// Runs the action of the rule matching a recognized gesture under the
+    /// currently held modifiers. Gestures never produce key events.
+    public mutating func handleGesture(_ gesture: GestureEvent) -> EngineOutput {
+        var output = EngineOutput()
+        if let rule = rules.trackpadRule(for: .gesture(gesture), modifiers: physicalModifiers.generic, app: frontmostApp) {
+            output.actions.append(rule.action)
+        }
+        output.nextDeadline = pendingDeadline
+        return output
     }
 
     private func chordLeaderIsHeld(_ chordLeader: ChordLeader, physical: ModifierSet) -> Bool {

@@ -53,6 +53,8 @@ enum Messages {
             String(localized: "The scroll mode \(mode) is not supported yet.")
         case .scrollValueOutOfRange:
             String(localized: "The scroll distance or speed is outside the allowed range.")
+        case .invalidTrackpadTrigger:
+            String(localized: "The trackpad gesture is incomplete or not supported.")
         }
     }
 
@@ -93,6 +95,13 @@ enum Messages {
             return String(localized: "Two mouse wheel settings apply in the same situation. Keep one.")
         case .wheelRuleWithoutChanges:
             return String(localized: "The mouse wheel setting changes nothing.")
+        case let .trackpadFingersOutOfRange(id):
+            return String(localized: "\(rule(id)): this gesture cannot use that number of fingers.")
+        case let .twoFingerTapNeedsModifiers(id):
+            return String(localized: "\(rule(id)): a two-finger tap is the macOS secondary click. Add a modifier, such as Fn.")
+        case let .duplicateTrackpadRule(ids):
+            let names = ids.map(rule).joined(separator: ", ")
+            return String(localized: "\(names) use the same trackpad gesture in the same situation.")
         }
     }
 
