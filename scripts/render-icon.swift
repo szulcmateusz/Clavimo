@@ -25,10 +25,10 @@ func color(_ hex: UInt32, _ alpha: CGFloat = 1) -> CGColor {
 }
 
 enum Brand {
-    static let tileTop = color(0x6C5CF6)
-    static let tileBottom = color(0x241E7A)
-    static let keycapLight = color(0xF4F1FF)
-    static let keycapShade = color(0xD9D2F7)
+    static let tileTop = color(0x2B2752)
+    static let tileBottom = color(0x0D0B1F)
+    static let keycapLight = color(0xB9A9FF)
+    static let keycapShade = color(0x8C76F2)
     static let mintLight = color(0x8AF3E3)
     static let mintDeep = color(0x3FD8C4)
 }
