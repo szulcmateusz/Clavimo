@@ -88,11 +88,11 @@ struct RuleDraft: Equatable {
 
         var title: String {
             switch self {
-            case .swapKeys: "Swap two keys"
-            case .remapKey: "Remap a key"
-            case .modifierClick: "Modifier + mouse button"
-            case .keyClick: "Key + mouse button"
-            case .wheel: "Mouse wheel direction"
+            case .swapKeys: String(localized: "Swap two keys")
+            case .remapKey: String(localized: "Remap a key")
+            case .modifierClick: String(localized: "Modifier + mouse button")
+            case .keyClick: String(localized: "Key + mouse button")
+            case .wheel: String(localized: "Mouse wheel direction")
             }
         }
     }
@@ -116,10 +116,10 @@ struct RuleDraft: Equatable {
         var id: String { rawValue }
         var title: String {
             switch self {
-            case .nextWorkspace: "Next Space"
-            case .previousWorkspace: "Previous Space"
-            case .missionControl: "Mission Control"
-            case .applicationWindows: "Application Windows"
+            case .nextWorkspace: String(localized: "Next Space")
+            case .previousWorkspace: String(localized: "Previous Space")
+            case .missionControl: String(localized: "Mission Control")
+            case .applicationWindows: String(localized: "Application Windows")
             }
         }
     }
@@ -129,16 +129,16 @@ struct RuleDraft: Equatable {
         var id: String { rawValue }
         var title: String {
             switch self {
-            case .boundedWindow: "Short wait, then type normally"
-            case .deferredUntilUp: "Wait until the key is released"
-            case .nonConsuming: "Type immediately"
+            case .boundedWindow: String(localized: "Short wait, then type normally")
+            case .deferredUntilUp: String(localized: "Wait until the key is released")
+            case .nonConsuming: String(localized: "Type immediately")
             }
         }
         var explanation: String {
             switch self {
-            case .boundedWindow: "The key is held back briefly. Clicking within the window triggers the action; otherwise the key types as usual, slightly delayed."
-            case .deferredUntilUp: "The key never types by accident, but it types only when released and does not repeat while held."
-            case .nonConsuming: "The key types instantly and the action still triggers, but the character also reaches the app."
+            case .boundedWindow: String(localized: "The key is held back briefly. Clicking within the window triggers the action; otherwise the key types as usual, slightly delayed.")
+            case .deferredUntilUp: String(localized: "The key never types by accident, but it types only when released and does not repeat while held.")
+            case .nonConsuming: String(localized: "The key types instantly and the action still triggers, but the character also reaches the app.")
             }
         }
     }
@@ -170,16 +170,15 @@ struct RuleDraft: Equatable {
     var suggestedName: String {
         switch kind {
         case .swapKeys:
-            "Swap \(KeyNames.name(for: firstKey)) and \(KeyNames.name(for: secondKey))"
+            String(localized: "Swap \(KeyNames.name(for: firstKey)) and \(KeyNames.name(for: secondKey))")
         case .remapKey:
-            "\(KeyNames.name(for: firstKey)) to \(KeyNames.name(for: secondKey))"
+            String(localized: "\(KeyNames.name(for: firstKey)) to \(KeyNames.name(for: secondKey))")
         case .modifierClick:
-            "\(modifierText) + \(KeyNames.buttonName(button)): \(action.title)"
+            String(localized: "\(modifierText) + \(KeyNames.buttonName(button)): \(action.title)")
         case .keyClick:
-            "\(KeyNames.name(for: firstKey)) + \(KeyNames.buttonName(button)): \(action.title)"
+            String(localized: "\(KeyNames.name(for: firstKey)) + \(KeyNames.buttonName(button)): \(action.title)")
         case .wheel:
-            "Mouse wheel: " + [vertical.summary.map { "vertical \($0)" }, horizontal.summary.map { "horizontal \($0)" }]
-                .compactMap { $0 }.joined(separator: "; ")
+            String(localized: "Mouse wheel")
         }
     }
 
@@ -193,23 +192,23 @@ struct RuleDraft: Equatable {
     var validationMessage: String? {
         switch kind {
         case .swapKeys, .remapKey:
-            if firstKey == secondKey { return "Choose two different keys." }
+            if firstKey == secondKey { return String(localized: "Choose two different keys.") }
             let unsupported: Set<UInt16> = [KeyCode.capsLock.rawValue, KeyCode.function.rawValue]
             if unsupported.contains(firstKey) || unsupported.contains(secondKey) {
-                return "Caps Lock and Fn cannot be remapped yet."
+                return String(localized: "Caps Lock and Fn cannot be remapped yet.")
             }
         case .modifierClick:
-            if modifiers.isEmpty { return "Choose at least one modifier." }
+            if modifiers.isEmpty { return String(localized: "Choose at least one modifier.") }
         case .keyClick:
             if KeyCode(firstKey).modifierKey != nil || firstKey == KeyCode.capsLock.rawValue || firstKey == KeyCode.function.rawValue {
-                return "Use \"Modifier + mouse button\" for modifier keys."
+                return String(localized: "Use \"Modifier + mouse button\" for modifier keys.")
             }
-            if button <= 2 { return "Letter key chords cannot use the left or right button." }
-            if !devices.isEmpty { return "Key + mouse button rules cannot be limited to a device." }
+            if button <= 2 { return String(localized: "Letter key chords cannot use the left or right button.") }
+            if !devices.isEmpty { return String(localized: "Key + mouse button rules cannot be limited to a device.") }
         case .wheel:
-            if !vertical.changesEvents && !horizontal.changesEvents { return "Change at least one direction or mode." }
-            if !devices.isEmpty { return "Scrolling cannot be limited to a device yet." }
-            if onlyApps.count > 1 || !exceptApps.isEmpty { return "Scrolling rules can be limited to one app only." }
+            if !vertical.changesEvents && !horizontal.changesEvents { return String(localized: "Change at least one direction or mode.") }
+            if !devices.isEmpty { return String(localized: "Scrolling cannot be limited to a device yet.") }
+            if onlyApps.count > 1 || !exceptApps.isEmpty { return String(localized: "Scrolling rules can be limited to one app only.") }
         }
         return nil
     }

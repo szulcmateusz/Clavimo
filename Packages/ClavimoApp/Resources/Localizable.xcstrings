@@ -1,7 +1,106 @@
 {
   "sourceLanguage": "en",
-  "version": "1.0",
   "strings": {
+    "%@  %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@  %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@  %@"
+          }
+        }
+      }
+    },
+    "%@ (%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ (%2$@)"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (%@)"
+          }
+        }
+      }
+    },
+    "%@ (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ (%2$lld)"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (%lld)"
+          }
+        }
+      }
+    },
+    "%@ (active)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (aktywny)"
+          }
+        }
+      }
+    },
+    "%@ + %@: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ + %2$@: %3$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ + %@: %@"
+          }
+        }
+      }
+    },
+    "%@ acts as %@, and %@ acts as %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ acts as %2$@, and %3$@ acts as %4$@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ działa jak %@, a %@ jak %@."
+          }
+        }
+      }
+    },
+    "%@ also types its character.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ dodatkowo wpisuje swój znak."
+          }
+        }
+      }
+    },
     "%@ cannot be mapped to itself.": {
       "localizations": {
         "pl": {
@@ -18,6 +117,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ nie da się jeszcze przemapować."
+          }
+        }
+      }
+    },
+    "%@ copy": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (kopia)"
           }
         }
       }
@@ -52,6 +161,16 @@
         }
       }
     },
+    "%@ is running": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa %@"
+          }
+        }
+      }
+    },
     "%@ is running and may conflict": {
       "localizations": {
         "pl": {
@@ -72,6 +191,22 @@
         }
       }
     },
+    "%@ to %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ to %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ na %@"
+          }
+        }
+      }
+    },
     "%@ use the same shortcut with the %@.": {
       "localizations": {
         "pl": {
@@ -88,6 +223,32 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ używa przycisku „%@” bez zezwolenia."
+          }
+        }
+      }
+    },
+    "%@ µs": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ µs"
+          }
+        }
+      }
+    },
+    "%@, inherits from %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@, inherits from %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, dziedziczy z: %@"
           }
         }
       }
@@ -122,12 +283,544 @@
         }
       }
     },
+    "%@×": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@×"
+          }
+        }
+      }
+    },
+    "%lld keyboards, %lld mice": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld keyboards, %2$lld mice"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "klawiatury: %lld, myszy: %lld"
+          }
+        }
+      }
+    },
+    "%lld lines per notch": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld linie na ząbek"
+          }
+        }
+      }
+    },
+    "%lld ms": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ms"
+          }
+        }
+      }
+    },
+    "%lld own rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "własne reguły: %lld"
+          }
+        }
+      }
+    },
+    "%lld px": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld px"
+          }
+        }
+      }
+    },
+    "%lld px per notch": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld px na ząbek"
+          }
+        }
+      }
+    },
+    "%lld rules cannot run": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły, które nie mogą działać: %lld"
+          }
+        }
+      }
+    },
+    "%lld rules that belong only to this profile will be deleted.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zostaną usunięte reguły należące tylko do tego profilu: %lld."
+          }
+        }
+      }
+    },
+    "%lld turned off": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wyłączone: %lld"
+          }
+        }
+      }
+    },
+    "A profile inherits from %@, which does not exist.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeden z profili dziedziczy z profilu %@, który nie istnieje."
+          }
+        }
+      }
+    },
+    "About": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O aplikacji"
+          }
+        }
+      }
+    },
+    "Accelerated": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przyspieszone"
+          }
+        }
+      }
+    },
+    "Accessibility": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostępność"
+          }
+        }
+      }
+    },
+    "Action": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akcja"
+          }
+        }
+      }
+    },
+    "Actions that use them will do nothing: %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akcje, które z nich korzystają, nic nie zrobią: %@."
+          }
+        }
+      }
+    },
     "Active": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Aktywne"
+          }
+        }
+      }
+    },
+    "Active profile: %@ → %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Active profile: %1$@ → %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktywny profil: %@ → %@"
+          }
+        }
+      }
+    },
+    "Add": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj"
+          }
+        }
+      }
+    },
+    "Add Profile": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj profil"
+          }
+        }
+      }
+    },
+    "Add Rule": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj regułę"
+          }
+        }
+      }
+    },
+    "Add Rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj reguły"
+          }
+        }
+      }
+    },
+    "Added": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodane"
+          }
+        }
+      }
+    },
+    "Advanced rule. Edit it in the configuration file.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguła zaawansowana. Edytuj ją w pliku konfiguracji."
+          }
+        }
+      }
+    },
+    "All": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystkie"
+          }
+        }
+      }
+    },
+    "All set.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowe."
+          }
+        }
+      }
+    },
+    "Allow Clavimo to read and change input": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pozwól Clavimo odczytywać i zmieniać wejście"
+          }
+        }
+      }
+    },
+    "Another macOS account is in use. Remapping resumes when you return.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używane jest inne konto macOS. Działanie wznowi się, gdy wrócisz."
+          }
+        }
+      }
+    },
+    "App Windows": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Okna aplikacji"
+          }
+        }
+      }
+    },
+    "Application Windows": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Okna aplikacji"
+          }
+        }
+      }
+    },
+    "Application windows": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Okna aplikacji"
+          }
+        }
+      }
+    },
+    "Applies to every mouse wheel. Trackpad and Magic Mouse scrolling keep the system settings.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dotyczy każdego kółka myszy. Przewijanie na gładziku i Magic Mouse zostaje bez zmian."
+          }
+        }
+      }
+    },
+    "Apply": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zastosuj"
+          }
+        }
+      }
+    },
+    "Ask macOS for Permission": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poproś macOS o uprawnienia"
+          }
+        }
+      }
+    },
+    "Automatic recoveries": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatyczne wznowienia"
+          }
+        }
+      }
+    },
+    "Available": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostępne"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstecz"
+          }
+        }
+      }
+    },
+    "Backup and Import": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopie i import"
+          }
+        }
+      }
+    },
+    "Both directions are created: pressing either key produces the other, including in shortcuts. Left and right modifiers are separate keys.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa w obie strony: każdy z klawiszy daje drugi, także w skrótach. Lewe i prawe modyfikatory to osobne klawisze."
+          }
+        }
+      }
+    },
+    "Built-in": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wbudowane"
+          }
+        }
+      }
+    },
+    "Bundle ID, e.g. com.apple.Safari": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Identyfikator, np. com.apple.Safari"
+          }
+        }
+      }
+    },
+    "Button %lld": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przycisk %lld"
+          }
+        }
+      }
+    },
+    "Button 4 (Back)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "przycisk 4 (Wstecz)"
+          }
+        }
+      }
+    },
+    "Button 5 (Forward)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "przycisk 5 (Dalej)"
+          }
+        }
+      }
+    },
+    "By lines": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O linie"
+          }
+        }
+      }
+    },
+    "By pixels": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O piksele"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuluj"
+          }
+        }
+      }
+    },
+    "Cannot run": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie działa"
+          }
+        }
+      }
+    },
+    "Caps Lock": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock"
+          }
+        }
+      }
+    },
+    "Caps Lock and Fn cannot be remapped yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock i Fn nie da się jeszcze przemapować."
+          }
+        }
+      }
+    },
+    "Change at least one direction or mode.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień przynajmniej jeden kierunek lub tryb."
+          }
+        }
+      }
+    },
+    "Changed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmienione"
+          }
+        }
+      }
+    },
+    "Choose at least one modifier.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz co najmniej jeden modyfikator."
           }
         }
       }
@@ -142,12 +835,62 @@
         }
       }
     },
+    "Choose two different keys.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz dwa różne klawisze."
+          }
+        }
+      }
+    },
+    "Clavimo": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clavimo"
+          }
+        }
+      }
+    },
+    "Clavimo starts in the background when you sign in to this macOS account. It cannot change input at the login screen.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clavimo uruchamia się w tle po zalogowaniu na to konto macOS. Na ekranie logowania nie może zmieniać wejścia."
+          }
+        }
+      }
+    },
     "Clavimo: %@": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Clavimo: %@"
+          }
+        }
+      }
+    },
+    "Clicking and scrolling work as usual": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klikanie i przewijanie działają normalnie"
+          }
+        }
+      }
+    },
+    "Combine keys and mouse buttons": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Łącz klawisze z przyciskami myszy"
           }
         }
       }
@@ -162,6 +905,56 @@
         }
       }
     },
+    "Command": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Command"
+          }
+        }
+      }
+    },
+    "Common": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Popularne"
+          }
+        }
+      }
+    },
+    "Conditions": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warunki"
+          }
+        }
+      }
+    },
+    "Configuration": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konfiguracja"
+          }
+        }
+      }
+    },
+    "Configuration applied.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konfiguracja zastosowana."
+          }
+        }
+      }
+    },
     "Configuration error": {
       "localizations": {
         "pl": {
@@ -172,12 +965,322 @@
         }
       }
     },
+    "Connected devices": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podłączone urządzenia"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej"
+          }
+        }
+      }
+    },
+    "Control": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Control"
+          }
+        }
+      }
+    },
+    "Copied": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skopiowano"
+          }
+        }
+      }
+    },
+    "Copy Diagnostic Report": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiuj raport diagnostyczny"
+          }
+        }
+      }
+    },
+    "Copy device ID": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiuj identyfikator urządzenia"
+          }
+        }
+      }
+    },
+    "Could not save": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się zapisać"
+          }
+        }
+      }
+    },
+    "Create a Rule for This Keyboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utwórz regułę dla tej klawiatury"
+          }
+        }
+      }
+    },
+    "Create from Scratch": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utwórz od zera"
+          }
+        }
+      }
+    },
+    "Custom": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własne"
+          }
+        }
+      }
+    },
+    "Custom scrolling": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Własne przewijanie"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń"
+          }
+        }
+      }
+    },
+    "Delete %@?": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunąć %@?"
+          }
+        }
+      }
+    },
+    "Delete Profile and Its Rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń profil i jego reguły"
+          }
+        }
+      }
+    },
+    "Delete...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń…"
+          }
+        }
+      }
+    },
+    "Device": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Urządzenie"
+          }
+        }
+      }
+    },
+    "Device recognition": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpoznawanie urządzeń"
+          }
+        }
+      }
+    },
+    "Devices": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Urządzenia"
+          }
+        }
+      }
+    },
+    "Devices (%@)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Urządzenia (%@)"
+          }
+        }
+      }
+    },
+    "Diagnostics": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostyka"
+          }
+        }
+      }
+    },
     "Disabled": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Wyłączone"
+          }
+        }
+      }
+    },
+    "Disconnected device %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odłączone urządzenie %@"
+          }
+        }
+      }
+    },
+    "Distance": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odległość"
+          }
+        }
+      }
+    },
+    "Distance and acceleration as set in macOS.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odległość i przyspieszenie jak w ustawieniach macOS."
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowe"
+          }
+        }
+      }
+    },
+    "Double-click to edit": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknij dwukrotnie, aby edytować"
+          }
+        }
+      }
+    },
+    "Down Arrow": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strzałka w dół"
+          }
+        }
+      }
+    },
+    "Duplicate": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplikuj"
+          }
+        }
+      }
+    },
+    "Each macOS account grants permissions separately. Clavimo never records typed text and makes no network connections.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każde konto macOS nadaje uprawnienia osobno. Clavimo nigdy nie zapisuje wpisywanego tekstu i nie łączy się z siecią."
+          }
+        }
+      }
+    },
+    "Each notch glides a fixed distance over a short animation, like a trackpad. Moving the trackpad or pausing stops it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każdy ząbek płynnie przesuwa stałą odległość, jak na gładziku. Ruch na gładziku albo pauza zatrzymuje animację."
+          }
+        }
+      }
+    },
+    "Each profile uses its own rules plus the rules of Default. A rule in a profile replaces a Default rule with the same trigger.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każdy profil używa własnych reguł oraz reguł profilu Domyślny. Reguła w profilu zastępuje regułę z profilu Domyślny o tym samym wyzwalaczu."
+          }
+        }
+      }
+    },
+    "Edit...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edytuj…"
           }
         }
       }
@@ -202,6 +1305,146 @@
         }
       }
     },
+    "End": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End"
+          }
+        }
+      }
+    },
+    "Escape": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escape"
+          }
+        }
+      }
+    },
+    "Events": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zdarzenia"
+          }
+        }
+      }
+    },
+    "Events handled": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obsłużone zdarzenia"
+          }
+        }
+      }
+    },
+    "Everything happens on your Mac. Clavimo never records what you type and makes no network connections.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystko dzieje się na Twoim Macu. Clavimo nigdy nie zapisuje tego, co piszesz, i nie łączy się z siecią."
+          }
+        }
+      }
+    },
+    "Experimental: the rule applies only when Clavimo can tell which device sent the input.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eksperymentalne: reguła działa tylko wtedy, gdy Clavimo rozpozna, z którego urządzenia przyszło wejście."
+          }
+        }
+      }
+    },
+    "Export...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eksportuj…"
+          }
+        }
+      }
+    },
+    "Exported files contain your rules, app identifiers and device IDs, never anything you typed. Importing shows the changes before anything is applied.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eksportowany plik zawiera Twoje reguły, identyfikatory aplikacji i urządzeń, nigdy niczego, co wpisałeś. Import najpierw pokazuje zmiany, a dopiero potem je stosuje."
+          }
+        }
+      }
+    },
+    "Exported to %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyeksportowano do %@."
+          }
+        }
+      }
+    },
+    "File": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plik"
+          }
+        }
+      }
+    },
+    "Fn": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn"
+          }
+        }
+      }
+    },
+    "Fn + left click: previous Space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn + lewy klik: poprzednie biurko"
+          }
+        }
+      }
+    },
+    "Fn + right click: next Space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn + prawy klik: następne biurko"
+          }
+        }
+      }
+    },
+    "Fn + side button: Mission Control": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn + boczny przycisk: Mission Control"
+          }
+        }
+      }
+    },
     "For 1 Hour": {
       "localizations": {
         "pl": {
@@ -222,12 +1465,372 @@
         }
       }
     },
+    "Forward Delete": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forward Delete"
+          }
+        }
+      }
+    },
+    "Function keys": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisze funkcyjne"
+          }
+        }
+      }
+    },
+    "General": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ogólne"
+          }
+        }
+      }
+    },
+    "Get Started": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaczynamy"
+          }
+        }
+      }
+    },
+    "Glide": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Płynność"
+          }
+        }
+      }
+    },
+    "Grant Accessibility and Input Monitoring in General to start.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aby zacząć, nadaj uprawnienia Dostępność i Monitorowanie wejścia w zakładce Ogólne."
+          }
+        }
+      }
+    },
     "Grant Permissions...": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Nadaj uprawnienia…"
+          }
+        }
+      }
+    },
+    "Granted": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nadane"
+          }
+        }
+      }
+    },
+    "Held back": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstrzymane"
+          }
+        }
+      }
+    },
+    "Help": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help"
+          }
+        }
+      }
+    },
+    "Hold": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trzymaj"
+          }
+        }
+      }
+    },
+    "Hold F + side button: next Space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trzymaj F + boczny przycisk: następne biurko"
+          }
+        }
+      }
+    },
+    "Hold Fn and click to switch Spaces, or open Mission Control with a side button.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj Fn i kliknij, aby przełączyć biurko, albo otwórz Mission Control bocznym przyciskiem."
+          }
+        }
+      }
+    },
+    "Home": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
+          }
+        }
+      }
+    },
+    "Horizontal": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poziomo"
+          }
+        }
+      }
+    },
+    "Horizontal: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poziomo: %@"
+          }
+        }
+      }
+    },
+    "How Clavimo's connection to keyboard and mouse input is doing.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stan połączenia Clavimo z klawiaturą i myszą."
+          }
+        }
+      }
+    },
+    "How device rules work": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jak działają reguły dla urządzeń"
+          }
+        }
+      }
+    },
+    "I can type normally in another app": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mogę normalnie pisać w innej aplikacji"
+          }
+        }
+      }
+    },
+    "I found the Clavimo icon in the menu bar; its menu can pause or disable remapping": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widzę ikonę Clavimo w pasku menu; jej menu pozwala wstrzymać lub wyłączyć działanie"
+          }
+        }
+      }
+    },
+    "If a mouse side button does nothing later, check whether Logi Options+ or a similar tool already uses it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeśli boczny przycisk myszy nie reaguje, sprawdź, czy nie używa go już Logi Options+ lub podobne narzędzie."
+          }
+        }
+      }
+    },
+    "If anything feels wrong, choose Emergency Disable in the menu bar, or quit Clavimo. Input goes back to normal immediately.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeśli coś działa nie tak, wybierz w pasku menu „Wyłącz awaryjnie” albo zakończ Clavimo. Klawiatura i mysz od razu wrócą do normy."
+          }
+        }
+      }
+    },
+    "Import %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import: %@"
+          }
+        }
+      }
+    },
+    "Import...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importuj…"
+          }
+        }
+      }
+    },
+    "Input Monitoring": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monitorowanie wejścia"
+          }
+        }
+      }
+    },
+    "Input connection": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Połączenie z wejściem"
+          }
+        }
+      }
+    },
+    "Input inspector": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inspektor wejścia"
+          }
+        }
+      }
+    },
+    "Input passes through unchanged until you turn remapping on.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wejście przechodzi bez zmian, dopóki nie włączysz działania."
+          }
+        }
+      }
+    },
+    "Inspect input": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podgląd wejścia"
+          }
+        }
+      }
+    },
+    "Interruptions by macOS": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przerwy wymuszone przez macOS"
+          }
+        }
+      }
+    },
+    "Key %u": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz %u"
+          }
+        }
+      }
+    },
+    "Key + mouse button": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz + przycisk myszy"
+          }
+        }
+      }
+    },
+    "Key + mouse button rules cannot be limited to a device.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguł klawisz + przycisk myszy nie można ograniczyć do urządzenia."
+          }
+        }
+      }
+    },
+    "Keyboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawiatura"
+          }
+        }
+      }
+    },
+    "Keyboard and mouse rules for macOS": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły klawiatury i myszy dla macOS"
+          }
+        }
+      }
+    },
+    "Keyboard and mouse rules for macOS.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły klawiatury i myszy dla macOS."
+          }
+        }
+      }
+    },
+    "Launch at login": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchamiaj po zalogowaniu"
           }
         }
       }
@@ -242,12 +1845,262 @@
         }
       }
     },
+    "Leave everything empty to apply the rule everywhere.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zostaw puste, aby reguła działała wszędzie."
+          }
+        }
+      }
+    },
+    "Left": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewy"
+          }
+        }
+      }
+    },
+    "Left Arrow": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strzałka w lewo"
+          }
+        }
+      }
+    },
+    "Left Button": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lewy przycisk"
+          }
+        }
+      }
+    },
+    "Left Command": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lewy Command"
+          }
+        }
+      }
+    },
+    "Left Control": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lewy Control"
+          }
+        }
+      }
+    },
+    "Left Option": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lewy Option"
+          }
+        }
+      }
+    },
+    "Left Shift": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lewy Shift"
+          }
+        }
+      }
+    },
+    "Lets Clavimo change and replace keyboard and mouse events.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pozwala Clavimo zmieniać i zastępować zdarzenia klawiatury i myszy."
+          }
+        }
+      }
+    },
+    "Lets Clavimo read keyboard events and tell devices apart.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pozwala Clavimo odczytywać zdarzenia klawiatury i rozróżniać urządzenia."
+          }
+        }
+      }
+    },
+    "Letter key chords cannot use the left or right button.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skróty z klawiszem literowym nie mogą używać lewego ani prawego przycisku."
+          }
+        }
+      }
+    },
+    "Letters and digits": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Litery i cyfry"
+          }
+        }
+      }
+    },
+    "Line %lld": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiersz %lld"
+          }
+        }
+      }
+    },
+    "Make Active": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustaw jako aktywny"
+          }
+        }
+      }
+    },
+    "Manage Profiles": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zarządzaj profilami"
+          }
+        }
+      }
+    },
+    "Microseconds": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrosekundy"
+          }
+        }
+      }
+    },
+    "Middle": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Środkowy"
+          }
+        }
+      }
+    },
+    "Middle Button": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "środkowy przycisk"
+          }
+        }
+      }
+    },
+    "Mission Control": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control"
+          }
+        }
+      }
+    },
     "Modifier + key shortcuts are not supported yet; use a mouse button.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Skróty modyfikator + klawisz nie są jeszcze obsługiwane; użyj przycisku myszy."
+          }
+        }
+      }
+    },
+    "Modifier + mouse button": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikator + przycisk myszy"
+          }
+        }
+      }
+    },
+    "Modifiers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikatory"
+          }
+        }
+      }
+    },
+    "More actions for %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Więcej działań dla: %@"
+          }
+        }
+      }
+    },
+    "Mouse": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mysz"
+          }
+        }
+      }
+    },
+    "Mouse & Scrolling": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mysz i przewijanie"
+          }
+        }
+      }
+    },
+    "Mouse button": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przycisk myszy"
           }
         }
       }
@@ -282,12 +2135,368 @@
         }
       }
     },
+    "Mouse wheel": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kółko myszy"
+          }
+        }
+      }
+    },
+    "Mouse wheel direction": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kierunek kółka myszy"
+          }
+        }
+      }
+    },
+    "Mouse wheel settings are edited in Mouse & Scrolling.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia kółka myszy zmienisz w zakładce Mysz i przewijanie."
+          }
+        }
+      }
+    },
+    "Mouse wheels scroll like this: %@. Trackpads are not changed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kółka myszy przewijają tak: %@. Gładzik zostaje bez zmian."
+          }
+        }
+      }
+    },
+    "Move left a space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przejdź o jedno biurko w lewo"
+          }
+        }
+      }
+    },
+    "Move right a space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przejdź o jedno biurko w prawo"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwa"
+          }
+        }
+      }
+    },
+    "Needed to change, replace or hold back keyboard and mouse events.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potrzebne do zmieniania, zastępowania i wstrzymywania zdarzeń klawiatury i myszy."
+          }
+        }
+      }
+    },
+    "Needed to read keyboard events and tell devices apart.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potrzebne do odczytu zdarzeń klawiatury i rozróżniania urządzeń."
+          }
+        }
+      }
+    },
     "Needs approval in System Settings": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Wymaga zatwierdzenia w Ustawieniach systemowych"
+          }
+        }
+      }
+    },
+    "New Rule": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nowa reguła"
+          }
+        }
+      }
+    },
+    "New profile name, for example Games": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwa nowego profilu, np. Gry"
+          }
+        }
+      }
+    },
+    "New profiles": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nowe profile"
+          }
+        }
+      }
+    },
+    "Next Space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Następne biurko"
+          }
+        }
+      }
+    },
+    "No configuration is loaded.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konfiguracja nie jest wczytana."
+          }
+        }
+      }
+    },
+    "No measurements yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak pomiarów."
+          }
+        }
+      }
+    },
+    "Not granted": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nienadane"
+          }
+        }
+      }
+    },
+    "Not in %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie w: %@."
+          }
+        }
+      }
+    },
+    "Nothing changes.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nic się nie zmienia."
+          }
+        }
+      }
+    },
+    "Off": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączone"
+          }
+        }
+      }
+    },
+    "On": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączone"
+          }
+        }
+      }
+    },
+    "Only in %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tylko w: %@."
+          }
+        }
+      }
+    },
+    "Only on %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tylko na: %@."
+          }
+        }
+      }
+    },
+    "Open Keyboard Shortcuts": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz skróty klawiszowe"
+          }
+        }
+      }
+    },
+    "Open Login Items Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz ustawienia logowania"
+          }
+        }
+      }
+    },
+    "Open Mouse Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz ustawienia myszy"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz ustawienia"
+          }
+        }
+      }
+    },
+    "Open source under the MIT License. Clavimo processes input on your Mac only: it never records typed text and makes no network connections.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwarte oprogramowanie na licencji MIT. Clavimo przetwarza wejście wyłącznie na Twoim Macu: nigdy nie zapisuje wpisywanego tekstu i nie łączy się z siecią."
+          }
+        }
+      }
+    },
+    "Opens %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwiera: %@"
+          }
+        }
+      }
+    },
+    "Option": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Option"
+          }
+        }
+      }
+    },
+    "Ordinary clicks are never affected: only clicks made while exactly these modifiers are held are replaced by the action.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwykłe kliknięcia działają jak dotąd: akcją zastępowane są tylko kliknięcia przy wciśniętych dokładnie tych modyfikatorach."
+          }
+        }
+      }
+    },
+    "Otherwise %@ types normally, up to %lld ms later.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Otherwise %1$@ types normally, up to %2$lld ms later."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W przeciwnym razie %@ wpisuje się normalnie, najwyżej %lld ms później."
+          }
+        }
+      }
+    },
+    "Otherwise %@ types when you release it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W przeciwnym razie %@ wpisuje się po puszczeniu."
+          }
+        }
+      }
+    },
+    "Overview": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przegląd"
+          }
+        }
+      }
+    },
+    "Page Down": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page Down"
+          }
+        }
+      }
+    },
+    "Page Up": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page Up"
           }
         }
       }
@@ -322,12 +2531,258 @@
         }
       }
     },
+    "Paused. Resumes at %@.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstrzymane. Wznowienie o %@."
+          }
+        }
+      }
+    },
+    "Percentile": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Percentyl"
+          }
+        }
+      }
+    },
+    "Permissions": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uprawnienia"
+          }
+        }
+      }
+    },
+    "Pick a few rules to start": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz kilka reguł na start"
+          }
+        }
+      }
+    },
+    "Pick one and adjust it, or create a rule from scratch.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz jeden i dopasuj albo utwórz regułę od zera."
+          }
+        }
+      }
+    },
+    "Pixels": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Piksele"
+          }
+        }
+      }
+    },
+    "Pointer acceleration": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przyspieszenie wskaźnika"
+          }
+        }
+      }
+    },
     "Pointer speed and acceleration are set in System Settings > Mouse.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Szybkość i przyspieszenie wskaźnika ustawisz w Ustawieniach systemowych > Mysz."
+          }
+        }
+      }
+    },
+    "Pointing device": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Urządzenie wskazujące"
+          }
+        }
+      }
+    },
+    "Press a key or a mouse button.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij klawisz albo przycisk myszy."
+          }
+        }
+      }
+    },
+    "Press the physical key to use. Remapping pauses while recording.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij klawisz, którego chcesz użyć. Na czas nagrywania działanie jest wstrzymane."
+          }
+        }
+      }
+    },
+    "Pressed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnięty"
+          }
+        }
+      }
+    },
+    "Pressing %@ sends %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Pressing %1$@ sends %2$@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnięcie %@ wysyła %@."
+          }
+        }
+      }
+    },
+    "Preview: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podgląd: %@"
+          }
+        }
+      }
+    },
+    "Previous Space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprzednie biurko"
+          }
+        }
+      }
+    },
+    "Priority decides between mouse chords with the same trigger. Key rules for the same key need different conditions; the most specific one wins.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priorytet rozstrzyga między skrótami z myszą o tym samym wyzwalaczu. Reguły dla tego samego klawisza muszą mieć różne warunki; wygrywa najbardziej szczegółowa."
+          }
+        }
+      }
+    },
+    "Priority: %lld": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priorytet: %lld"
+          }
+        }
+      }
+    },
+    "Private by design": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prywatność od podstaw"
+          }
+        }
+      }
+    },
+    "Problems": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problemy"
+          }
+        }
+      }
+    },
+    "Processing time": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czas przetwarzania"
+          }
+        }
+      }
+    },
+    "Profile": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
+          }
+        }
+      }
+    },
+    "Profile: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil: %@"
+          }
+        }
+      }
+    },
+    "Profiles": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
+          }
+        }
+      }
+    },
+    "Project on GitHub": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projekt na GitHubie"
+          }
+        }
+      }
+    },
+    "Quick actions": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybkie akcje"
           }
         }
       }
@@ -342,12 +2797,182 @@
         }
       }
     },
+    "Ran action": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akcja"
+          }
+        }
+      }
+    },
+    "Ready to go": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystko gotowe"
+          }
+        }
+      }
+    },
+    "Record": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nagraj"
+          }
+        }
+      }
+    },
+    "Refresh": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odśwież"
+          }
+        }
+      }
+    },
+    "Released": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puszczony"
+          }
+        }
+      }
+    },
+    "Reload": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wczytaj ponownie"
+          }
+        }
+      }
+    },
     "Reload Configuration": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Wczytaj konfigurację ponownie"
+          }
+        }
+      }
+    },
+    "Remap": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przemapuj"
+          }
+        }
+      }
+    },
+    "Remap a key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przemapuj klawisz"
+          }
+        }
+      }
+    },
+    "Remap keys": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przemapowuj klawisze"
+          }
+        }
+      }
+    },
+    "Remapping": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działanie"
+          }
+        }
+      }
+    },
+    "Remove": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń"
+          }
+        }
+      }
+    },
+    "Removed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunięte"
+          }
+        }
+      }
+    },
+    "Removed profiles": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunięte profile"
+          }
+        }
+      }
+    },
+    "Rename...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień nazwę…"
+          }
+        }
+      }
+    },
+    "Request Permissions": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poproś o uprawnienia"
+          }
+        }
+      }
+    },
+    "Restore Previous Version...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przywróć poprzednią wersję…"
+          }
+        }
+      }
+    },
+    "Restore the previous version": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przywróć poprzednią wersję"
           }
         }
       }
@@ -372,12 +2997,242 @@
         }
       }
     },
+    "Return": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Return"
+          }
+        }
+      }
+    },
+    "Reverse direction": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odwróć kierunek"
+          }
+        }
+      }
+    },
+    "Reverse it and scroll a fixed distance per notch, without touching the trackpad.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odwróć je i przewijaj o stałą odległość na ząbek, bez zmian na gładziku."
+          }
+        }
+      }
+    },
+    "Revert": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cofnij"
+          }
+        }
+      }
+    },
+    "Review what changes. Your current configuration is kept as the previous version.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprawdź, co się zmieni. Obecna konfiguracja zostanie zachowana jako poprzednia wersja."
+          }
+        }
+      }
+    },
+    "Right": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawy"
+          }
+        }
+      }
+    },
+    "Right Arrow": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strzałka w prawo"
+          }
+        }
+      }
+    },
+    "Right Button": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prawy przycisk"
+          }
+        }
+      }
+    },
+    "Right Command": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prawy Command"
+          }
+        }
+      }
+    },
+    "Right Control": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prawy Control"
+          }
+        }
+      }
+    },
+    "Right Option": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prawy Option"
+          }
+        }
+      }
+    },
+    "Right Shift": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prawy Shift"
+          }
+        }
+      }
+    },
+    "Rule type": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typ reguły"
+          }
+        }
+      }
+    },
+    "Rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły"
+          }
+        }
+      }
+    },
+    "Rules can be limited to one of these devices.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły można ograniczyć do jednego z tych urządzeń."
+          }
+        }
+      }
+    },
+    "Rules work with any keyboard and mouse. You can also limit a rule to one of these later.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły działają z każdą klawiaturą i myszą. Później możesz też ograniczyć regułę do jednego z tych urządzeń."
+          }
+        }
+      }
+    },
+    "Running Apps": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchomione aplikacje"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zachowaj"
+          }
+        }
+      }
+    },
+    "Scroll here after applying to feel the result.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Po zastosowaniu przewiń tutaj, żeby sprawdzić efekt."
+          }
+        }
+      }
+    },
     "Scroll settings cannot be limited to one mouse yet.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Ustawień przewijania nie można jeszcze ograniczyć do jednej myszy."
+          }
+        }
+      }
+    },
+    "Scrolling cannot be limited to a device yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewijania nie można jeszcze ograniczyć do urządzenia."
+          }
+        }
+      }
+    },
+    "Scrolling rules can be limited to one app only.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustawienia przewijania można ograniczyć tylko do jednej aplikacji."
+          }
+        }
+      }
+    },
+    "Search rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukaj reguł"
+          }
+        }
+      }
+    },
+    "Section (ISO)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paragraf (ISO)"
           }
         }
       }
@@ -402,6 +3257,202 @@
         }
       }
     },
+    "Shift": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shift"
+          }
+        }
+      }
+    },
+    "Short wait, then type normally": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krótkie czekanie, potem zwykłe pisanie"
+          }
+        }
+      }
+    },
+    "Show": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż"
+          }
+        }
+      }
+    },
+    "Show Rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż reguły"
+          }
+        }
+      }
+    },
+    "Show in Finder": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż w Finderze"
+          }
+        }
+      }
+    },
+    "Shows the last keys and buttons and what Clavimo did with them. Kept in memory only and cleared when you leave this page.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokazuje ostatnie klawisze i przyciski oraz to, co Clavimo z nimi zrobiło. Tylko w pamięci, czyszczone po opuszczeniu tej strony."
+          }
+        }
+      }
+    },
+    "Skip": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomiń"
+          }
+        }
+      }
+    },
+    "Skip for Now": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomiń na razie"
+          }
+        }
+      }
+    },
+    "Smooth": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Płynnie"
+          }
+        }
+      }
+    },
+    "Some macOS shortcuts are turned off": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niektóre skróty macOS są wyłączone"
+          }
+        }
+      }
+    },
+    "Space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spacja"
+          }
+        }
+      }
+    },
+    "Speed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybkość"
+          }
+        }
+      }
+    },
+    "Start Clavimo": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchom Clavimo"
+          }
+        }
+      }
+    },
+    "Start Clavimo when I log in": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchamiaj Clavimo po zalogowaniu"
+          }
+        }
+      }
+    },
+    "Start with a template": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zacznij od szablonu"
+          }
+        }
+      }
+    },
+    "Startup": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchamianie"
+          }
+        }
+      }
+    },
+    "Startup status": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stan uruchamiania"
+          }
+        }
+      }
+    },
+    "Status": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stan"
+          }
+        }
+      }
+    },
+    "Step %lld of %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Step %1$lld of %2$lld"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krok %lld z %lld"
+          }
+        }
+      }
+    },
     "Stopped (safe mode)": {
       "localizations": {
         "pl": {
@@ -412,12 +3463,98 @@
         }
       }
     },
+    "Swap": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamiana"
+          }
+        }
+      }
+    },
+    "Swap %@ and %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Swap %1$@ and %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamiana: %@ i %@"
+          }
+        }
+      }
+    },
+    "Swap Command and Option (left)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamiana Command i Option (lewe)"
+          }
+        }
+      }
+    },
+    "Swap Command and Option (right)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamiana Command i Option (prawe)"
+          }
+        }
+      }
+    },
+    "Swap Command and Option, or turn any key into another.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamień Command z Option albo zmień dowolny klawisz w inny."
+          }
+        }
+      }
+    },
+    "Swap two keys": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamień dwa klawisze"
+          }
+        }
+      }
+    },
     "Swapping both sides at once is not supported. Add one rule for each side.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Zamiana obu stron naraz nie jest obsługiwana. Dodaj osobną regułę dla każdej strony."
+          }
+        }
+      }
+    },
+    "System": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Systemowe"
+          }
+        }
+      }
+    },
+    "Tab": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tab"
           }
         }
       }
@@ -442,6 +3579,16 @@
         }
       }
     },
+    "The active profile %@ does not exist.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktywny profil %@ nie istnieje."
+          }
+        }
+      }
+    },
     "The condition %@ is not supported.": {
       "localizations": {
         "pl": {
@@ -462,12 +3609,52 @@
         }
       }
     },
+    "The configuration file could not be loaded.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się wczytać pliku konfiguracji."
+          }
+        }
+      }
+    },
     "The configuration file is not valid: %@": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Plik konfiguracji jest nieprawidłowy: %@"
+          }
+        }
+      }
+    },
+    "The configuration was made by a newer version of Clavimo (format %lld). Update Clavimo to use it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konfiguracja pochodzi z nowszej wersji Clavimo (format %lld). Zaktualizuj Clavimo, aby jej użyć."
+          }
+        }
+      }
+    },
+    "The exact set of held modifiers must match.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wciśnięte modyfikatory muszą zgadzać się dokładnie."
+          }
+        }
+      }
+    },
+    "The key is held back briefly. Clicking within the window triggers the action; otherwise the key types as usual, slightly delayed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz jest na chwilę wstrzymywany. Kliknięcie w tym czasie uruchamia akcję; w przeciwnym razie klawisz wpisuje się normalnie, z lekkim opóźnieniem."
           }
         }
       }
@@ -482,12 +3669,42 @@
         }
       }
     },
+    "The key never types by accident, but it types only when released and does not repeat while held.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz nigdy nie wpisze się przypadkiem, ale wpisuje się dopiero po puszczeniu i nie powtarza się przy przytrzymaniu."
+          }
+        }
+      }
+    },
+    "The key types instantly and the action still triggers, but the character also reaches the app.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz wpisuje się od razu i akcja też działa, ale znak trafia do aplikacji."
+          }
+        }
+      }
+    },
     "The key uses a code format Clavimo does not read yet.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Klawisz ma zapis kodu, którego Clavimo jeszcze nie odczytuje."
+          }
+        }
+      }
+    },
+    "The macOS acceleration curve, faster or slower.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krzywa przyspieszenia macOS, szybciej lub wolniej."
           }
         }
       }
@@ -512,12 +3729,52 @@
         }
       }
     },
+    "The profile %@ inherits from itself through other profiles.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil %@ dziedziczy sam z siebie przez inne profile."
+          }
+        }
+      }
+    },
+    "The report contains versions, settings and measurements, never what you typed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raport zawiera wersje, ustawienia i pomiary, nigdy tego, co wpisałeś."
+          }
+        }
+      }
+    },
     "The rule is incomplete. Edit or delete it.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Reguła jest niekompletna. Popraw ją albo usuń."
+          }
+        }
+      }
+    },
+    "The same distance for every notch, without acceleration. Experimental.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta sama odległość dla każdego ząbka, bez przyspieszenia. Eksperymentalne."
+          }
+        }
+      }
+    },
+    "The same number of lines for every notch, without acceleration.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta sama liczba linii dla każdego ząbka, bez przyspieszenia."
           }
         }
       }
@@ -572,12 +3829,108 @@
         }
       }
     },
+    "Then": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wtedy"
+          }
+        }
+      }
+    },
+    "There is no previous version yet. One is kept every time you change a rule.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie ma jeszcze poprzedniej wersji. Zachowuje się ją przy każdej zmianie reguły."
+          }
+        }
+      }
+    },
+    "This profile also uses %lld rules inherited from %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "This profile also uses %1$lld rules inherited from %2$@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten profil używa też odziedziczonych reguł (%lld) z: %@."
+          }
+        }
+      }
+    },
+    "Time Clavimo adds to each event, measured on this Mac. It does not include USB, Bluetooth or display latency.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czas, jaki Clavimo dodaje do każdego zdarzenia, zmierzony na tym Macu. Nie obejmuje opóźnień USB, Bluetooth ani ekranu."
+          }
+        }
+      }
+    },
     "Trackpad settings are not changed by Clavimo.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Clavimo nie zmienia ustawień gładzika."
+          }
+        }
+      }
+    },
+    "Try it": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wypróbuj"
+          }
+        }
+      }
+    },
+    "Tune the mouse wheel": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostosuj kółko myszy"
+          }
+        }
+      }
+    },
+    "Turn on Clavimo in both lists. This page updates by itself.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz Clavimo na obu listach. Ta strona odświeży się sama."
+          }
+        }
+      }
+    },
+    "Turn remapping on to collect measurements.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz działanie, aby zbierać pomiary."
+          }
+        }
+      }
+    },
+    "Turn remapping on when Clavimo starts": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączaj działanie przy starcie Clavimo"
           }
         }
       }
@@ -602,12 +3955,52 @@
         }
       }
     },
+    "Two tools changing the keyboard or mouse at once can apply rules twice. Quit one of them.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dwa narzędzia zmieniające klawiaturę lub mysz naraz mogą zastosować reguły podwójnie. Zakończ jedno z nich."
+          }
+        }
+      }
+    },
+    "Type immediately": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wpisuj od razu"
+          }
+        }
+      }
+    },
+    "Unavailable (Input Monitoring needed)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niedostępne (wymaga Monitorowania wejścia)"
+          }
+        }
+      }
+    },
     "Unavailable for this copy of the app": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Niedostępne dla tej kopii aplikacji"
+          }
+        }
+      }
+    },
+    "Unchanged": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bez zmian"
           }
         }
       }
@@ -642,6 +4035,76 @@
         }
       }
     },
+    "Up Arrow": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strzałka w górę"
+          }
+        }
+      }
+    },
+    "Use \"Modifier + mouse button\" for modifier keys.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dla modyfikatorów użyj typu „Modyfikator + przycisk myszy”."
+          }
+        }
+      }
+    },
+    "Uses the macOS Mission Control keyboard shortcuts (Control + Arrow keys). They must be enabled in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używa skrótów Mission Control w macOS (Control + strzałki). Muszą być włączone w Ustawieniach systemowych > Klawiatura > Skróty klawiszowe > Mission Control."
+          }
+        }
+      }
+    },
+    "Version %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wersja %@"
+          }
+        }
+      }
+    },
+    "Vertical": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pionowo"
+          }
+        }
+      }
+    },
+    "Vertical: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pionowo: %@"
+          }
+        }
+      }
+    },
+    "Wait until the key is released": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czekaj do puszczenia klawisza"
+          }
+        }
+      }
+    },
     "Waiting for permissions": {
       "localizations": {
         "pl": {
@@ -651,6 +4114,269 @@
           }
         }
       }
+    },
+    "Welcome to Clavimo": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Witaj w Clavimo"
+          }
+        }
+      }
+    },
+    "Wheel": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kółko"
+          }
+        }
+      }
+    },
+    "When": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kiedy"
+          }
+        }
+      }
+    },
+    "When you start Clavimo, it lives in the menu bar. Check that everything still feels normal:": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Po uruchomieniu Clavimo działa w pasku menu. Sprawdź, czy wszystko działa normalnie:"
+          }
+        }
+      }
+    },
+    "While waiting": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podczas czekania"
+          }
+        }
+      }
+    },
+    "While you hold %@, the %@ runs %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "While you hold %1$@, the %2$@ runs %3$@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdy trzymasz %@, %@ uruchamia: %@."
+          }
+        }
+      }
+    },
+    "While you hold %@, the %@ runs %@. Other clicks work as usual.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "While you hold %1$@, the %2$@ runs %3$@. Other clicks work as usual."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdy trzymasz %@, %@ uruchamia: %@. Pozostałe kliknięcia działają normalnie."
+          }
+        }
+      }
+    },
+    "Window: %lld ms": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czas oczekiwania: %lld ms"
+          }
+        }
+      }
+    },
+    "You can change or remove them at any time in Rules.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Możesz je w każdej chwili zmienić lub usunąć w zakładce Reguły."
+          }
+        }
+      }
+    },
+    "Your devices": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje urządzenia"
+          }
+        }
+      }
+    },
+    "Your rules are applied to keyboard and mouse input.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje reguły działają na klawiaturze i myszy."
+          }
+        }
+      }
+    },
+    "all enabled": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "wszystkie włączone"
+          }
+        }
+      }
+    },
+    "left": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "lewy"
+          }
+        }
+      }
+    },
+    "macOS asks you to approve this once, in System Settings. Each macOS account approves separately, and you can revoke it at any time.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS poprosi o jednorazową zgodę w Ustawieniach systemowych. Każde konto macOS zatwierdza ją osobno i w każdej chwili możesz ją cofnąć."
+          }
+        }
+      }
+    },
+    "macOS does not say which device a key press came from. When a rule is limited to a device, Clavimo asks the connected devices which one is holding the key. If two devices report it, or none does, the rule does not apply. Two devices of the same model share an ID.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS nie podaje, z którego urządzenia pochodzi naciśnięcie. Gdy reguła jest ograniczona do urządzenia, Clavimo pyta podłączone urządzenia, które z nich trzyma klawisz. Jeśli zgłoszą to dwa albo żadne, reguła nie działa. Dwa urządzenia tego samego modelu mają ten sam identyfikator."
+          }
+        }
+      }
+    },
+    "macOS sets pointer speed and acceleration for all mice. Turn acceleration off in Mouse > Advanced for movement that matches your hand exactly.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybkość i przyspieszenie wskaźnika macOS ustawia dla wszystkich myszy. Wyłącz przyspieszenie w Mysz > Zaawansowane, aby ruch kursora dokładnie odpowiadał ruchowi ręki."
+          }
+        }
+      }
+    },
+    "macOS stopped the input connection several times. Resume after checking for conflicts.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS kilka razy przerwał połączenie z wejściem. Wznów po sprawdzeniu konfliktów."
+          }
+        }
+      }
+    },
+    "pointer acceleration off": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "przyspieszenie wskaźnika wyłączone"
+          }
+        }
+      }
+    },
+    "pointer acceleration on": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "przyspieszenie wskaźnika włączone"
+          }
+        }
+      }
+    },
+    "reversed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "odwrócone"
+          }
+        }
+      }
+    },
+    "right": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "prawy"
+          }
+        }
+      }
+    },
+    "smooth, %lld px per notch": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "płynnie, %lld px na ząbek"
+          }
+        }
+      }
+    },
+    "space": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "spacja"
+          }
+        }
+      }
+    },
+    "speed %@×": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "szybkość %@×"
+          }
+        }
+      }
+    },
+    "µs": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "µs"
+          }
+        }
+      }
     }
-  }
+  },
+  "version": "1.0"
 }

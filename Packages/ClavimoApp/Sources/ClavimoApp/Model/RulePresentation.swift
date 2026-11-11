@@ -20,7 +20,7 @@ extension KeyNames {
             0x3B: ("⌃", "L"), 0x3E: ("⌃", "R"), 0x38: ("⇧", "L"), 0x3C: ("⇧", "R"),
         ]
         if let (glyph, caption) = side[code] {
-            return (glyph, String(localized: caption == "L" ? "left" : "right"))
+            return (glyph, caption == "L" ? String(localized: "left") : String(localized: "right"))
         }
         let glyphs: [UInt16: String] = [
             0x39: "⇪", 0x35: "esc", 0x24: "↩", 0x30: "⇥", 0x31: String(localized: "space"), 0x33: "⌫", 0x75: "⌦",
@@ -131,7 +131,8 @@ extension RuleDraft {
         if !devices.isEmpty {
             text += " " + String(localized: "Only on \(devices.map(DeviceNames.name).formatted(.list(type: .or))).")
         }
-        return text
+        // Key names such as "prawy Command" can start the sentence.
+        return text.prefix(1).localizedUppercase + text.dropFirst()
     }
 }
 
