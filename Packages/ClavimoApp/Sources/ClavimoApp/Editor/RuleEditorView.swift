@@ -16,10 +16,12 @@ struct RuleEditorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            preview
             Form {
                 Section {
                     Picker("Rule type", selection: $draft.kind) {
-                        ForEach(RuleDraft.Kind.allCases) { Text($0.title).tag($0) }
+                        // Mouse wheel settings have their own pane.
+                        ForEach(RuleDraft.Kind.allCases.filter { $0 != .wheel || draft.kind == .wheel }) { Text($0.title).tag($0) }
                     }
                     TextField("Name", text: $draft.name, prompt: Text(draft.suggestedName))
                 }
@@ -59,7 +61,23 @@ struct RuleEditorView: View {
             }
             .padding(12)
         }
-        .frame(width: 560, height: 620)
+        .frame(width: 600, height: 680)
+    }
+
+    /// Live summary of the rule being edited, in keycaps and in words.
+    private var preview: some View {
+        VStack(alignment: .leading, spacing: Spacing.s) {
+            RuleTokensView(tokens: draft.tokens)
+            Text(draft.sentence)
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityLabel(String(localized: "Preview: \(draft.sentence)"))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Spacing.l)
+        .background(Brand.violet.opacity(0.08))
+        .animation(.easeOut(duration: 0.15), value: draft)
     }
 
     @ViewBuilder

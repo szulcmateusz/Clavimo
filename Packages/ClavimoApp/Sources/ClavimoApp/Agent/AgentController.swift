@@ -306,7 +306,7 @@ final class AgentController {
 
 /// Deep links into System Settings.
 enum SystemSettingsLink {
-    case accessibility, inputMonitoring, loginItems, mouse
+    case accessibility, inputMonitoring, loginItems, mouse, keyboardShortcuts
 
     private var url: String {
         switch self {
@@ -314,6 +314,7 @@ enum SystemSettingsLink {
         case .inputMonitoring: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent"
         case .loginItems: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension"
         case .mouse: "x-apple.systempreferences:com.apple.Mouse-Settings.extension"
+        case .keyboardShortcuts: "x-apple.systempreferences:com.apple.Keyboard-Settings.extension"
         }
     }
 
