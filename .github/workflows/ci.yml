@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and test (macOS)
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Show toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+
+      - name: Test ClavimoCore
+        run: swift test --package-path Packages/ClavimoCore
+
+      - name: Test ClavimoQuartz
+        run: swift test --package-path Packages/ClavimoQuartz
+
+      - name: Test ClavimoApp
+        run: swift test --package-path Packages/ClavimoApp
+
+      - name: Build universal app bundle (ad-hoc signed)
+        run: scripts/build-app.sh
+
+      - name: Check the example configuration with the app
+        run: build/Clavimo.app/Contents/MacOS/Clavimo --check-config examples/example-config.json
+
+      - name: Validate the example against the JSON schema
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet jsonschema==4.26.0
+          .venv/bin/python scripts/validate-config.py examples/example-config.json
+
+      - name: Check whitespace
+        run: git diff --check $(git hash-object -t tree /dev/null) HEAD
+
+  commit-messages:
+    name: Commit messages
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Check Conventional Commits and ASCII hyphens
+        run: scripts/check-commit-message.sh --range "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
