@@ -112,6 +112,10 @@ struct RuleDraft: Equatable {
         switch kind {
         case .swapKeys, .remapKey:
             if firstKey == secondKey { return "Choose two different keys." }
+            let unsupported: Set<UInt16> = [KeyCode.capsLock.rawValue, KeyCode.function.rawValue]
+            if unsupported.contains(firstKey) || unsupported.contains(secondKey) {
+                return "Caps Lock and Fn cannot be remapped yet."
+            }
         case .modifierClick:
             if modifiers.isEmpty { return "Choose at least one modifier." }
         case .keyClick:

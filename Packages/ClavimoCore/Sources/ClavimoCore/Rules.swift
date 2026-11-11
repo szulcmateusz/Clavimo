@@ -123,6 +123,9 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     case duplicateChord(button: MouseButton, ids: [String])
     case duplicateRuleID(String)
     case deviceConditionOnLetterLeader(id: String)
+    /// Caps Lock and Fn arrive as special flag changes that the Quartz
+    /// backend forwards uninterpreted, so they cannot be remapped yet.
+    case unsupportedKey(KeyCode)
     case duplicateWheelRule
 }
 
@@ -228,6 +231,10 @@ public struct CompiledRules: Equatable, Sendable {
         var seenIDs: Set<String> = []
 
         func addRemap(_ from: KeyCode, _ to: KeyCode, _ conditions: RuleConditions, _ order: Int) {
+            for key in [from, to] where key == .capsLock || key == .function {
+                errors.append(.unsupportedKey(key))
+                return
+            }
             if remaps[from]?.contains(where: { $0.0.conditions == conditions }) == true {
                 errors.append(.duplicateRemapSource(from))
             } else {

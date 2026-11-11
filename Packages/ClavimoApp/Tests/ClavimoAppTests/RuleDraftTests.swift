@@ -12,8 +12,8 @@ struct RuleDraftTests {
 
         var remap = RuleDraft()
         remap.kind = .remapKey
-        remap.name = "Caps to Escape"
-        remap.firstKey = KeyCode.capsLock.rawValue
+        remap.name = "F13 to Escape"
+        remap.firstKey = 0x69
         remap.secondKey = KeyCode.escape.rawValue
         remap.exceptApps = ["com.example.game"]
 

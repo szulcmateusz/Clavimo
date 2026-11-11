@@ -69,6 +69,11 @@ struct CompilerTests {
         #expect(errors([.swap(.leftCommand, .leftOption), .remap(from: .leftOption, to: .a)]) == [.duplicateRemapSource(.leftOption)])
     }
 
+    @Test func rejectsCapsLockAndFnRemaps() {
+        #expect(errors([.remap(from: .capsLock, to: .escape)]) == [.unsupportedKey(.capsLock)])
+        #expect(errors([.remap(from: .a, to: .function)]) == [.unsupportedKey(.function)])
+    }
+
     @Test func rejectsSelfMappings() {
         #expect(errors([.remap(from: .a, to: .a)]) == [.remapToItself(.a)])
         #expect(errors([.swap(.a, .a)]) == [.swapWithItself(.a)])
