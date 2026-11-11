@@ -10,7 +10,11 @@ import SwiftUI
 ///   Clavimo --render-screenshots <output-dir>
 @MainActor
 enum ScreenshotRenderer {
+    /// True while rendering: live touch input is replaced by sample fingers.
+    static var isRendering = false
+
     static func run(outputDirectory: URL) -> Int32 {
+        isRendering = true
         _ = NSApplication.shared
         NSApp.setActivationPolicy(.prohibited)
         do {
@@ -36,6 +40,11 @@ enum ScreenshotRenderer {
                     let sheet = RuleEditorView(model: agent, draft: draft, isNew: false) { _ in nil }
                     try render(sheet, size: NSSize(width: 600, height: 680), appearance: appearance,
                                to: outputDirectory.appendingPathComponent("editor-\(suffix).png"))
+                }
+                if let draft = editor.rows.first(where: { $0.draft?.kind == .trackpadGesture && $0.draft?.gesture == .swipe })?.draft {
+                    let sheet = RuleEditorView(model: agent, draft: draft, isNew: false) { _ in nil }
+                    try render(sheet, size: NSSize(width: 600, height: 680), appearance: appearance,
+                               to: outputDirectory.appendingPathComponent("editor-trackpad-\(suffix).png"))
                 }
             }
             for step in OnboardingView.Step.allCases {
@@ -99,10 +108,36 @@ enum ScreenshotRenderer {
         wheel.vertical.mode = .byLines
         wheel.vertical.lines = 3
 
-        let rules = [swap, fnLeft, fnRight, mission, chord].enumerated().map { index, draft in
+        var tap = RuleDraft()
+        tap.kind = .trackpadGesture
+        tap.name = "Three-finger tap: middle click"
+        tap.fingers = 3
+        tap.action = .middleClick
+        var back = RuleDraft()
+        back.kind = .trackpadGesture
+        back.name = "Fn + three-finger swipe left: back"
+        back.gesture = .swipe
+        back.direction = .left
+        back.trackpadModifiers = [.function]
+        back.action = .backClick
+        var corner = RuleDraft()
+        corner.kind = .trackpadClick
+        corner.name = "Top right corner click: close tab"
+        corner.clickPlace = .corner
+        corner.corner = .topRight
+        corner.action = .shortcut
+        corner.shortcutKey = 0x0D
+        corner.shortcutModifiers = [.command]
+        var trackpadScroll = RuleDraft()
+        trackpadScroll.kind = .trackpadScroll
+        trackpadScroll.name = "Trackpad"
+        trackpadScroll.trackpadScroll = TrackpadScrollSettings(speed: 1.25, momentum: true)
+
+        let rules = [swap, fnLeft, fnRight, mission, chord, tap, back, corner].enumerated().map { index, draft in
             draft.makeRule(id: "sample-\(index)", order: index)
         }
         return ConfigDocument(engine: .init(enabledOnLaunch: true), rules: rules,
-                              deviceSettings: [wheel.makeDeviceSetting(id: "sample-wheel")])
+                              deviceSettings: [wheel.makeDeviceSetting(id: "sample-wheel"),
+                                               trackpadScroll.makeDeviceSetting(id: "sample-trackpad")])
     }
 }

@@ -185,6 +185,22 @@
         }
       }
     },
+    "%@ runs %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ runs %2$@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ uruchamia: %@."
+          }
+        }
+      }
+    },
     "%@ to %@": {
       "localizations": {
         "en": {
@@ -313,6 +329,68 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@×"
+          }
+        }
+      }
+    },
+    "%lld": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        }
+      }
+    },
+    "%lld fingers": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld finger"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld fingers"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld palce"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld palców"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld palec"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld palca"
+                }
+              }
+            }
           }
         }
       }
@@ -607,6 +685,16 @@
         }
       }
     },
+    "A two-finger tap is the macOS secondary click. Add a modifier, such as Fn.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie dwoma palcami to w macOS kliknięcie prawym przyciskiem. Dodaj modyfikator, np. Fn."
+          }
+        }
+      }
+    },
     "About": {
       "localizations": {
         "pl": {
@@ -783,6 +871,16 @@
         }
       }
     },
+    "App": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aplikacja"
+          }
+        }
+      }
+    },
     "App Windows": {
       "localizations": {
         "pl": {
@@ -813,12 +911,12 @@
         }
       }
     },
-    "Applies to every mouse wheel. Trackpad and Magic Mouse scrolling keep the system settings.": {
+    "Applies to every mouse wheel. Trackpad and Magic Mouse scrolling are set in Trackpad.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dotyczy każdego kółka myszy. Przewijanie na gładziku i Magic Mouse zostaje bez zmian."
+            "value": "Dotyczy każdego kółka myszy. Przewijanie gładzikiem i Magic Mouse ustawisz w panelu Gładzik."
           }
         }
       }
@@ -873,12 +971,32 @@
         }
       }
     },
+    "Back (button 4)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstecz (przycisk 4)"
+          }
+        }
+      }
+    },
     "Backup and Import": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Kopie i import"
+          }
+        }
+      }
+    },
+    "Both actions happen, even while a key is held. Turn the macOS gesture off in Trackpad settings, or change the rule.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zadziałają obie akcje, nawet gdy trzymasz klawisz. Wyłącz gest macOS w ustawieniach gładzika albo zmień regułę."
           }
         }
       }
@@ -909,6 +1027,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prawy dolny"
+          }
+        }
+      }
+    },
+    "Brightness down": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciemniej"
+          }
+        }
+      }
+    },
+    "Brightness keys may not work with external displays.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisze jasności mogą nie działać z monitorami zewnętrznymi."
+          }
+        }
+      }
+    },
+    "Brightness up": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jaśniej"
           }
         }
       }
@@ -1033,6 +1181,26 @@
         }
       }
     },
+    "Change at least one setting.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień co najmniej jedno ustawienie."
+          }
+        }
+      }
+    },
+    "Change...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień…"
+          }
+        }
+      }
+    },
     "Changed": {
       "localizations": {
         "pl": {
@@ -1063,12 +1231,32 @@
         }
       }
     },
+    "Choose the app to open.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz aplikację do otwarcia."
+          }
+        }
+      }
+    },
     "Choose two different keys.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Wybierz dwa różne klawisze."
+          }
+        }
+      }
+    },
+    "Choose...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz…"
           }
         }
       }
@@ -1099,6 +1287,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clavimo: %@"
+          }
+        }
+      }
+    },
+    "Click": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie"
           }
         }
       }
@@ -1303,6 +1501,16 @@
         }
       }
     },
+    "Corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Róg"
+          }
+        }
+      }
+    },
     "Could not save": {
       "localizations": {
         "pl": {
@@ -1449,6 +1657,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Diagnostyka"
+          }
+        }
+      }
+    },
+    "Direction": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kierunek"
           }
         }
       }
@@ -1693,6 +1911,16 @@
         }
       }
     },
+    "Fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palce"
+          }
+        }
+      }
+    },
     "First key": {
       "localizations": {
         "pl": {
@@ -1703,12 +1931,42 @@
         }
       }
     },
+    "Five-finger tap: play or pause": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie pięcioma palcami: odtwórz lub wstrzymaj"
+          }
+        }
+      }
+    },
     "Fn": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Fn"
+          }
+        }
+      }
+    },
+    "Fn + four-finger swipe down: volume down": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn + przesunięcie czterema palcami w dół: ciszej"
+          }
+        }
+      }
+    },
+    "Fn + four-finger swipe up: volume up": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn + przesunięcie czterema palcami w górę: głośniej"
           }
         }
       }
@@ -1743,6 +2001,26 @@
         }
       }
     },
+    "Fn + three-finger swipe left: back": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn + przesunięcie trzema palcami w lewo: wstecz"
+          }
+        }
+      }
+    },
+    "Fn + three-finger swipe right: forward": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn + przesunięcie trzema palcami w prawo: dalej"
+          }
+        }
+      }
+    },
     "For 1 Hour": {
       "localizations": {
         "pl": {
@@ -1763,12 +2041,42 @@
         }
       }
     },
+    "Forward": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej"
+          }
+        }
+      }
+    },
+    "Forward (button 5)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej (przycisk 5)"
+          }
+        }
+      }
+    },
     "Forward Delete": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Forward Delete"
+          }
+        }
+      }
+    },
+    "Four-finger tap: Mission Control": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie czterema palcami: Mission Control"
           }
         }
       }
@@ -1789,6 +2097,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ogólne"
+          }
+        }
+      }
+    },
+    "Gesture": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gest"
           }
         }
       }
@@ -2013,6 +2331,16 @@
         }
       }
     },
+    "In a corner": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W rogu"
+          }
+        }
+      }
+    },
     "Input Monitoring": {
       "localizations": {
         "pl": {
@@ -2073,6 +2401,26 @@
         }
       }
     },
+    "Keep scrolling after lifting the fingers (momentum)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewijaj dalej po oderwaniu palców (bezwładność)"
+          }
+        }
+      }
+    },
+    "Key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz"
+          }
+        }
+      }
+    },
     "Key %u": {
       "localizations": {
         "pl": {
@@ -2129,6 +2477,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reguły klawiatury i myszy dla macOS."
+          }
+        }
+      }
+    },
+    "Keyboard shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót klawiszowy"
           }
         }
       }
@@ -2233,6 +2591,16 @@
         }
       }
     },
+    "Left of the resting finger": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Po lewej od opartego palca"
+          }
+        }
+      }
+    },
     "Lets Clavimo change and replace keyboard and mouse events.": {
       "localizations": {
         "pl": {
@@ -2293,6 +2661,16 @@
         }
       }
     },
+    "Look up with three fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyszukiwanie po stuknięciu trzema palcami"
+          }
+        }
+      }
+    },
     "Make Active": {
       "localizations": {
         "pl": {
@@ -2309,6 +2687,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zarządzaj profilami"
+          }
+        }
+      }
+    },
+    "Media key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz multimedialny"
           }
         }
       }
@@ -2343,12 +2731,42 @@
         }
       }
     },
+    "Middle click": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Środkowy przycisk"
+          }
+        }
+      }
+    },
     "Mission Control": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Mission Control"
+          }
+        }
+      }
+    },
+    "Mission Control and App Exposé with four fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control i App Exposé czterema palcami"
+          }
+        }
+      }
+    },
+    "Mission Control and App Exposé with three fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control i App Exposé trzema palcami"
           }
         }
       }
@@ -2473,22 +2891,12 @@
         }
       }
     },
-    "Mouse wheel settings are edited in Mouse & Scrolling.": {
+    "Mouse wheels scroll like this: %@. Trackpads keep their own setting.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ustawienia kółka myszy zmienisz w zakładce Mysz i przewijanie."
-          }
-        }
-      }
-    },
-    "Mouse wheels scroll like this: %@. Trackpads are not changed.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kółka myszy przewijają tak: %@. Gładzik zostaje bez zmian."
+            "value": "Kółka myszy przewijają tak: %@. Gładziki mają własne ustawienie."
           }
         }
       }
@@ -2509,6 +2917,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przejdź o jedno biurko w prawo"
+          }
+        }
+      }
+    },
+    "Mute": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wycisz"
           }
         }
       }
@@ -2593,6 +3011,16 @@
         }
       }
     },
+    "Next track": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Następny utwór"
+          }
+        }
+      }
+    },
     "No configuration is loaded.": {
       "localizations": {
         "pl": {
@@ -2603,12 +3031,62 @@
         }
       }
     },
+    "No gesture yet.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeszcze żadnego gestu."
+          }
+        }
+      }
+    },
     "No measurements yet.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Brak pomiarów."
+          }
+        }
+      }
+    },
+    "No rule uses this gesture.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Żadna reguła nie używa tego gestu."
+          }
+        }
+      }
+    },
+    "No trackpad": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak gładzika"
+          }
+        }
+      }
+    },
+    "None yet. Start with a template below.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeszcze żadnych. Zacznij od szablonu poniżej."
+          }
+        }
+      }
+    },
+    "Not available on this macOS": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niedostępne w tej wersji macOS"
           }
         }
       }
@@ -2713,6 +3191,16 @@
         }
       }
     },
+    "Open %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz %@"
+          }
+        }
+      }
+    },
     "Open Keyboard Shortcuts": {
       "localizations": {
         "pl": {
@@ -2753,6 +3241,36 @@
         }
       }
     },
+    "Open Trackpad Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz ustawienia gładzika"
+          }
+        }
+      }
+    },
+    "Open an app": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz aplikację"
+          }
+        }
+      }
+    },
+    "Open app": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz aplikację"
+          }
+        }
+      }
+    },
     "Open source under the MIT License. Clavimo processes input on your Mac only: it never records typed text and makes no network connections.": {
       "localizations": {
         "pl": {
@@ -2789,6 +3307,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zwykłe kliknięcia działają jak dotąd: akcją zastępowane są tylko kliknięcia przy wciśniętych dokładnie tych modyfikatorach."
+          }
+        }
+      }
+    },
+    "Other": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inne"
+          }
+        }
+      }
+    },
+    "Other App...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inna aplikacja…"
           }
         }
       }
@@ -2929,12 +3467,32 @@
         }
       }
     },
+    "Pick one to open it in the editor; nothing changes until you add it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz szablon, żeby otworzyć go w edytorze; nic się nie zmieni, dopóki go nie dodasz."
+          }
+        }
+      }
+    },
     "Pixels": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Piksele"
+          }
+        }
+      }
+    },
+    "Play or pause": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odtwórz lub wstrzymaj"
           }
         }
       }
@@ -3035,6 +3593,16 @@
         }
       }
     },
+    "Previous track": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprzedni utwór"
+          }
+        }
+      }
+    },
     "Priority decides between mouse chords with the same trigger. Key rules for the same key need different conditions; the most specific one wins.": {
       "localizations": {
         "pl": {
@@ -3121,6 +3689,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Projekt na GitHubie"
+          }
+        }
+      }
+    },
+    "Put your fingers on the trackpad. Recognized gestures appear below, with the rule they run.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Połóż palce na gładziku. Rozpoznane gesty pojawią się obok, razem z regułą, którą uruchamiają."
           }
         }
       }
@@ -3365,12 +3943,32 @@
         }
       }
     },
+    "Reverse horizontal scrolling": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odwróć przewijanie w poziomie"
+          }
+        }
+      }
+    },
     "Reverse it and scroll a fixed distance per notch, without touching the trackpad.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Odwróć je i przewijaj o stałą odległość na ząbek, bez zmian na gładziku."
+          }
+        }
+      }
+    },
+    "Reverse vertical scrolling": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odwróć przewijanie w pionie"
           }
         }
       }
@@ -3465,6 +4063,16 @@
         }
       }
     },
+    "Right of the resting finger": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Po prawej od opartego palca"
+          }
+        }
+      }
+    },
     "Rule type": {
       "localizations": {
         "pl": {
@@ -3515,6 +4123,32 @@
         }
       }
     },
+    "Runs %@ while you hold %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Runs %1$@ while you hold %2$@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchamia %@, gdy trzymasz %@."
+          }
+        }
+      }
+    },
+    "Runs: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uruchamia: %@"
+          }
+        }
+      }
+    },
     "Save": {
       "localizations": {
         "pl": {
@@ -3531,6 +4165,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Po zastosowaniu przewiń tutaj, żeby sprawdzić efekt."
+          }
+        }
+      }
+    },
+    "Scroll settings are edited in Mouse & Scrolling and Trackpad.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewijanie ustawisz w panelach Mysz i przewijanie oraz Gładzik."
           }
         }
       }
@@ -3605,6 +4249,16 @@
         }
       }
     },
+    "Separate from the mouse wheel: macOS has one natural scrolling switch for both. Also applies to Magic Mouse.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niezależnie od kółka myszy: macOS ma jeden przełącznik naturalnego przewijania dla obu. Dotyczy też Magic Mouse."
+          }
+        }
+      }
+    },
     "Settings per display are not supported.": {
       "localizations": {
         "pl": {
@@ -3641,6 +4295,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Krótkie czekanie, potem zwykłe pisanie"
+          }
+        }
+      }
+    },
+    "Shortcut": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skrót"
           }
         }
       }
@@ -3715,6 +4379,16 @@
         }
       }
     },
+    "Some gestures are also used by macOS": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niektórych gestów używa też macOS"
+          }
+        }
+      }
+    },
     "Some macOS shortcuts are turned off": {
       "localizations": {
         "pl": {
@@ -3731,6 +4405,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spacja"
+          }
+        }
+      }
+    },
+    "Spaces and windows": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biurka i okna"
           }
         }
       }
@@ -3907,6 +4591,36 @@
         }
       }
     },
+    "Swipe": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesunięcie"
+          }
+        }
+      }
+    },
+    "Swipe between full-screen apps with four fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przechodzenie między aplikacjami na pełnym ekranie czterema palcami"
+          }
+        }
+      }
+    },
+    "Swipe between pages or full-screen apps with three fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przechodzenie między stronami lub aplikacjami na pełnym ekranie trzema palcami"
+          }
+        }
+      }
+    },
     "Swipe down with %lld fingers": {
       "localizations": {
         "pl": {
@@ -3967,12 +4681,52 @@
         }
       }
     },
+    "Tap": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie"
+          }
+        }
+      }
+    },
     "Tap with %lld fingers": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Stuknięcie %lld palcami"
+          }
+        }
+      }
+    },
+    "Tapping finger": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stukający palec"
+          }
+        }
+      }
+    },
+    "Taps, swipes and clicks with several fingers can run actions, also together with a held key. Clavimo reads finger positions through an unofficial macOS interface, only while a trackpad rule is on or this page is open, and never stores them. If a macOS update changes that interface, gestures turn themselves off and everything else keeps working.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcia, przesunięcia i kliknięcia kilkoma palcami mogą uruchamiać akcje, także razem z przytrzymanym klawiszem. Clavimo odczytuje położenie palców przez nieoficjalny interfejs macOS, tylko gdy włączona jest reguła gładzika albo otwarta jest ta strona, i nigdy go nie zapisuje. Jeśli aktualizacja macOS zmieni ten interfejs, gesty same się wyłączą, a reszta dalej będzie działać."
+          }
+        }
+      }
+    },
+    "Templates": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szablony"
           }
         }
       }
@@ -4003,6 +4757,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aktywny profil %@ nie istnieje."
+          }
+        }
+      }
+    },
+    "The click is replaced by the action. Press the trackpad with exactly this many fingers.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie zostaje zastąpione akcją. Wciśnij gładzik dokładnie tyloma palcami."
+          }
+        }
+      }
+    },
+    "The click is replaced by the action. With tap to click, a one-finger tap in the corner counts too.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie zostaje zastąpione akcją. Przy stuknięciu w celu kliknięcia liczy się też stuknięcie jednym palcem w rogu."
+          }
+        }
+      }
+    },
+    "The click itself does not reach the app.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Samo kliknięcie nie trafia do aplikacji."
           }
         }
       }
@@ -4303,12 +5087,52 @@
         }
       }
     },
+    "Three-finger click: middle click": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie trzema palcami: środkowy przycisk"
+          }
+        }
+      }
+    },
+    "Three-finger drag": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przeciąganie trzema palcami"
+          }
+        }
+      }
+    },
+    "Three-finger tap: middle click": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie trzema palcami: środkowy przycisk"
+          }
+        }
+      }
+    },
     "Time Clavimo adds to each event, measured on this Mac. It does not include USB, Bluetooth or display latency.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Czas, jaki Clavimo dodaje do każdego zdarzenia, zmierzony na tym Macu. Nie obejmuje opóźnień USB, Bluetooth ani ekranu."
+          }
+        }
+      }
+    },
+    "Tip tap": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TipTap"
           }
         }
       }
@@ -4333,6 +5157,16 @@
         }
       }
     },
+    "Tip tap right: new tab": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TipTap po prawej: nowa karta"
+          }
+        }
+      }
+    },
     "Top left": {
       "localizations": {
         "pl": {
@@ -4353,12 +5187,124 @@
         }
       }
     },
+    "Top right corner click: close tab": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie w prawym górnym rogu: zamknij kartę"
+          }
+        }
+      }
+    },
+    "Trackpad": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gładzik"
+          }
+        }
+      }
+    },
+    "Trackpad click": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknięcie gładzika"
+          }
+        }
+      }
+    },
     "Trackpad gesture": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Gest gładzika"
+          }
+        }
+      }
+    },
+    "Trackpad gestures": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesty gładzika"
+          }
+        }
+      }
+    },
+    "Trackpad scrolling": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przewijanie gładzikiem"
+          }
+        }
+      }
+    },
+    "Trackpad with %lld fingers": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Trackpad with %lld finger"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Trackpad with %lld fingers"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Gładzik, %lld palce"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Gładzik, %lld palców"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Gładzik, %lld palec"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Gładzik, %lld palca"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Trackpads scroll like this: %@. Mouse wheels keep their own setting.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gładziki przewijają tak: %@. Kółka myszy mają własne ustawienie."
           }
         }
       }
@@ -4583,6 +5529,26 @@
         }
       }
     },
+    "Volume down": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciszej"
+          }
+        }
+      }
+    },
+    "Volume up": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Głośniej"
+          }
+        }
+      }
+    },
     "Wait until the key is released": {
       "localizations": {
         "pl": {
@@ -4653,12 +5619,38 @@
         }
       }
     },
+    "While holding": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przy przytrzymanym"
+          }
+        }
+      }
+    },
     "While waiting": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Podczas czekania"
+          }
+        }
+      }
+    },
+    "While you hold %@, %@ runs %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "While you hold %1$@, %2$@ runs %3$@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdy trzymasz %@, %@ uruchamia: %@."
           }
         }
       }
@@ -4705,6 +5697,36 @@
         }
       }
     },
+    "With": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Z klawiszami"
+          }
+        }
+      }
+    },
+    "With no modifiers selected, the gesture works only while no modifier is held.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bez zaznaczonych modyfikatorów gest działa tylko wtedy, gdy żaden modyfikator nie jest wciśnięty."
+          }
+        }
+      }
+    },
+    "With several fingers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilkoma palcami"
+          }
+        }
+      }
+    },
     "You can change or remove them at any time in Rules.": {
       "localizations": {
         "pl": {
@@ -4735,12 +5757,32 @@
         }
       }
     },
+    "Your trackpad rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje reguły gładzika"
+          }
+        }
+      }
+    },
     "all enabled": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "wszystkie włączone"
+          }
+        }
+      }
+    },
+    "as in macOS": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "jak w macOS"
           }
         }
       }
@@ -4813,12 +5855,32 @@
         }
       }
     },
+    "horizontal reversed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "odwrócone w poziomie"
+          }
+        }
+      }
+    },
     "left": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "lewy"
+          }
+        }
+      }
+    },
+    "macOS also uses this movement: %@. Holding a key does not stop it, so both actions happen until you turn it off in Trackpad settings.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS też używa tego ruchu: %@. Przytrzymany klawisz tego nie zatrzymuje, więc zadziałają obie akcje, dopóki nie wyłączysz go w ustawieniach gładzika."
           }
         }
       }
@@ -4859,6 +5921,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "macOS kilka razy przerwał połączenie z wejściem. Wznów po sprawdzeniu konfliktów."
+          }
+        }
+      }
+    },
+    "no momentum": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bez bezwładności"
           }
         }
       }
@@ -4929,6 +6001,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "szybkość %@×"
+          }
+        }
+      }
+    },
+    "vertical reversed": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "odwrócone w pionie"
           }
         }
       }

@@ -56,4 +56,46 @@ enum RuleTemplates {
             RuleTemplate(id: "letter-chord", title: String(localized: "Hold F + side button: next Space"), draft: letterChord),
         ]
     }
+
+    /// Ready-made trackpad rules.
+    static var trackpad: [RuleTemplate] {
+        func gesture(_ trigger: TrackpadTrigger, _ action: RuleDraft.Action, modifiers: Set<RuleDraft.Modifier> = [],
+                     configure: (inout RuleDraft) -> Void = { _ in }) -> RuleDraft {
+            var draft = RuleDraft()
+            draft.trackpadModifiers = modifiers
+            draft.action = action
+            switch trigger {
+            case let .gesture(.tap(count)): draft.kind = .trackpadGesture; draft.gesture = .tap; draft.fingers = count
+            case let .gesture(.tipTap(side)): draft.kind = .trackpadGesture; draft.gesture = .tipTap; draft.side = side
+            case let .gesture(.swipe(count, direction)):
+                draft.kind = .trackpadGesture; draft.gesture = .swipe; draft.fingers = count; draft.direction = direction
+            case let .click(count): draft.kind = .trackpadClick; draft.clickPlace = .fingers; draft.fingers = count
+            case let .cornerClick(corner): draft.kind = .trackpadClick; draft.clickPlace = .corner; draft.corner = corner
+            }
+            configure(&draft)
+            return draft
+        }
+        return [
+            RuleTemplate(id: "tap3-middle", title: String(localized: "Three-finger tap: middle click"),
+                         draft: gesture(.gesture(.tap(fingers: 3)), .middleClick)),
+            RuleTemplate(id: "click3-middle", title: String(localized: "Three-finger click: middle click"),
+                         draft: gesture(.click(fingers: 3), .middleClick)),
+            RuleTemplate(id: "tiptap-newtab", title: String(localized: "Tip tap right: new tab"),
+                         draft: gesture(.gesture(.tipTap(.right)), .shortcut) { $0.shortcutKey = 0x11; $0.shortcutModifiers = [.command] }),
+            RuleTemplate(id: "fn-swipe-back", title: String(localized: "Fn + three-finger swipe left: back"),
+                         draft: gesture(.gesture(.swipe(fingers: 3, .left)), .backClick, modifiers: [.function])),
+            RuleTemplate(id: "fn-swipe-forward", title: String(localized: "Fn + three-finger swipe right: forward"),
+                         draft: gesture(.gesture(.swipe(fingers: 3, .right)), .forwardClick, modifiers: [.function])),
+            RuleTemplate(id: "tap4-mission", title: String(localized: "Four-finger tap: Mission Control"),
+                         draft: gesture(.gesture(.tap(fingers: 4)), .missionControl)),
+            RuleTemplate(id: "corner-close", title: String(localized: "Top right corner click: close tab"),
+                         draft: gesture(.cornerClick(.topRight), .shortcut) { $0.shortcutKey = 0x0D; $0.shortcutModifiers = [.command] }),
+            RuleTemplate(id: "fn-volume-up", title: String(localized: "Fn + four-finger swipe up: volume up"),
+                         draft: gesture(.gesture(.swipe(fingers: 4, .up)), .media, modifiers: [.function]) { $0.mediaKey = .volumeUp }),
+            RuleTemplate(id: "fn-volume-down", title: String(localized: "Fn + four-finger swipe down: volume down"),
+                         draft: gesture(.gesture(.swipe(fingers: 4, .down)), .media, modifiers: [.function]) { $0.mediaKey = .volumeDown }),
+            RuleTemplate(id: "tap5-play", title: String(localized: "Five-finger tap: play or pause"),
+                         draft: gesture(.gesture(.tap(fingers: 5)), .media) { $0.mediaKey = .playPause }),
+        ]
+    }
 }

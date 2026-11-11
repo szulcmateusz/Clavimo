@@ -32,7 +32,79 @@ struct RuleDraftTests {
         keyClick.policy = .boundedWindow
         keyClick.windowMilliseconds = 150
         keyClick.onlyApps = ["com.apple.finder"]
-        return [swap, remap, fnClick, keyClick]
+        var shortcutClick = fnClick
+        shortcutClick.name = "Fn side: copy"
+        shortcutClick.button = 4
+        shortcutClick.action = .shortcut
+        shortcutClick.shortcutKey = KeyCode.c.rawValue
+        shortcutClick.shortcutModifiers = [.command, .shift]
+
+        var tap = RuleDraft()
+        tap.kind = .trackpadGesture
+        tap.name = "Tap"
+        tap.gesture = .tap
+        tap.fingers = 3
+        tap.action = .middleClick
+
+        var swipe = RuleDraft()
+        swipe.kind = .trackpadGesture
+        swipe.name = "Swipe"
+        swipe.gesture = .swipe
+        swipe.fingers = 4
+        swipe.direction = .up
+        swipe.trackpadModifiers = [.function]
+        swipe.action = .media
+        swipe.mediaKey = .volumeUp
+        swipe.onlyApps = ["com.apple.Music"]
+
+        var tipTap = RuleDraft()
+        tipTap.kind = .trackpadGesture
+        tipTap.name = "Tip tap"
+        tipTap.gesture = .tipTap
+        tipTap.side = .left
+        tipTap.action = .launchApp
+        tipTap.appBundleID = "com.apple.Safari"
+
+        var corner = RuleDraft()
+        corner.kind = .trackpadClick
+        corner.name = "Corner"
+        corner.clickPlace = .corner
+        corner.corner = .bottomLeft
+        corner.action = .backClick
+
+        var click = RuleDraft()
+        click.kind = .trackpadClick
+        click.name = "Click"
+        click.clickPlace = .fingers
+        click.fingers = 4
+        click.action = .forwardClick
+        return [swap, remap, fnClick, keyClick, shortcutClick, tap, swipe, tipTap, corner, click]
+    }
+
+    @Test func trackpadScrollDraftBecomesTrackpadSetting() throws {
+        var draft = RuleDraft()
+        draft.kind = .trackpadScroll
+        draft.trackpadScroll = TrackpadScrollSettings(reverseVertical: false, reverseHorizontal: true, speed: 1.5, momentum: false)
+        let setting = draft.makeDeviceSetting(id: "t")
+        #expect(setting["scope"]?["deviceClass"]?.string == "trackpad")
+        let back = try #require(RuleDraft(deviceSetting: setting))
+        #expect(back.kind == .trackpadScroll)
+        #expect(back.trackpadScroll == draft.trackpadScroll)
+        var document = ConfigDocument(rules: [])
+        document.deviceSettings = [setting]
+        let interpreted = try ConfigDocument.decode(try document.encoded()).interpret()
+        #expect(interpreted.unsupported.isEmpty)
+        #expect(interpreted.definitions == [.trackpadScroll(draft.trackpadScroll)])
+    }
+
+    @Test func twoFingerTapNeedsAModifier() {
+        var draft = RuleDraft()
+        draft.kind = .trackpadGesture
+        draft.gesture = .tap
+        draft.fingers = 2
+        #expect(draft.validationMessage != nil)
+        draft.trackpadModifiers = [.command]
+        #expect(draft.validationMessage == nil)
     }
 
     @Test(arguments: drafts())

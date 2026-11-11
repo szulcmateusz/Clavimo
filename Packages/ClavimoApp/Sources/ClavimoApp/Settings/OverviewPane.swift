@@ -74,7 +74,7 @@ struct OverviewPane: View {
 
     // MARK: Numbers
 
-    private var ruleRows: [ConfigEditor.Row] { editor.rows.filter { $0.draft?.kind != .wheel } }
+    private var ruleRows: [ConfigEditor.Row] { editor.rows.filter { $0.draft?.kind.isSetting != true } }
 
     private var activeRuleCount: Int {
         ruleRows.filter { row in row.enabled && !model.unsupported.contains { $0.ruleID == row.id } }.count

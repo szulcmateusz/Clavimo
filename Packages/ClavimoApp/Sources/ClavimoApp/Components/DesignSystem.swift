@@ -154,6 +154,8 @@ struct RuleTokensView: View {
                         .accessibilityHidden(true)
                 case let .text(text):
                     Text(text).font(.callout).foregroundStyle(.secondary)
+                case let .trackpad(model, title):
+                    TrackpadToken(model: model, title: title)
                 }
             }
         }

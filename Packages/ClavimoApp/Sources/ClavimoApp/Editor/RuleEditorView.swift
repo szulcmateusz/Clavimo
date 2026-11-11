@@ -21,20 +21,14 @@ struct RuleEditorView: View {
             Form {
                 Section {
                     Picker("Rule type", selection: $draft.kind) {
-                        // Mouse wheel settings have their own pane.
-                        ForEach(RuleDraft.Kind.allCases.filter { $0 != .wheel || draft.kind == .wheel }) { Text($0.title).tag($0) }
+                        // Scroll settings have their own panes.
+                        ForEach(RuleDraft.Kind.allCases.filter { !$0.isSetting || draft.kind == $0 }) { Text($0.title).tag($0) }
                     }
                     TextField("Name", text: $draft.name, prompt: Text(draft.suggestedName))
                 }
                 triggerSection
-                if draft.kind == .modifierClick || draft.kind == .keyClick {
-                    Section("Then") {
-                        Picker("Action", selection: $draft.action) {
-                            ForEach(RuleDraft.Action.allCases) { Text($0.title).tag($0) }
-                        }
-                        Text("Uses the macOS Mission Control keyboard shortcuts (Control + Arrow keys). They must be enabled in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.")
-                            .font(.caption).foregroundStyle(.secondary)
-                    }
+                if draft.kind.hasAction {
+                    ActionSection(draft: $draft, model: model)
                 }
                 conditionsSection
                 Section {
@@ -138,10 +132,82 @@ struct RuleEditorView: View {
             } footer: {
                 Text(draft.policy.explanation + " " + String(localized: "Letter-key chords can delay that letter while typing.")).formFooterStyle()
             }
-        case .wheel:
+        case .trackpadGesture:
             Section {
-                Text(String(localized: "Mouse wheel settings are edited in Mouse & Scrolling."))
+                Picker(String(localized: "Gesture"), selection: $draft.gesture) {
+                    ForEach(RuleDraft.Gesture.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: draft.gesture) { clampFingers() }
+                if draft.gesture != .tipTap {
+                    FingerPicker(fingers: $draft.fingers, choices: draft.gesture.fingerChoices)
+                }
+                if draft.gesture == .swipe {
+                    Picker(String(localized: "Direction"), selection: $draft.direction) {
+                        ForEach(GestureEvent.Direction.allCases, id: \.self) { Text(GestureNames.direction($0)).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                if draft.gesture == .tipTap {
+                    Picker(String(localized: "Tapping finger"), selection: $draft.side) {
+                        Text(String(localized: "Left of the resting finger")).tag(GestureEvent.Side.left)
+                        Text(String(localized: "Right of the resting finger")).tag(GestureEvent.Side.right)
+                    }
+                }
+                ModifierToggles(title: String(localized: "While holding"), selection: $draft.trackpadModifiers)
+            } header: {
+                Text("When")
+            } footer: {
+                trackpadFooter(String(localized: "With no modifiers selected, the gesture works only while no modifier is held."))
+            }
+        case .trackpadClick:
+            Section {
+                Picker(String(localized: "Click"), selection: $draft.clickPlace) {
+                    ForEach(RuleDraft.ClickPlace.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: draft.clickPlace) { clampFingers() }
+                if draft.clickPlace == .fingers {
+                    FingerPicker(fingers: $draft.fingers, choices: TrackpadTrigger.clickFingers)
+                } else {
+                    Picker(String(localized: "Corner"), selection: $draft.corner) {
+                        ForEach(TrackpadCorner.allCases, id: \.self) { Text(GestureNames.name($0)).tag($0) }
+                    }
+                }
+                ModifierToggles(title: String(localized: "While holding"), selection: $draft.trackpadModifiers)
+            } header: {
+                Text("When")
+            } footer: {
+                trackpadFooter(draft.clickPlace == .corner
+                    ? String(localized: "The click is replaced by the action. With tap to click, a one-finger tap in the corner counts too.")
+                    : String(localized: "The click is replaced by the action. Press the trackpad with exactly this many fingers."))
+            }
+        case .wheel, .trackpadScroll:
+            Section {
+                Text(String(localized: "Scroll settings are edited in Mouse & Scrolling and Trackpad."))
                     .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func clampFingers() {
+        let choices = draft.kind == .trackpadClick ? TrackpadTrigger.clickFingers : draft.gesture.fingerChoices
+        draft.fingers = min(max(draft.fingers, choices.lowerBound), choices.upperBound)
+    }
+
+    /// The footer of a trackpad section, with any macOS gesture the rule
+    /// would overlap with.
+    private func trackpadFooter(_ text: String) -> some View {
+        let conflicts = SystemTrackpadGestures.conflicts(with: draft.trackpadTrigger)
+        return VStack(alignment: .leading, spacing: Spacing.s) {
+            Text(text).formFooterStyle()
+            if !conflicts.isEmpty {
+                Label(String(localized: "macOS also uses this movement: \(conflicts.map(\.title).formatted(.list(type: .and))). Holding a key does not stop it, so both actions happen until you turn it off in Trackpad settings."),
+                      systemImage: "exclamationmark.triangle")
+                    .font(.callout)
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+                Button(String(localized: "Open Trackpad Settings")) { SystemSettingsLink.open(.trackpad) }
             }
         }
     }
@@ -149,7 +215,7 @@ struct RuleEditorView: View {
     @ViewBuilder
     private var conditionsSection: some View {
         Section {
-            if draft.kind != .wheel && draft.kind != .keyClick {
+            if draft.kind == .swapKeys || draft.kind == .remapKey || draft.kind == .modifierClick {
                 DisclosureGroup(draft.devices.isEmpty ? String(localized: "Devices (all)") : String(localized: "Devices (\(draft.devices.count))")) {
                     ForEach(devices.filter { draft.kind == .modifierClick ? $0.isPointer : $0.isKeyboard }) { device in
                         Toggle(isOn: Binding(
@@ -168,8 +234,8 @@ struct RuleEditorView: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
-            AppListEditor(title: String(localized: "Only in apps"), apps: $draft.onlyApps, limit: draft.kind == .wheel ? 1 : nil)
-            if draft.kind != .wheel {
+            AppListEditor(title: String(localized: "Only in apps"), apps: $draft.onlyApps, limit: draft.kind.isSetting ? 1 : nil)
+            if !draft.kind.isSetting {
                 AppListEditor(title: String(localized: "Not in apps"), apps: $draft.exceptApps, limit: nil)
             }
         } header: {
@@ -177,6 +243,127 @@ struct RuleEditorView: View {
         } footer: {
             Text("Leave everything empty to apply the rule everywhere.").formFooterStyle()
         }
+    }
+}
+
+// MARK: - Actions
+
+/// What a rule does: the action and its details.
+private struct ActionSection: View {
+    @Binding var draft: RuleDraft
+    let model: AgentController
+
+    var body: some View {
+        Section {
+            Picker("Action", selection: $draft.action) {
+                Section(String(localized: "Spaces and windows")) {
+                    ForEach([RuleDraft.Action.nextWorkspace, .previousWorkspace, .missionControl, .applicationWindows]) { Text($0.title).tag($0) }
+                }
+                Section(String(localized: "Mouse")) {
+                    ForEach([RuleDraft.Action.middleClick, .backClick, .forwardClick]) { Text($0.title).tag($0) }
+                }
+                Section(String(localized: "Other")) {
+                    ForEach([RuleDraft.Action.shortcut, .launchApp, .media]) { Text($0.title).tag($0) }
+                }
+            }
+            switch draft.action {
+            case .shortcut:
+                KeyField(title: String(localized: "Key"), code: $draft.shortcutKey, model: model)
+                ModifierToggles(title: String(localized: "With"), selection: $draft.shortcutModifiers)
+            case .launchApp:
+                AppPicker(bundleID: $draft.appBundleID)
+            case .media:
+                Picker(String(localized: "Key"), selection: $draft.mediaKey) {
+                    ForEach(MediaKey.allCases, id: \.self) { Text($0.localizedTitle).tag($0) }
+                }
+            default:
+                EmptyView()
+            }
+        } header: {
+            Text("Then")
+        } footer: {
+            if draft.action.isSimple {
+                Text("Uses the macOS Mission Control keyboard shortcuts (Control + Arrow keys). They must be enabled in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.")
+                    .formFooterStyle()
+            } else if draft.action == .media {
+                Text(String(localized: "Brightness keys may not work with external displays.")).formFooterStyle()
+            }
+        }
+    }
+}
+
+/// Toggle buttons for the five generic modifiers.
+struct ModifierToggles: View {
+    let title: String
+    @Binding var selection: Set<RuleDraft.Modifier>
+
+    var body: some View {
+        HStack {
+            Text(title)
+            Spacer()
+            ForEach(RuleDraft.Modifier.allCases) { modifier in
+                Toggle(modifier.symbol, isOn: Binding(
+                    get: { selection.contains(modifier) },
+                    set: { if $0 { selection.insert(modifier) } else { selection.remove(modifier) } }
+                ))
+                .toggleStyle(.button)
+                .accessibilityLabel(modifier.localizedName)
+            }
+        }
+    }
+}
+
+/// Number of fingers, shown as a segmented control.
+struct FingerPicker: View {
+    @Binding var fingers: Int
+    let choices: ClosedRange<Int>
+
+    var body: some View {
+        Picker(String(localized: "Fingers"), selection: $fingers) {
+            ForEach(Array(choices), id: \.self) { Text("\($0)").tag($0) }
+        }
+        .pickerStyle(.segmented)
+    }
+}
+
+/// Chooses an app by bundle identifier: from running apps or a file panel.
+struct AppPicker: View {
+    @Binding var bundleID: String
+
+    var body: some View {
+        LabeledContent(String(localized: "App")) {
+            HStack {
+                if !bundleID.isEmpty {
+                    if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) {
+                        Image(nsImage: NSWorkspace.shared.icon(forFile: url.path)).resizable().frame(width: 18, height: 18)
+                    }
+                    Text(AppNames.name(bundleID))
+                }
+                Menu(bundleID.isEmpty ? String(localized: "Choose...") : String(localized: "Change...")) {
+                    ForEach(runningApps, id: \.id) { app in
+                        Button(app.name) { bundleID = app.id }
+                    }
+                    Divider()
+                    Button(String(localized: "Other App...")) { chooseFromFinder() }
+                }
+                .fixedSize()
+            }
+        }
+    }
+
+    private var runningApps: [(id: String, name: String)] {
+        NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular }
+            .compactMap { app in app.bundleIdentifier.map { ($0, app.localizedName ?? $0) } }
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    private func chooseFromFinder() {
+        let panel = NSOpenPanel()
+        panel.allowedContentTypes = [.application]
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        guard panel.runModal() == .OK, let url = panel.url, let id = Bundle(url: url)?.bundleIdentifier else { return }
+        bundleID = id
     }
 }
 

@@ -22,19 +22,6 @@ struct RuleDraft: Equatable {
 
         var changesEvents: Bool { reverse || mode != .system }
 
-        var summary: String? {
-            var parts: [String] = []
-            if reverse { parts.append("reversed") }
-            switch mode {
-            case .system: break
-            case .accelerated: parts.append("speed \(speed.formatted(.number.precision(.fractionLength(0...1))))x")
-            case .byLines: parts.append("\(lines) \(lines == 1 ? "line" : "lines")")
-            case .byPixels: parts.append("\(Int(pixels)) px")
-            case .smoothed: parts.append("smooth, \(Int(pixels)) px")
-            }
-            return parts.isEmpty ? nil : parts.joined(separator: ", ")
-        }
-
         var json: JSONValue {
             var object: [String: JSONValue] = ["reverse": .bool(reverse), "mode": .string(mode.rawValue)]
             switch mode {
@@ -65,7 +52,7 @@ struct RuleDraft: Equatable {
     }
 
     enum Kind: String, CaseIterable, Identifiable {
-        case swapKeys, remapKey, modifierClick, keyClick, wheel
+        case swapKeys, remapKey, modifierClick, keyClick, trackpadGesture, trackpadClick, wheel, trackpadScroll
         var id: String { rawValue }
 
         var title: String {
@@ -74,7 +61,47 @@ struct RuleDraft: Equatable {
             case .remapKey: String(localized: "Remap a key")
             case .modifierClick: String(localized: "Modifier + mouse button")
             case .keyClick: String(localized: "Key + mouse button")
+            case .trackpadGesture: String(localized: "Trackpad gesture")
+            case .trackpadClick: String(localized: "Trackpad click")
             case .wheel: String(localized: "Mouse wheel direction")
+            case .trackpadScroll: String(localized: "Trackpad scrolling")
+            }
+        }
+
+        /// Scroll settings are stored as device settings and edited in
+        /// their own panes, not in the rules list.
+        var isSetting: Bool { self == .wheel || self == .trackpadScroll }
+        var isTrackpad: Bool { self == .trackpadGesture || self == .trackpadClick }
+        var hasAction: Bool { self == .modifierClick || self == .keyClick || isTrackpad }
+    }
+
+    enum Gesture: String, CaseIterable, Identifiable {
+        case tap, tipTap, swipe
+        var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .tap: String(localized: "Tap")
+            case .tipTap: String(localized: "Tip tap")
+            case .swipe: String(localized: "Swipe")
+            }
+        }
+
+        var fingerChoices: ClosedRange<Int> {
+            switch self {
+            case .tap: TrackpadTrigger.tapFingers
+            case .swipe: TrackpadTrigger.swipeFingers
+            case .tipTap: 2...2
+            }
+        }
+    }
+
+    enum ClickPlace: String, CaseIterable, Identifiable {
+        case fingers, corner
+        var id: String { rawValue }
+        var title: String {
+            switch self {
+            case .fingers: String(localized: "With several fingers")
+            case .corner: String(localized: "In a corner")
             }
         }
     }
@@ -95,6 +122,7 @@ struct RuleDraft: Equatable {
 
     enum Action: String, CaseIterable, Identifiable {
         case nextWorkspace, previousWorkspace, missionControl, applicationWindows
+        case middleClick, backClick, forwardClick, shortcut, launchApp, media
         var id: String { rawValue }
         var title: String {
             switch self {
@@ -102,8 +130,17 @@ struct RuleDraft: Equatable {
             case .previousWorkspace: String(localized: "Previous Space")
             case .missionControl: String(localized: "Mission Control")
             case .applicationWindows: String(localized: "Application Windows")
+            case .middleClick: String(localized: "Middle click")
+            case .backClick: String(localized: "Back (button 4)")
+            case .forwardClick: String(localized: "Forward (button 5)")
+            case .shortcut: String(localized: "Keyboard shortcut")
+            case .launchApp: String(localized: "Open an app")
+            case .media: String(localized: "Media key")
             }
         }
+
+        /// Actions stored as plain `{"kind": rawValue}`.
+        var isSimple: Bool { [.nextWorkspace, .previousWorkspace, .missionControl, .applicationWindows].contains(self) }
     }
 
     enum Policy: String, CaseIterable, Identifiable {
@@ -135,6 +172,18 @@ struct RuleDraft: Equatable {
     var modifiers: Set<Modifier> = [.function]
     var button = 4
     var action: Action = .nextWorkspace
+    var shortcutKey: UInt16 = 0x11 // T
+    var shortcutModifiers: Set<Modifier> = [.command]
+    var appBundleID = ""
+    var mediaKey: MediaKey = .playPause
+    var gesture: Gesture = .tap
+    var fingers = 3
+    var direction: GestureEvent.Direction = .left
+    var side: GestureEvent.Side = .right
+    var clickPlace: ClickPlace = .fingers
+    var corner: TrackpadCorner = .topRight
+    var trackpadModifiers: Set<Modifier> = []
+    var trackpadScroll = TrackpadScrollSettings(reverseVertical: true)
     var policy: Policy = .boundedWindow
     var windowMilliseconds = LeaderPolicy.defaultWindowMilliseconds
     var vertical: Axis = {
@@ -156,11 +205,65 @@ struct RuleDraft: Equatable {
         case .remapKey:
             String(localized: "\(KeyNames.name(for: firstKey)) to \(KeyNames.name(for: secondKey))")
         case .modifierClick:
-            String(localized: "\(modifierText) + \(KeyNames.buttonName(button)): \(action.title)")
+            String(localized: "\(modifierText) + \(KeyNames.buttonName(button)): \(actionTitle)")
         case .keyClick:
-            String(localized: "\(KeyNames.name(for: firstKey)) + \(KeyNames.buttonName(button)): \(action.title)")
+            String(localized: "\(KeyNames.name(for: firstKey)) + \(KeyNames.buttonName(button)): \(actionTitle)")
+        case .trackpadGesture, .trackpadClick:
+            trackpadModifiers.isEmpty
+                ? String(localized: "\(trackpadTriggerTitle): \(actionTitle)")
+                : String(localized: "\(trackpadModifierText) + \(trackpadTriggerTitle): \(actionTitle)")
         case .wheel:
             String(localized: "Mouse wheel")
+        case .trackpadScroll:
+            String(localized: "Trackpad scrolling")
+        }
+    }
+
+    var trackpadModifierText: String {
+        Modifier.allCases.filter { trackpadModifiers.contains($0) }.map(\.symbol).joined(separator: " ")
+    }
+
+    var trackpadTrigger: TrackpadTrigger {
+        if kind == .trackpadClick {
+            return clickPlace == .corner ? .cornerClick(corner) : .click(fingers: min(max(fingers, 3), 5))
+        }
+        switch gesture {
+        case .tap: return .gesture(.tap(fingers: fingers))
+        case .tipTap: return .gesture(.tipTap(side))
+        case .swipe: return .gesture(.swipe(fingers: fingers, direction))
+        }
+    }
+
+    var trackpadTriggerTitle: String { GestureNames.title(trackpadTrigger) }
+
+    /// The action as the engine runs it.
+    var actionCommand: ActionCommand {
+        switch action {
+        case .nextWorkspace: .nextWorkspace
+        case .previousWorkspace: .previousWorkspace
+        case .missionControl: .missionControl
+        case .applicationWindows: .applicationWindows
+        case .middleClick: .click(.middle)
+        case .backClick: .click(.button4)
+        case .forwardClick: .click(.button5)
+        case .shortcut: .shortcut(KeyCode(shortcutKey), Modifier.generic(shortcutModifiers))
+        case .launchApp: .launchApp(appBundleID)
+        case .media: .media(mediaKey)
+        }
+    }
+
+    /// Names the action including its details, such as the shortcut keys.
+    var actionTitle: String {
+        switch action {
+        case .shortcut:
+            (Modifier.allCases.filter { shortcutModifiers.contains($0) }.map(\.symbol) + [KeyNames.keyCap(for: shortcutKey).label])
+                .joined()
+        case .launchApp:
+            appBundleID.isEmpty ? action.title : String(localized: "Open \(AppNames.name(appBundleID))")
+        case .media:
+            mediaKey.localizedTitle
+        default:
+            action.localizedTitle
         }
     }
 
@@ -187,12 +290,53 @@ struct RuleDraft: Equatable {
             }
             if button <= 2 { return String(localized: "Letter key chords cannot use the left or right button.") }
             if !devices.isEmpty { return String(localized: "Key + mouse button rules cannot be limited to a device.") }
+        case .trackpadGesture, .trackpadClick:
+            if trackpadTrigger == .gesture(.tap(fingers: 2)), trackpadModifiers.isEmpty {
+                return String(localized: "A two-finger tap is the macOS secondary click. Add a modifier, such as Fn.")
+            }
+        case .trackpadScroll:
+            if !trackpadScroll.changesEvents { return String(localized: "Change at least one setting.") }
+            if onlyApps.count > 1 || !exceptApps.isEmpty { return String(localized: "Scrolling rules can be limited to one app only.") }
         case .wheel:
             if !vertical.changesEvents && !horizontal.changesEvents { return String(localized: "Change at least one direction or mode.") }
             if !devices.isEmpty { return String(localized: "Scrolling cannot be limited to a device yet.") }
             if onlyApps.count > 1 || !exceptApps.isEmpty { return String(localized: "Scrolling rules can be limited to one app only.") }
         }
+        if kind.hasAction, action == .launchApp, appBundleID.isEmpty {
+            return String(localized: "Choose the app to open.")
+        }
         return nil
+    }
+}
+
+extension RuleDraft.Modifier {
+    static func generic(_ set: Set<Self>) -> GenericModifiers {
+        var result: GenericModifiers = []
+        for modifier in set {
+            switch modifier {
+            case .control: result.insert(.control)
+            case .option: result.insert(.option)
+            case .shift: result.insert(.shift)
+            case .command: result.insert(.command)
+            case .function: result.insert(.function)
+            }
+        }
+        return result
+    }
+}
+
+extension MediaKey {
+    var localizedTitle: String {
+        switch self {
+        case .playPause: String(localized: "Play or pause")
+        case .nextTrack: String(localized: "Next track")
+        case .previousTrack: String(localized: "Previous track")
+        case .volumeUp: String(localized: "Volume up")
+        case .volumeDown: String(localized: "Volume down")
+        case .mute: String(localized: "Mute")
+        case .brightnessUp: String(localized: "Brightness up")
+        case .brightnessDown: String(localized: "Brightness down")
+        }
     }
 }
 
@@ -229,20 +373,45 @@ extension RuleDraft {
             actionValue = .object(["kind": .string("sendKey"), "key": Self.key(secondKey)])
             behavior.repeat = "onAutorepeat"
         case .modifierClick:
-            let names = Modifier.allCases.filter { modifiers.contains($0) }.map { JSONValue.string($0.rawValue) }
-            trigger = .object(["kind": .string("modifierChord"), "requiredModifiers": .array(names), "mouseButton": .number(Double(button))])
-            actionValue = .object(["kind": .string(action.rawValue)])
+            trigger = .object(["kind": .string("modifierChord"), "requiredModifiers": Self.modifierNames(modifiers),
+                               "mouseButton": .number(Double(button))])
+            actionValue = actionJSON
             if button <= 2 { behavior.allowProtectedButton = true }
         case .keyClick:
             trigger = .object([
                 "kind": .string("keyMouseChord"), "leaderKey": Self.key(firstKey),
                 "mouseButton": .number(Double(button)), "order": .string("leaderThenMouse"),
             ])
-            actionValue = .object(["kind": .string(action.rawValue)])
+            actionValue = actionJSON
             behavior.leaderPolicy = policy.rawValue
             if policy == .boundedWindow { behavior.leaderWindowMs = windowMilliseconds }
-        case .wheel:
-            preconditionFailure("wheel drafts are stored as device settings")
+        case .trackpadGesture, .trackpadClick:
+            var object: [String: JSONValue] = ["requiredModifiers": Self.modifierNames(trackpadModifiers)]
+            switch trackpadTrigger {
+            case let .gesture(.tap(count)):
+                object["kind"] = .string("trackpadGesture")
+                object["gesture"] = .string("tap")
+                object["fingers"] = .number(Double(count))
+            case let .gesture(.tipTap(side)):
+                object["kind"] = .string("trackpadGesture")
+                object["gesture"] = .string("tipTap")
+                object["side"] = .string(side.rawValue)
+            case let .gesture(.swipe(count, direction)):
+                object["kind"] = .string("trackpadGesture")
+                object["gesture"] = .string("swipe")
+                object["fingers"] = .number(Double(count))
+                object["direction"] = .string(direction.rawValue)
+            case let .click(count):
+                object["kind"] = .string("trackpadClick")
+                object["fingers"] = .number(Double(count))
+            case let .cornerClick(corner):
+                object["kind"] = .string("trackpadClick")
+                object["corner"] = .string(corner.rawValue)
+            }
+            trigger = .object(object)
+            actionValue = actionJSON
+        case .wheel, .trackpadScroll:
+            preconditionFailure("scroll drafts are stored as device settings")
         }
         return ConfigDocument.Rule(
             id: id, name: displayName, enabled: enabled, priority: priority, profileId: profileID,
@@ -251,14 +420,91 @@ extension RuleDraft {
         )
     }
 
+    private static func modifierNames(_ set: Set<Modifier>) -> JSONValue {
+        .array(Modifier.allCases.filter { set.contains($0) }.map { .string($0.rawValue) })
+    }
+
+    private var actionJSON: JSONValue {
+        switch action {
+        case .nextWorkspace, .previousWorkspace, .missionControl, .applicationWindows:
+            .object(["kind": .string(action.rawValue)])
+        case .middleClick: .object(["kind": .string("mouseClick"), "mouseButton": .number(3)])
+        case .backClick: .object(["kind": .string("mouseClick"), "mouseButton": .number(4)])
+        case .forwardClick: .object(["kind": .string("mouseClick"), "mouseButton": .number(5)])
+        case .shortcut:
+            .object(["kind": .string("sendShortcut"), "key": Self.key(shortcutKey), "modifiers": Self.modifierNames(shortcutModifiers)])
+        case .launchApp: .object(["kind": .string("launchApp"), "bundleId": .string(appBundleID)])
+        case .media: .object(["kind": .string("mediaKey"), "key": .string(mediaKey.rawValue)])
+        }
+    }
+
+    /// Reads an action the form can show; false when it cannot.
+    private mutating func readAction(_ value: JSONValue) -> Bool {
+        guard let kind = value["kind"]?.string else { return false }
+        if let simple = Action(rawValue: kind), simple.isSimple {
+            action = simple
+            return true
+        }
+        switch kind {
+        case "mouseClick":
+            switch value["mouseButton"]?.int {
+            case 3: action = .middleClick
+            case 4: action = .backClick
+            case 5: action = .forwardClick
+            default: return false
+            }
+        case "sendShortcut":
+            guard let key = Self.code(value["key"]), let set = Self.modifierSet(value["modifiers"]) else { return false }
+            action = .shortcut
+            shortcutKey = key
+            shortcutModifiers = set
+        case "launchApp":
+            guard let id = value["bundleId"]?.string, !id.isEmpty else { return false }
+            action = .launchApp
+            appBundleID = id
+        case "mediaKey":
+            guard let key = value["key"]?.string.flatMap(MediaKey.init(rawValue:)) else { return false }
+            action = .media
+            mediaKey = key
+        default:
+            return false
+        }
+        return true
+    }
+
+    private static func modifierSet(_ value: JSONValue?) -> Set<Modifier>? {
+        var set: Set<Modifier> = []
+        for item in value?.array ?? [] {
+            guard let modifier = item.string.flatMap(Modifier.init(rawValue:)) else { return nil }
+            set.insert(modifier)
+        }
+        return set
+    }
+
     func makeDeviceSetting(id: String) -> JSONValue {
-        var scope: [String: JSONValue] = ["deviceClass": .string("mouse")]
+        var scope: [String: JSONValue] = ["deviceClass": .string(kind == .trackpadScroll ? "trackpad" : "mouse")]
         if let app = onlyApps.first { scope["appBundleId"] = .string(app) }
+        let scrolling: JSONValue
+        if kind == .trackpadScroll {
+            let speed = trackpadScroll.speed
+            func axis(_ reverse: Bool) -> JSONValue {
+                var object: [String: JSONValue] = ["reverse": .bool(reverse), "mode": .string(speed == 1 ? "system" : "accelerated")]
+                if speed != 1 { object["speedMultiplier"] = .number(speed) }
+                return .object(object)
+            }
+            scrolling = .object([
+                "vertical": axis(trackpadScroll.reverseVertical),
+                "horizontal": axis(trackpadScroll.reverseHorizontal),
+                "momentum": .bool(trackpadScroll.momentum),
+            ])
+        } else {
+            scrolling = .object(["vertical": vertical.json, "horizontal": horizontal.json])
+        }
         return .object([
             "id": .string(id), "name": .string(displayName), "enabled": .bool(enabled),
             "profileId": .string(profileID), "priority": .number(Double(priority)),
             "scope": .object(scope),
-            "scrolling": .object(["vertical": vertical.json, "horizontal": horizontal.json]),
+            "scrolling": scrolling,
         ])
     }
 
@@ -285,31 +531,77 @@ extension RuleDraft {
         case ("key", "sendKey"):
             guard let from = Self.code(trigger["key"]), let to = Self.code(rule.action["key"]) else { return nil }
             kind = .remapKey; firstKey = from; secondKey = to
-        case let ("modifierChord", actionKind?):
-            guard trigger["key"] == nil, let number = trigger["mouseButton"]?.int, let action = Action(rawValue: actionKind) else { return nil }
-            var set: Set<Modifier> = []
-            for item in trigger["requiredModifiers"]?.array ?? [] {
-                guard let modifier = item.string.flatMap(Modifier.init(rawValue:)) else { return nil }
-                set.insert(modifier)
-            }
-            kind = .modifierClick; modifiers = set; button = number; self.action = action
-        case let ("keyMouseChord", actionKind?):
-            guard let leader = Self.code(trigger["leaderKey"]), let number = trigger["mouseButton"]?.int,
-                  let action = Action(rawValue: actionKind),
+        case ("modifierChord", _):
+            guard trigger["key"] == nil, let number = trigger["mouseButton"]?.int, readAction(rule.action),
+                  let set = Self.modifierSet(trigger["requiredModifiers"]) else { return nil }
+            kind = .modifierClick; modifiers = set; button = number
+        case ("keyMouseChord", _):
+            guard let leader = Self.code(trigger["leaderKey"]), let number = trigger["mouseButton"]?.int, readAction(rule.action),
                   let policy = rule.behavior.leaderPolicy.flatMap(Policy.init(rawValue:)) else { return nil }
-            kind = .keyClick; firstKey = leader; button = number; self.action = action; self.policy = policy
+            kind = .keyClick; firstKey = leader; button = number; self.policy = policy
             windowMilliseconds = rule.behavior.leaderWindowMs ?? LeaderPolicy.defaultWindowMilliseconds
+        case ("trackpadGesture", _), ("trackpadClick", _):
+            guard devices.isEmpty, readAction(rule.action), let set = Self.modifierSet(trigger["requiredModifiers"]),
+                  readTrackpadTrigger(trigger) else { return nil }
+            trackpadModifiers = set
         default:
             return nil
         }
     }
 
+    private mutating func readTrackpadTrigger(_ trigger: JSONValue) -> Bool {
+        let count = trigger["fingers"]?.int
+        if trigger["kind"]?.string == "trackpadClick" {
+            kind = .trackpadClick
+            if let name = trigger["corner"]?.string {
+                guard let corner = TrackpadCorner(rawValue: name) else { return false }
+                clickPlace = .corner
+                self.corner = corner
+            } else {
+                guard let count, TrackpadTrigger.clickFingers.contains(count) else { return false }
+                clickPlace = .fingers
+                fingers = count
+            }
+            return true
+        }
+        kind = .trackpadGesture
+        guard let gesture = trigger["gesture"]?.string.flatMap(Gesture.init(rawValue:)) else { return false }
+        self.gesture = gesture
+        switch gesture {
+        case .tap, .swipe:
+            guard let count, gesture.fingerChoices.contains(count) else { return false }
+            fingers = count
+            if gesture == .swipe {
+                guard let direction = trigger["direction"]?.string.flatMap(GestureEvent.Direction.init(rawValue:)) else { return false }
+                self.direction = direction
+            }
+        case .tipTap:
+            guard let side = trigger["side"]?.string.flatMap(GestureEvent.Side.init(rawValue:)) else { return false }
+            self.side = side
+        }
+        return true
+    }
+
     init?(deviceSetting value: JSONValue) {
-        guard value["scope"]?["deviceClass"]?.string == "mouse", value["pointer"] == nil,
+        let deviceClass = value["scope"]?["deviceClass"]?.string
+        guard deviceClass == "mouse" || deviceClass == "trackpad", value["pointer"] == nil,
               value["scope"]?["vendorId"] == nil, value["scope"]?["displayId"] == nil else { return nil }
         guard let vertical = Axis(json: value["scrolling"]?["vertical"]),
               let horizontal = Axis(json: value["scrolling"]?["horizontal"]) else { return nil }
-        kind = .wheel
+        if deviceClass == "trackpad" {
+            let modes: [Axis.Mode] = [.system, .accelerated]
+            guard modes.contains(vertical.mode), modes.contains(horizontal.mode) else { return nil }
+            let speeds = Set([vertical, horizontal].filter { $0.mode == .accelerated }.map(\.speed))
+            guard speeds.count <= 1 else { return nil }
+            kind = .trackpadScroll
+            trackpadScroll = TrackpadScrollSettings(
+                reverseVertical: vertical.reverse, reverseHorizontal: horizontal.reverse, speed: speeds.first ?? 1,
+                momentum: value["scrolling"]?["momentum"] != .bool(false)
+            )
+        } else {
+            guard value["scrolling"]?["momentum"] == nil else { return nil }
+            kind = .wheel
+        }
         profileID = value["profileId"]?.string ?? "default"
         self.vertical = vertical
         self.horizontal = horizontal

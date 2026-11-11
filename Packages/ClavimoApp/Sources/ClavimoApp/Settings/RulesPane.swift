@@ -34,7 +34,7 @@ struct RulesPane: View {
     /// Rules of the selected profile. Mouse wheel settings live in Mouse
     /// & Scrolling.
     private var rows: [ConfigEditor.Row] {
-        editor.rows.filter { $0.draft?.kind != .wheel && $0.profileID == selectedProfile }
+        editor.rows.filter { $0.draft?.kind.isSetting != true && $0.profileID == selectedProfile }
     }
 
     private var selectedProfile: String {
@@ -43,7 +43,7 @@ struct RulesPane: View {
 
     private var inheritedCount: Int {
         let ancestors = editor.ancestors(of: selectedProfile)
-        return editor.rows.filter { $0.draft?.kind != .wheel && ancestors.contains($0.profileID) }.count
+        return editor.rows.filter { $0.draft?.kind.isSetting != true && ancestors.contains($0.profileID) }.count
     }
 
     private func newDraft(_ base: RuleDraft = RuleDraft()) -> RuleDraft {

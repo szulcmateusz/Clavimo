@@ -65,7 +65,7 @@ final class ConfigEditor {
         if let message = draft.validationMessage { return message }
         let id = existingID ?? UUID().uuidString.lowercased()
         remove(id: id, from: &updated)
-        if draft.kind == .wheel {
+        if draft.kind.isSetting {
             var settings = updated.deviceSettings ?? []
             settings.append(draft.makeDeviceSetting(id: id))
             updated.deviceSettings = settings

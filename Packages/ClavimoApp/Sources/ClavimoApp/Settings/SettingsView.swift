@@ -9,7 +9,7 @@ import SwiftUI
 @Observable
 final class SettingsNavigation {
     enum Pane: String, CaseIterable, Identifiable {
-        case overview, rules, mouse, devices, diagnostics, general, about
+        case overview, rules, mouse, trackpad, devices, diagnostics, general, about
         var id: String { rawValue }
 
         var title: String {
@@ -17,6 +17,7 @@ final class SettingsNavigation {
             case .overview: String(localized: "Overview")
             case .rules: String(localized: "Rules")
             case .mouse: String(localized: "Mouse & Scrolling")
+            case .trackpad: String(localized: "Trackpad")
             case .devices: String(localized: "Devices")
             case .diagnostics: String(localized: "Diagnostics")
             case .general: String(localized: "General")
@@ -29,6 +30,7 @@ final class SettingsNavigation {
             case .overview: "gauge.with.dots.needle.33percent"
             case .rules: "list.bullet.rectangle.portrait"
             case .mouse: "computermouse"
+            case .trackpad: "rectangle.and.hand.point.up.left"
             case .devices: "keyboard"
             case .diagnostics: "waveform.path.ecg"
             case .general: "gearshape"
@@ -64,7 +66,7 @@ struct SettingsView: View {
         NavigationSplitView {
             List(selection: $navigation.pane) {
                 Section {
-                    ForEach([SettingsNavigation.Pane.overview, .rules, .mouse, .devices]) { pane in
+                    ForEach([SettingsNavigation.Pane.overview, .rules, .mouse, .trackpad, .devices]) { pane in
                         Label(pane.title, systemImage: pane.symbol).tag(pane)
                     }
                 }
@@ -80,6 +82,7 @@ struct SettingsView: View {
             case .overview: OverviewPane(model: model, editor: editor, navigation: navigation)
             case .rules: RulesPane(model: model, editor: editor, navigation: navigation)
             case .mouse: MousePane(editor: editor)
+            case .trackpad: TrackpadPane(model: model, editor: editor)
             case .devices: DevicesPane(navigation: navigation)
             case .diagnostics: DiagnosticsPane(model: model)
             case .general: GeneralPane(model: model, editor: editor)

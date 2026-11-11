@@ -23,7 +23,7 @@ struct MousePane: View {
                     VStack(alignment: .leading, spacing: Spacing.m) {
                         HStack {
                             SectionHeader(title: String(localized: "Mouse wheel"),
-                                          subtitle: String(localized: "Applies to every mouse wheel. Trackpad and Magic Mouse scrolling keep the system settings."))
+                                          subtitle: String(localized: "Applies to every mouse wheel. Trackpad and Magic Mouse scrolling are set in Trackpad."))
                             Spacer()
                             Toggle(String(localized: "Custom scrolling"), isOn: $draft.enabled)
                                 .toggleStyle(.switch)
