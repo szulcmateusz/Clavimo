@@ -41,16 +41,26 @@ public final class EventTapController: @unchecked Sendable {
     /// Marks events posted by Modweave ("MWV1").
     public static let syntheticTag: Int64 = 0x4D57_5631
 
-    public static let eventMask: CGEventMask = {
-        let types: [CGEventType] = [.keyDown, .keyUp, .flagsChanged, .otherMouseDown, .otherMouseUp]
-        return types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << CGEventMask($1.rawValue)) }
-    }()
+    /// Events observed for every rule set.
+    public static let baseEventMask: CGEventMask = mask(of: [.keyDown, .keyUp, .flagsChanged, .otherMouseDown, .otherMouseUp])
+
+    /// The minimal mask for `rules`: primary and secondary clicks are added
+    /// only when a rule explicitly uses them.
+    public static func eventMask(for rules: CompiledRules) -> CGEventMask {
+        guard rules.observesProtectedButtons else { return baseEventMask }
+        return baseEventMask | mask(of: [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp])
+    }
+
+    private static func mask(of types: [CGEventType]) -> CGEventMask {
+        types.reduce(CGEventMask(0)) { $0 | (CGEventMask(1) << CGEventMask($1.rawValue)) }
+    }
 
     private let flagRewrite: FlagRewriteMode
     private let actionHandler: @Sendable (ActionCommand) -> Void
     private let onStop: @Sendable (StopReason) -> Void
     private let actionQueue = DispatchQueue(label: "modweave.actions", qos: .userInteractive)
     private let source: CGEventSource?
+    private let eventMask: CGEventMask
 
     // Tap-thread state.
     private var engine: InputEngine
@@ -72,6 +82,7 @@ public final class EventTapController: @unchecked Sendable {
         onStop: @escaping @Sendable (StopReason) -> Void = { _ in }
     ) {
         engine = InputEngine(rules: rules)
+        eventMask = Self.eventMask(for: rules)
         self.flagRewrite = flagRewrite
         self.actionHandler = actionHandler
         self.onStop = onStop
@@ -136,7 +147,7 @@ public final class EventTapController: @unchecked Sendable {
             tap: .cgSessionEventTap,
             place: .headInsertEventTap,
             options: .defaultTap,
-            eventsOfInterest: Self.eventMask,
+            eventsOfInterest: eventMask,
             callback: eventTapCallback,
             userInfo: refcon
         ) else {
@@ -219,6 +230,10 @@ public final class EventTapController: @unchecked Sendable {
         case .otherMouseDown, .otherMouseUp:
             let button = MouseButton(raw: UInt16(truncatingIfNeeded: event.getIntegerValueField(.mouseEventButtonNumber)))
             return InputEvent(kind: .mouseButton(button, isDown: type == .otherMouseDown), modifiers: physical, time: time)
+        case .leftMouseDown, .leftMouseUp:
+            return InputEvent(kind: .mouseButton(.primary, isDown: type == .leftMouseDown), modifiers: physical, time: time)
+        case .rightMouseDown, .rightMouseUp:
+            return InputEvent(kind: .mouseButton(.secondary, isDown: type == .rightMouseDown), modifiers: physical, time: time)
         default:
             return nil
         }

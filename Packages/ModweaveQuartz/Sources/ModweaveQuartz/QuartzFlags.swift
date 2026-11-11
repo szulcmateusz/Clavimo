@@ -45,11 +45,13 @@ public enum QuartzFlags {
         where flags.contains(generic) && result.intersection(bothSides).isEmpty {
             result.insert(fallback)
         }
+        if flags.contains(.maskSecondaryFn) { result.insert(.function) }
         return result
     }
 
     /// Replaces only the modifier bits of `flags`, preserving unrelated
-    /// state such as Caps Lock, Fn, and the numeric pad flag.
+    /// state such as Caps Lock, Fn, and the numeric pad flag. The core's
+    /// `.function` member is ignored here: Fn is never remapped.
     public static func applying(_ modifiers: ModifierSet, to flags: CGEventFlags) -> CGEventFlags {
         var raw = flags.rawValue & ~allModifierBits
         for (side, deviceBit, generic) in sides where modifiers.contains(side) {

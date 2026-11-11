@@ -1,10 +1,10 @@
 import CoreGraphics
 import ModweaveCore
 
-/// Runs actions by posting the documented macOS keyboard shortcuts.
-/// Workspace switching depends on "Move left/right a space" being enabled
-/// in System Settings > Keyboard > Keyboard Shortcuts > Mission Control;
-/// there is no public API to select a Space directly.
+/// Runs actions by posting the documented macOS keyboard shortcuts
+/// (Control + Arrow keys). They depend on the matching entries being
+/// enabled in System Settings > Keyboard > Keyboard Shortcuts > Mission
+/// Control; there is no public API to select a Space directly.
 public struct SystemShortcutExecutor: Sendable {
     public init() {}
 
@@ -14,6 +14,10 @@ public struct SystemShortcutExecutor: Sendable {
             postShortcut(.rightArrow, [.control], isArrow: true)
         case .previousWorkspace:
             postShortcut(.leftArrow, [.control], isArrow: true)
+        case .missionControl:
+            postShortcut(.upArrow, [.control], isArrow: true)
+        case .applicationWindows:
+            postShortcut(.downArrow, [.control], isArrow: true)
         case let .shortcut(key, modifiers):
             postShortcut(key, modifiers, isArrow: false)
         }

@@ -33,8 +33,27 @@ struct QuartzFlagsTests {
         }
     }
 
+    @Test func readsFnAsFunctionWithoutTouchingItOnApply() {
+        #expect(QuartzFlags.modifiers(from: .maskSecondaryFn) == [.function])
+        let applied = QuartzFlags.applying([.function], to: [])
+        #expect(!applied.contains(.maskSecondaryFn), "Fn is preserved from the event, never synthesized")
+    }
+
+    @Test func protectedButtonsJoinMaskOnlyWhenRulesUseThem() throws {
+        let fnClick = try CompiledRules.compile([
+            .mouseChord(id: "x", leader: .modifiers(.function), button: .primary, action: .previousWorkspace, priority: 1, allowProtectedButton: true),
+        ]).get()
+        let mask = EventTapController.eventMask(for: fnClick)
+        for type: CGEventType in [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp] {
+            #expect(mask & (CGEventMask(1) << CGEventMask(type.rawValue)) != 0)
+        }
+        for type: CGEventType in [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .scrollWheel] {
+            #expect(mask & (CGEventMask(1) << CGEventMask(type.rawValue)) == 0)
+        }
+    }
+
     @Test func eventMaskExcludesPointerAndPrimaryButtons() {
-        let mask = EventTapController.eventMask
+        let mask = EventTapController.eventMask(for: .empty)
         for type: CGEventType in [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged,
                                   .scrollWheel, .leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp] {
             #expect(mask & (CGEventMask(1) << CGEventMask(type.rawValue)) == 0, "\(type.rawValue) must not be observed")
