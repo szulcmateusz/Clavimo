@@ -160,7 +160,7 @@ struct ConfigTests {
         """)
         let result = try interpret(json)
         #expect(result.definitions == [
-            .reverseWheel(vertical: true, horizontal: false),
+            .wheel(vertical: ScrollAxisSettings(reverse: true), horizontal: .unchanged),
         ])
         #expect(result.unsupported.map(\.ruleID) == ["d", "t", "p"])
     }
@@ -183,5 +183,30 @@ struct ConfigTests {
         #expect(text.contains("\"code\" : 54"), "integers must not be written as 54.0")
         #expect(try ConfigDocument.decode(data) == document)
         #expect(try ConfigDocument.decode(data).interpret().definitions == [.swap(.rightCommand, .rightOption)])
+    }
+
+    @Test func scrollModesAreTranslated() throws {
+        var json = Self.document(rules: "")
+        json = json.replacingOccurrences(of: "\"macros\": []", with: """
+        "macros": [],
+        "deviceSettings": [
+          {"id": "w", "name": "Wheel", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse"},
+           "scrolling": {"vertical": {"reverse": true, "mode": "byLines", "distanceLines": 3},
+                         "horizontal": {"mode": "accelerated", "speedMultiplier": 1.5}}},
+          {"id": "bad", "name": "Out of range", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse", "appBundleId": "com.example"},
+           "scrolling": {"vertical": {"mode": "byLines", "distanceLines": 99}}},
+          {"id": "smooth", "name": "Smooth", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse", "appBundleId": "com.example.other"},
+           "scrolling": {"vertical": {"mode": "smoothed"}}}
+        ]
+        """)
+        let result = try interpret(json)
+        #expect(result.definitions == [
+            .wheel(vertical: ScrollAxisSettings(reverse: true, mode: .byLines(3)),
+                   horizontal: ScrollAxisSettings(mode: .accelerated(speed: 1.5))),
+        ])
+        #expect(result.unsupported.map(\.ruleID) == ["bad", "smooth"])
     }
 }

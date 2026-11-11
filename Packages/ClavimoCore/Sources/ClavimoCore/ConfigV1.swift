@@ -57,6 +57,11 @@ public enum JSONValue: Codable, Equatable, Sendable {
         return nil
     }
 
+    public var number: Double? {
+        if case let .number(value) = self { return value }
+        return nil
+    }
+
     public var array: [JSONValue]? {
         if case let .array(value) = self { return value }
         return nil
@@ -255,8 +260,8 @@ extension ConfigDocument {
         return result
     }
 
-    /// Only wheel direction reversal for mice is supported. Pointer
-    /// acceleration and scroll modes are reported as unsupported.
+    /// Mouse wheel direction and scroll modes are supported. Pointer
+    /// settings and smoothed scrolling are reported as unsupported.
     private static func translateDeviceSetting(_ setting: JSONValue) throws -> RuleDefinition {
         guard setting["scope"]?["deviceClass"]?.string == "mouse" else {
             throw Unsupported(message: "only mouse device settings are supported; trackpad behavior is never changed")
@@ -264,19 +269,9 @@ extension ConfigDocument {
         if let pointer = setting["pointer"], pointer["accelerationMode"]?.string != "system" || pointer["speedMultiplier"] != nil {
             throw Unsupported(message: "pointer speed and acceleration are not supported yet")
         }
-        var reverse = (vertical: false, horizontal: false)
-        for axis in ["vertical", "horizontal"] {
-            guard let config = setting["scrolling"]?[axis] else { continue }
-            if let mode = config["mode"]?.string, mode != "system" {
-                throw Unsupported(message: "scroll mode \(mode) is not supported yet")
-            }
-            for key in ["speedMultiplier", "acceleration", "distanceLines", "distancePixels", "smoothing"] where config[key] != nil {
-                throw Unsupported(message: "scroll \(key) is not supported yet")
-            }
-            let isReversed = config["reverse"] == .bool(true)
-            if axis == "vertical" { reverse.vertical = isReversed } else { reverse.horizontal = isReversed }
-        }
-        guard reverse.vertical || reverse.horizontal else {
+        let vertical = try scrollAxis(setting["scrolling"]?["vertical"])
+        let horizontal = try scrollAxis(setting["scrolling"]?["horizontal"])
+        guard vertical.changesEvents || horizontal.changesEvents else {
             throw Unsupported(message: "no supported scroll change in this setting")
         }
         var conditions = RuleConditions()
@@ -292,7 +287,37 @@ extension ConfigDocument {
         if scope?["displayId"] != nil {
             throw Unsupported(message: "display scope is not supported")
         }
-        return .reverseWheel(vertical: reverse.vertical, horizontal: reverse.horizontal, conditions: conditions)
+        return .wheel(vertical: vertical, horizontal: horizontal, conditions: conditions)
+    }
+
+    private static func scrollAxis(_ config: JSONValue?) throws -> ScrollAxisSettings {
+        guard let config else { return .unchanged }
+        for key in ["acceleration", "smoothing"] where config[key] != nil {
+            throw Unsupported(message: "scroll \(key) is not supported yet")
+        }
+        let mode: ScrollMode
+        switch config["mode"]?.string ?? "system" {
+        case "system":
+            mode = .system
+        case "accelerated":
+            guard let speed = config["speedMultiplier"]?.number, ScrollMode.speedRange.contains(speed) else {
+                throw Unsupported(message: "accelerated scrolling needs speedMultiplier between 0.1 and 10")
+            }
+            mode = .accelerated(speed: speed)
+        case "byLines":
+            guard let lines = config["distanceLines"]?.int, ScrollMode.linesRange.contains(lines) else {
+                throw Unsupported(message: "scrolling by lines needs distanceLines between 1 and 30")
+            }
+            mode = .byLines(lines)
+        case "byPixels":
+            guard let pixels = config["distancePixels"]?.number, ScrollMode.pixelsRange.contains(pixels) else {
+                throw Unsupported(message: "scrolling by pixels needs distancePixels between 1 and 512")
+            }
+            mode = .byPixels(pixels)
+        case let other:
+            throw Unsupported(message: "scroll mode \(other) is not supported yet")
+        }
+        return ScrollAxisSettings(reverse: config["reverse"] == .bool(true), mode: mode)
     }
 
     private struct Unsupported: Error {

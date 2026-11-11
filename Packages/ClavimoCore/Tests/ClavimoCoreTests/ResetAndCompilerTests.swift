@@ -223,10 +223,17 @@ struct ConditionTests {
         #expect(throws: CompileFailure.self) { try result.get() }
     }
 
-    @Test func wheelReversalSkipsContinuousScrolling() throws {
-        let engine = InputEngine(rules: try CompiledRules.compile([.reverseWheel(vertical: true, horizontal: false)]).get())
-        #expect(engine.wheelReversal(isContinuous: false, device: nil)?.vertical == true)
-        #expect(engine.wheelReversal(isContinuous: true, device: nil) == nil, "trackpads are never changed")
+    @Test func wheelSettingsSkipContinuousScrolling() throws {
+        let engine = InputEngine(rules: try CompiledRules.compile([
+            .wheel(vertical: ScrollAxisSettings(reverse: true), horizontal: .unchanged),
+        ]).get())
+        #expect(engine.wheelSettings(isContinuous: false, device: nil)?.vertical.reverse == true)
+        #expect(engine.wheelSettings(isContinuous: true, device: nil) == nil, "trackpads are never changed")
+    }
+
+    @Test func wheelRuleWithoutChangesIsRejected() {
+        let result = CompiledRules.compile([.wheel(vertical: .unchanged, horizontal: .unchanged)])
+        #expect(throws: CompileFailure.self) { try result.get() }
     }
 
     @Test func deviceIDParsing() {

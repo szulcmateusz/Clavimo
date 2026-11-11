@@ -53,7 +53,21 @@ struct RuleDraftTests {
         let setting = wheel.makeDeviceSetting(id: "w")
         #expect(RuleDraft(deviceSetting: setting) == wheel)
         let interpreted = try ConfigDocument(deviceSettings: [setting]).interpret()
-        #expect(interpreted.definitions == [.reverseWheel(vertical: true, horizontal: false)])
+        #expect(interpreted.definitions == [.wheel(vertical: ScrollAxisSettings(reverse: true), horizontal: .unchanged)])
+
+        var modes = RuleDraft()
+        modes.kind = .wheel
+        modes.name = "Modes"
+        modes.vertical.mode = .byLines
+        modes.vertical.lines = 3
+        modes.horizontal.mode = .accelerated
+        modes.horizontal.speed = 1.5
+        let modeSetting = modes.makeDeviceSetting(id: "m")
+        #expect(RuleDraft(deviceSetting: modeSetting) == modes)
+        #expect(try ConfigDocument(deviceSettings: [modeSetting]).interpret().definitions == [
+            .wheel(vertical: ScrollAxisSettings(reverse: true, mode: .byLines(3)),
+                   horizontal: ScrollAxisSettings(mode: .accelerated(speed: 1.5))),
+        ])
     }
 
     @Test func invalidDraftsExplainWhy() {

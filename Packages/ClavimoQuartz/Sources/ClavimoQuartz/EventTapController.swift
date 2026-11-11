@@ -231,7 +231,7 @@ public final class EventTapController: @unchecked Sendable {
         let start = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
         eventsSeen &+= 1
         if type == .scrollWheel {
-            reverseWheelIfNeeded(event)
+            applyWheelSettings(event)
             passThroughLatency.record(clock_gettime_nsec_np(CLOCK_UPTIME_RAW) &- start)
             return Unmanaged.passUnretained(event)
         }
@@ -253,27 +253,48 @@ public final class EventTapController: @unchecked Sendable {
         return result
     }
 
-    /// Negates discrete wheel deltas in place. Continuous scrolling
-    /// (trackpads, Magic Mouse) is identified by the system's continuous
-    /// flag and left untouched.
-    private func reverseWheelIfNeeded(_ event: CGEvent) {
+    /// Applies wheel settings to discrete wheel events in place.
+    /// Continuous scrolling (trackpads, Magic Mouse) is identified by the
+    /// system's continuous flag and left untouched.
+    private func applyWheelSettings(_ event: CGEvent) {
         let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0
-        guard let reversal = engine.wheelReversal(isContinuous: isContinuous, device: nil) else { return }
-        if reversal.vertical {
-            Self.negate(event, .scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1)
+        guard let settings = engine.wheelSettings(isContinuous: isContinuous, device: nil) else { return }
+        var precise = false
+        if settings.vertical.changesEvents {
+            precise = Self.transform(event, settings.vertical, .scrollWheelEventDeltaAxis1,
+                                     .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1) || precise
         }
-        if reversal.horizontal {
-            Self.negate(event, .scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2)
+        if settings.horizontal.changesEvents {
+            precise = Self.transform(event, settings.horizontal, .scrollWheelEventDeltaAxis2,
+                                     .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2) || precise
+        }
+        if precise {
+            // Pixel distances are only honored for precise (continuous)
+            // scroll events; apps treat other wheel events as line counts.
+            event.setIntegerValueField(.scrollWheelEventIsContinuous, value: 1)
         }
     }
 
-    private static func negate(_ event: CGEvent, _ line: CGEventField, _ fixed: CGEventField, _ point: CGEventField) {
-        let lineDelta = event.getIntegerValueField(line)
-        let fixedDelta = event.getDoubleValueField(fixed)
-        let pointDelta = event.getIntegerValueField(point)
-        event.setIntegerValueField(line, value: -lineDelta)
-        event.setDoubleValueField(fixed, value: -fixedDelta)
-        event.setIntegerValueField(point, value: -pointDelta)
+    /// Returns true when the axis now carries a pixel distance.
+    private static func transform(
+        _ event: CGEvent,
+        _ settings: ScrollAxisSettings,
+        _ lineField: CGEventField,
+        _ fixedField: CGEventField,
+        _ pointField: CGEventField
+    ) -> Bool {
+        let input = ScrollDeltas(
+            lines: event.getIntegerValueField(lineField),
+            fixed: event.getDoubleValueField(fixedField),
+            points: event.getIntegerValueField(pointField)
+        )
+        let output = ScrollTransform.apply(settings, to: input)
+        guard output != input else { return false }
+        event.setIntegerValueField(lineField, value: output.lines)
+        event.setDoubleValueField(fixedField, value: output.fixed)
+        event.setIntegerValueField(pointField, value: output.points)
+        if case .byPixels = settings.mode { return true }
+        return false
     }
 
     private func normalize(type: CGEventType, event: CGEvent, time: UInt64) -> InputEvent? {

@@ -5,6 +5,74 @@ import Foundation
 /// supports. Rules written by hand that do not fit this form are kept in
 /// the file untouched and shown as advanced rules.
 struct RuleDraft: Equatable {
+    /// Scroll settings for one wheel axis.
+    struct Axis: Equatable {
+        enum Mode: String, CaseIterable, Identifiable {
+            case system, accelerated, byLines, byPixels
+            var id: String { rawValue }
+            var title: String {
+                switch self {
+                case .system: "System"
+                case .accelerated: "Accelerated"
+                case .byLines: "By lines"
+                case .byPixels: "By pixels"
+                }
+            }
+            var explanation: String {
+                switch self {
+                case .system: "Distance and acceleration as set in macOS."
+                case .accelerated: "The macOS acceleration curve, faster or slower."
+                case .byLines: "The same number of lines for every wheel notch, without acceleration."
+                case .byPixels: "The same distance in pixels for every wheel notch, without acceleration. Experimental."
+                }
+            }
+        }
+
+        var reverse = false
+        var mode: Mode = .system
+        var speed = 1.0
+        var lines = 3
+        var pixels = 60.0
+
+        var changesEvents: Bool { reverse || mode != .system }
+
+        var summary: String? {
+            var parts: [String] = []
+            if reverse { parts.append("reversed") }
+            switch mode {
+            case .system: break
+            case .accelerated: parts.append("speed \(speed.formatted(.number.precision(.fractionLength(0...1))))x")
+            case .byLines: parts.append("\(lines) \(lines == 1 ? "line" : "lines")")
+            case .byPixels: parts.append("\(Int(pixels)) px")
+            }
+            return parts.isEmpty ? nil : parts.joined(separator: ", ")
+        }
+
+        var json: JSONValue {
+            var object: [String: JSONValue] = ["reverse": .bool(reverse), "mode": .string(mode.rawValue)]
+            switch mode {
+            case .system: break
+            case .accelerated: object["speedMultiplier"] = .number(speed)
+            case .byLines: object["distanceLines"] = .number(Double(lines))
+            case .byPixels: object["distancePixels"] = .number(pixels)
+            }
+            return .object(object)
+        }
+
+        init() {}
+
+        init?(json value: JSONValue?) {
+            guard let value else { return }
+            guard Set(value.keys).isSubset(of: ["reverse", "mode", "speedMultiplier", "distanceLines", "distancePixels"]),
+                  let mode = Mode(rawValue: value["mode"]?.string ?? "system") else { return nil }
+            self.mode = mode
+            reverse = value["reverse"] == .bool(true)
+            if let speed = value["speedMultiplier"]?.number { self.speed = speed }
+            if let lines = value["distanceLines"]?.int { self.lines = lines }
+            if let pixels = value["distancePixels"]?.number { self.pixels = pixels }
+        }
+    }
+
     enum Kind: String, CaseIterable, Identifiable {
         case swapKeys, remapKey, modifierClick, keyClick, wheel
         var id: String { rawValue }
@@ -77,8 +145,12 @@ struct RuleDraft: Equatable {
     var action: Action = .nextWorkspace
     var policy: Policy = .boundedWindow
     var windowMilliseconds = LeaderPolicy.defaultWindowMilliseconds
-    var reverseVertical = true
-    var reverseHorizontal = false
+    var vertical: Axis = {
+        var axis = Axis()
+        axis.reverse = true
+        return axis
+    }()
+    var horizontal = Axis()
     var devices: [String] = []
     var onlyApps: [String] = []
     var exceptApps: [String] = []
@@ -96,8 +168,8 @@ struct RuleDraft: Equatable {
         case .keyClick:
             "\(KeyNames.name(for: firstKey)) + \(KeyNames.buttonName(button)): \(action.title)"
         case .wheel:
-            "Mouse wheel: reverse " + [reverseVertical ? "vertical" : nil, reverseHorizontal ? "horizontal" : nil]
-                .compactMap { $0 }.joined(separator: " and ")
+            "Mouse wheel: " + [vertical.summary.map { "vertical \($0)" }, horizontal.summary.map { "horizontal \($0)" }]
+                .compactMap { $0 }.joined(separator: "; ")
         }
     }
 
@@ -125,7 +197,7 @@ struct RuleDraft: Equatable {
             if button <= 2 { return "Letter key chords cannot use the left or right button." }
             if !devices.isEmpty { return "Key + mouse button rules cannot be limited to a device." }
         case .wheel:
-            if !reverseVertical && !reverseHorizontal { return "Reverse at least one direction." }
+            if !vertical.changesEvents && !horizontal.changesEvents { return "Change at least one direction or mode." }
             if !devices.isEmpty { return "Scrolling cannot be limited to a device yet." }
             if onlyApps.count > 1 || !exceptApps.isEmpty { return "Scrolling rules can be limited to one app only." }
         }
@@ -195,10 +267,7 @@ extension RuleDraft {
             "id": .string(id), "name": .string(displayName), "enabled": .bool(enabled),
             "profileId": .string("default"), "priority": .number(Double(priority)),
             "scope": .object(scope),
-            "scrolling": .object([
-                "vertical": .object(["reverse": .bool(reverseVertical)]),
-                "horizontal": .object(["reverse": .bool(reverseHorizontal)]),
-            ]),
+            "scrolling": .object(["vertical": vertical.json, "horizontal": horizontal.json]),
         ])
     }
 
@@ -246,16 +315,14 @@ extension RuleDraft {
     init?(deviceSetting value: JSONValue) {
         guard value["scope"]?["deviceClass"]?.string == "mouse", value["pointer"] == nil,
               value["scope"]?["vendorId"] == nil, value["scope"]?["displayId"] == nil else { return nil }
-        for axis in ["vertical", "horizontal"] {
-            guard let config = value["scrolling"]?[axis] else { continue }
-            guard Set(config.keys).isSubset(of: ["reverse", "mode"]), config["mode"]?.string ?? "system" == "system" else { return nil }
-        }
+        guard let vertical = Axis(json: value["scrolling"]?["vertical"]),
+              let horizontal = Axis(json: value["scrolling"]?["horizontal"]) else { return nil }
         kind = .wheel
+        self.vertical = vertical
+        self.horizontal = horizontal
         name = value["name"]?.string ?? ""
         enabled = value["enabled"] == .bool(true)
         priority = value["priority"]?.int ?? 50
-        reverseVertical = value["scrolling"]?["vertical"]?["reverse"] == .bool(true)
-        reverseHorizontal = value["scrolling"]?["horizontal"]?["reverse"] == .bool(true)
         if let app = value["scope"]?["appBundleId"]?.string { onlyApps = [app] }
     }
 

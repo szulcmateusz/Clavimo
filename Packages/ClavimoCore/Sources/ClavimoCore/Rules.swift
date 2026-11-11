@@ -104,9 +104,9 @@ public enum RuleDefinition: Equatable, Sendable {
         allowProtectedButton: Bool = false,
         conditions: RuleConditions = .always
     )
-    /// Reverses discrete (mouse wheel) scrolling on the chosen axes.
-    /// Continuous scrolling from trackpads is never changed.
-    case reverseWheel(vertical: Bool, horizontal: Bool, conditions: RuleConditions = .always)
+    /// Changes discrete (mouse wheel) scrolling per axis. Continuous
+    /// scrolling from trackpads is never changed.
+    case wheel(vertical: ScrollAxisSettings, horizontal: ScrollAxisSettings, conditions: RuleConditions = .always)
 }
 
 public enum RuleValidationError: Error, Equatable, Sendable {
@@ -127,6 +127,7 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     /// backend forwards uninterpreted, so they cannot be remapped yet.
     case unsupportedKey(KeyCode)
     case duplicateWheelRule
+    case wheelRuleWithoutChanges
 }
 
 public struct ChordRule: Equatable, Sendable {
@@ -143,9 +144,9 @@ public struct RemapCandidate: Equatable, Sendable {
     public let conditions: RuleConditions
 }
 
-public struct WheelReversal: Equatable, Sendable {
-    public let vertical: Bool
-    public let horizontal: Bool
+public struct WheelSettings: Equatable, Sendable {
+    public let vertical: ScrollAxisSettings
+    public let horizontal: ScrollAxisSettings
     public let conditions: RuleConditions
 }
 
@@ -159,13 +160,13 @@ public struct CompiledRules: Equatable, Sendable {
     /// specific conditions, then definition order.
     public let chordsByButton: [MouseButton: [ChordRule]]
     public let leaderPolicies: [KeyCode: LeaderPolicy]
-    /// Wheel reversal rules, most specific first.
-    public let wheelReversals: [WheelReversal]
+    /// Wheel settings, most specific first.
+    public let wheelSettings: [WheelSettings]
 
-    public static let empty = CompiledRules(remapCandidates: [:], chordsByButton: [:], leaderPolicies: [:], wheelReversals: [])
+    public static let empty = CompiledRules(remapCandidates: [:], chordsByButton: [:], leaderPolicies: [:], wheelSettings: [])
 
     public var isEmpty: Bool {
-        remapCandidates.isEmpty && chordsByButton.isEmpty && wheelReversals.isEmpty
+        remapCandidates.isEmpty && chordsByButton.isEmpty && wheelSettings.isEmpty
     }
 
     /// Unconditional remaps, for inspection and tests.
@@ -181,14 +182,14 @@ public struct CompiledRules: Equatable, Sendable {
         chordsByButton.keys.contains { $0.isProtected }
     }
 
-    public var observesScrollWheel: Bool { !wheelReversals.isEmpty }
+    public var observesScrollWheel: Bool { !wheelSettings.isEmpty }
 
     /// Whether any rule depends on knowing the physical device, which
     /// requires device attribution in the platform adapter.
     public var usesDeviceConditions: Bool {
         remapCandidates.values.contains { $0.contains { !$0.conditions.devices.isEmpty } }
             || chordsByButton.values.contains { $0.contains { !$0.conditions.devices.isEmpty } }
-            || wheelReversals.contains { !$0.conditions.devices.isEmpty }
+            || wheelSettings.contains { !$0.conditions.devices.isEmpty }
     }
 
     /// Keys whose rules have device conditions; only these need a device
@@ -218,8 +219,8 @@ public struct CompiledRules: Equatable, Sendable {
         return applies ? policy : nil
     }
 
-    public func wheelReversal(app: String?, device: DeviceID?) -> WheelReversal? {
-        wheelReversals.first { $0.conditions.matches(app: app, device: device) }
+    public func wheelSettings(app: String?, device: DeviceID?) -> WheelSettings? {
+        wheelSettings.first { $0.conditions.matches(app: app, device: device) }
     }
 
     public static func compile(_ definitions: [RuleDefinition]) -> Result<CompiledRules, CompileFailure> {
@@ -227,7 +228,7 @@ public struct CompiledRules: Equatable, Sendable {
         var remaps: [KeyCode: [(RemapCandidate, Int)]] = [:]
         var chords: [ChordRule] = []
         var leaderPolicies: [KeyCode: LeaderPolicy] = [:]
-        var wheel: [(WheelReversal, Int)] = []
+        var wheel: [(WheelSettings, Int)] = []
         var seenIDs: Set<String> = []
 
         func addRemap(_ from: KeyCode, _ to: KeyCode, _ conditions: RuleConditions, _ order: Int) {
@@ -257,11 +258,13 @@ public struct CompiledRules: Equatable, Sendable {
                     addRemap(first, second, conditions, order)
                     addRemap(second, first, conditions, order)
                 }
-            case let .reverseWheel(vertical, horizontal, conditions):
+            case let .wheel(vertical, horizontal, conditions):
                 if wheel.contains(where: { $0.0.conditions == conditions }) {
                     errors.append(.duplicateWheelRule)
+                } else if !vertical.changesEvents && !horizontal.changesEvents {
+                    errors.append(.wheelRuleWithoutChanges)
                 } else {
-                    wheel.append((WheelReversal(vertical: vertical, horizontal: horizontal, conditions: conditions), order))
+                    wheel.append((WheelSettings(vertical: vertical, horizontal: horizontal, conditions: conditions), order))
                 }
             case let .mouseChord(id, leader, button, action, priority, allowProtected, conditions):
                 if !seenIDs.insert(id).inserted {
@@ -347,7 +350,7 @@ public struct CompiledRules: Equatable, Sendable {
             remapCandidates: remaps.mapValues { bySpecificity($0) { $0.conditions } },
             chordsByButton: byButton,
             leaderPolicies: leaderPolicies,
-            wheelReversals: bySpecificity(wheel) { $0.conditions }
+            wheelSettings: bySpecificity(wheel) { $0.conditions }
         ))
     }
 }

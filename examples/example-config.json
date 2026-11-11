@@ -200,7 +200,7 @@
   "deviceSettings": [
     {
       "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d07",
-      "name": "Mouse wheel: reverse vertical scrolling",
+      "name": "Mouse wheel: reversed, 3 lines per notch",
       "enabled": true,
       "profileId": "default",
       "priority": 50,
@@ -209,7 +209,13 @@
       },
       "scrolling": {
         "vertical": {
-          "reverse": true
+          "reverse": true,
+          "mode": "byLines",
+          "distanceLines": 3
+        },
+        "horizontal": {
+          "reverse": false,
+          "mode": "system"
         }
       }
     }

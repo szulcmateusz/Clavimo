@@ -71,11 +71,11 @@ public struct InputEngine: Sendable {
         frontmostApp = bundleID
     }
 
-    /// Wheel reversal for a scroll event, or nil to leave it unchanged.
-    /// Continuous (trackpad and Magic Mouse) scrolling is never reversed.
-    public func wheelReversal(isContinuous: Bool, device: DeviceID?) -> WheelReversal? {
+    /// Wheel settings for a scroll event, or nil to leave it unchanged.
+    /// Continuous (trackpad and Magic Mouse) scrolling is never changed.
+    public func wheelSettings(isContinuous: Bool, device: DeviceID?) -> WheelSettings? {
         guard !isContinuous else { return nil }
-        return rules.wheelReversal(app: frontmostApp, device: device)
+        return rules.wheelSettings(app: frontmostApp, device: device)
     }
 
     /// Replaces the rule snapshot. Held activations keep the mapping they
