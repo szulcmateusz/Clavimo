@@ -9,7 +9,7 @@ import SwiftUI
 @Observable
 final class SettingsNavigation {
     enum Pane: String, CaseIterable, Identifiable {
-        case overview, rules, mouse, devices, general, about
+        case overview, rules, mouse, devices, diagnostics, general, about
         var id: String { rawValue }
 
         var title: String {
@@ -18,6 +18,7 @@ final class SettingsNavigation {
             case .rules: String(localized: "Rules")
             case .mouse: String(localized: "Mouse & Scrolling")
             case .devices: String(localized: "Devices")
+            case .diagnostics: String(localized: "Diagnostics")
             case .general: String(localized: "General")
             case .about: String(localized: "About")
             }
@@ -29,6 +30,7 @@ final class SettingsNavigation {
             case .rules: "list.bullet.rectangle.portrait"
             case .mouse: "computermouse"
             case .devices: "keyboard"
+            case .diagnostics: "waveform.path.ecg"
             case .general: "gearshape"
             case .about: "info.circle"
             }
@@ -67,7 +69,7 @@ struct SettingsView: View {
                     }
                 }
                 Section {
-                    ForEach([SettingsNavigation.Pane.general, .about]) { pane in
+                    ForEach([SettingsNavigation.Pane.diagnostics, .general, .about]) { pane in
                         Label(pane.title, systemImage: pane.symbol).tag(pane)
                     }
                 }
@@ -79,6 +81,7 @@ struct SettingsView: View {
             case .rules: RulesPane(model: model, editor: editor, navigation: navigation)
             case .mouse: MousePane(editor: editor)
             case .devices: DevicesPane(navigation: navigation)
+            case .diagnostics: DiagnosticsPane(model: model)
             case .general: GeneralPane(model: model, editor: editor)
             case .about: AboutPane()
             }

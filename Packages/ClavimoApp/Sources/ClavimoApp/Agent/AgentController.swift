@@ -172,6 +172,14 @@ final class AgentController {
         reconcile()
     }
 
+    func setInspectorEnabled(_ enabled: Bool) {
+        controller?.setInspectorEnabled(enabled)
+    }
+
+    func inspectedEvents(_ completion: @escaping @Sendable ([EventTapController.InspectedEvent]) -> Void) {
+        controller?.inspectedEvents(completion)
+    }
+
     func statistics(_ completion: @escaping @Sendable (EventTapController.Statistics) -> Void) -> Bool {
         guard let controller else { return false }
         controller.statistics(completion)

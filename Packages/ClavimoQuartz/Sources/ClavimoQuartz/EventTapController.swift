@@ -29,6 +29,19 @@ public final class EventTapController: @unchecked Sendable {
         case tooManyTapFailures
     }
 
+    /// One input event as shown by the diagnostics inspector: a symbolic
+    /// description only, kept in memory while the inspector is open.
+    public struct InspectedEvent: Sendable, Equatable {
+        public enum Kind: Sendable, Equatable { case key, modifier, mouse, scroll }
+        public enum Outcome: Sendable, Equatable { case unchanged, changed, consumed, action }
+        public let kind: Kind
+        /// Key code, or mouse button number starting at 1.
+        public let code: UInt16
+        public let isDown: Bool
+        public let outcome: Outcome
+        public let callbackNanoseconds: UInt64
+    }
+
     public struct Statistics: Sendable {
         public var passThrough: LatencyRecorder.Summary?
         public var handled: LatencyRecorder.Summary?
@@ -87,6 +100,9 @@ public final class EventTapController: @unchecked Sendable {
     private var reenableTimes: [UInt64] = []
     private var attributor: HIDDeviceAttributor?
     private var deviceAttributionAvailable = false
+    private var inspectorEnabled = false
+    private var inspected: [InspectedEvent] = []
+    private static let inspectorCapacity = 30
 
     public init(
         rules: CompiledRules,
@@ -146,6 +162,19 @@ public final class EventTapController: @unchecked Sendable {
     /// workspace notifications, never looked up on the event path.
     public func setFrontmostApp(_ bundleID: String?) {
         perform { [self] in engine.setFrontmostApp(bundleID) }
+    }
+
+    /// Turns the input inspector on or off. Turning it off discards every
+    /// recorded event.
+    public func setInspectorEnabled(_ enabled: Bool) {
+        perform { [self] in
+            inspectorEnabled = enabled
+            inspected.removeAll()
+        }
+    }
+
+    public func inspectedEvents(_ completion: @escaping @Sendable ([InspectedEvent]) -> Void) {
+        perform { [self] in completion(inspected) }
     }
 
     public func statistics(_ completion: @escaping @Sendable (Statistics) -> Void) {
@@ -250,6 +279,9 @@ public final class EventTapController: @unchecked Sendable {
         } else {
             handledLatency.record(elapsed)
         }
+        if inspectorEnabled {
+            inspect(input, type: type, output: output, plain: isPlainPassThrough, elapsed: elapsed)
+        }
         return result
     }
 
@@ -323,6 +355,29 @@ public final class EventTapController: @unchecked Sendable {
         default:
             return nil
         }
+    }
+
+    private func inspect(_ input: InputEvent, type: CGEventType, output: EngineOutput, plain: Bool, elapsed: UInt64) {
+        let outcome: InspectedEvent.Outcome = if !output.actions.isEmpty {
+            .action
+        } else if plain {
+            .unchanged
+        } else if output.items.isEmpty {
+            .consumed
+        } else {
+            .changed
+        }
+        let event: InspectedEvent
+        switch input.kind {
+        case let .key(code, isDown, _):
+            event = InspectedEvent(kind: type == .flagsChanged ? .modifier : .key, code: code.rawValue, isDown: isDown,
+                                   outcome: outcome, callbackNanoseconds: elapsed)
+        case let .mouseButton(button, isDown):
+            event = InspectedEvent(kind: .mouse, code: UInt16(button.userFacingNumber), isDown: isDown,
+                                   outcome: outcome, callbackNanoseconds: elapsed)
+        }
+        if inspected.count >= Self.inspectorCapacity { inspected.removeFirst() }
+        inspected.append(event)
     }
 
     private func mouseEvent(_ button: MouseButton, isDown: Bool, physical: ModifierSet, time: UInt64) -> InputEvent {
