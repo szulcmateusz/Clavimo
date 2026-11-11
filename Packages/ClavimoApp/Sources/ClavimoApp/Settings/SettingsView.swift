@@ -68,7 +68,7 @@ struct SettingsView: View {
         NavigationSplitView {
             List(selection: $navigation.pane) {
                 Section {
-                    ForEach([SettingsNavigation.Pane.overview, .rules, .mouse, .trackpad, .devices]) { pane in
+                    ForEach([SettingsNavigation.Pane.overview, .rules, .keyboard, .mouse, .trackpad, .devices]) { pane in
                         Label(pane.title, systemImage: pane.symbol).tag(pane)
                     }
                 }

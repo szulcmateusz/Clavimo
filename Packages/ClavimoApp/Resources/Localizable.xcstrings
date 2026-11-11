@@ -5951,12 +5951,12 @@
         }
       }
     },
-    "Taps, swipes and clicks with several fingers can run actions, also together with a held key. Clavimo reads finger positions through an unofficial macOS interface, only while a trackpad rule is on or this page is open, and never stores them. If a macOS update changes that interface, gestures turn themselves off and everything else keeps working.": {
+    "Taps, swipes, two-finger turns and clicks with several fingers can run actions, on the whole trackpad or one half, also together with a held key. Clavimo reads finger positions through an unofficial macOS interface, only while a trackpad rule is on or this page is open, and never stores them. If a macOS update changes that interface, gestures turn themselves off and everything else keeps working.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stuknięcia, przesunięcia i kliknięcia kilkoma palcami mogą uruchamiać akcje, także razem z przytrzymanym klawiszem. Clavimo odczytuje położenie palców przez nieoficjalny interfejs macOS, tylko gdy włączona jest reguła gładzika albo otwarta jest ta strona, i nigdy go nie zapisuje. Jeśli aktualizacja macOS zmieni ten interfejs, gesty same się wyłączą, a reszta dalej będzie działać."
+            "value": "Stuknięcia, przesunięcia, obroty dwoma palcami i kliknięcia kilkoma palcami mogą uruchamiać akcje, na całym gładziku albo na jego połowie, także razem z przytrzymanym klawiszem. Clavimo odczytuje położenie palców przez nieoficjalny interfejs macOS, tylko gdy włączona jest reguła gładzika albo otwarta jest ta strona, i nigdy go nie zapisuje. Jeśli aktualizacja macOS zmieni ten interfejs, gesty same się wyłączą, a reszta dalej będzie działać."
           }
         }
       }

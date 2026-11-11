@@ -124,11 +124,19 @@ enum ScreenshotRenderer {
         corner.action = .shortcut
         corner.shortcutKey = 0x0D
         corner.shortcutModifiers = [.command]
+        var knob = RuleDraft()
+        knob.kind = .trackpadGesture
+        knob.gesture = .rotate
+        knob.fingers = 2
+        knob.rotation = .clockwise
+        knob.zone = .left
+        knob.action = .media
+        knob.mediaKey = .volumeUp
         var trackpadScroll = RuleDraft()
         trackpadScroll.kind = .trackpadScroll
         trackpadScroll.trackpadScroll = TrackpadScrollSettings(speed: 1.25, momentum: true)
 
-        var rules = [swap, fnLeft, fnRight, mission, chord, tap, back, corner].enumerated().map { index, draft in
+        var rules = [swap, fnLeft, fnRight, mission, chord, tap, back, knob, corner].enumerated().map { index, draft in
             draft.makeRule(id: "sample-\(index)", order: index)
         }
         var caps = KeyboardRuleDraft()

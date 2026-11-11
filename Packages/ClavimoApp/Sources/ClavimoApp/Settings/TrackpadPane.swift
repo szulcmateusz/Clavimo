@@ -67,7 +67,7 @@ struct TrackpadPane: View {
                         Text(String(localized: "Trackpad gestures")).font(.title3.weight(.semibold))
                         StatusChip(text: statusText, kind: statusKind)
                     }
-                    Text(String(localized: "Taps, swipes and clicks with several fingers can run actions, also together with a held key. Clavimo reads finger positions through an unofficial macOS interface, only while a trackpad rule is on or this page is open, and never stores them. If a macOS update changes that interface, gestures turn themselves off and everything else keeps working."))
+                    Text(String(localized: "Taps, swipes, two-finger turns and clicks with several fingers can run actions, on the whole trackpad or one half, also together with a held key. Clavimo reads finger positions through an unofficial macOS interface, only while a trackpad rule is on or this page is open, and never stores them. If a macOS update changes that interface, gestures turn themselves off and everything else keeps working."))
                         .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 }
             }
