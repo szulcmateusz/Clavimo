@@ -374,8 +374,11 @@ extension ConfigDocument {
 
     private static func scrollAxis(_ config: JSONValue?) throws -> ScrollAxisSettings {
         guard let config else { return .unchanged }
-        for key in ["acceleration", "smoothing"] where config[key] != nil {
+        for key in ["acceleration"] where config[key] != nil {
             throw Unsupported(.unsupportedScrollField(key))
+        }
+        if config["smoothing"] != nil, config["mode"]?.string != "smoothed" {
+            throw Unsupported(.unsupportedScrollField("smoothing"))
         }
         let mode: ScrollMode
         switch config["mode"]?.string ?? "system" {
@@ -396,6 +399,13 @@ extension ConfigDocument {
                 throw Unsupported(.scrollValueOutOfRange(mode: "byPixels"))
             }
             mode = .byPixels(pixels)
+        case "smoothed":
+            let pixels = config["distancePixels"]?.number ?? SmoothScroller.Settings.standard.pixelsPerNotch
+            let duration = config["smoothing"]?["response"]?.number ?? SmoothScroller.Settings.standard.duration
+            guard SmoothScroller.Settings.pixelsRange.contains(pixels), SmoothScroller.Settings.durationRange.contains(duration) else {
+                throw Unsupported(.scrollValueOutOfRange(mode: "smoothed"))
+            }
+            mode = .smoothed(SmoothScroller.Settings(pixelsPerNotch: pixels, duration: duration))
         case let other:
             throw Unsupported(.unsupportedScrollMode(other))
         }

@@ -8,7 +8,7 @@ struct RuleDraft: Equatable {
     /// Scroll settings for one wheel axis.
     struct Axis: Equatable {
         enum Mode: String, CaseIterable, Identifiable {
-            case system, accelerated, byLines, byPixels
+            case system, accelerated, byLines, byPixels, smoothed
             var id: String { rawValue }
             var title: String {
                 switch self {
@@ -16,6 +16,7 @@ struct RuleDraft: Equatable {
                 case .accelerated: "Accelerated"
                 case .byLines: "By lines"
                 case .byPixels: "By pixels"
+                case .smoothed: "Smooth"
                 }
             }
             var explanation: String {
@@ -24,6 +25,7 @@ struct RuleDraft: Equatable {
                 case .accelerated: "The macOS acceleration curve, faster or slower."
                 case .byLines: "The same number of lines for every wheel notch, without acceleration."
                 case .byPixels: "The same distance in pixels for every wheel notch, without acceleration. Experimental."
+                case .smoothed: "Each notch glides a fixed distance over a short animation, like a trackpad."
                 }
             }
         }
@@ -33,6 +35,8 @@ struct RuleDraft: Equatable {
         var speed = 1.0
         var lines = 3
         var pixels = 60.0
+        /// Smooth scrolling animation time in seconds.
+        var duration = 0.25
 
         var changesEvents: Bool { reverse || mode != .system }
 
@@ -44,6 +48,7 @@ struct RuleDraft: Equatable {
             case .accelerated: parts.append("speed \(speed.formatted(.number.precision(.fractionLength(0...1))))x")
             case .byLines: parts.append("\(lines) \(lines == 1 ? "line" : "lines")")
             case .byPixels: parts.append("\(Int(pixels)) px")
+            case .smoothed: parts.append("smooth, \(Int(pixels)) px")
             }
             return parts.isEmpty ? nil : parts.joined(separator: ", ")
         }
@@ -55,6 +60,9 @@ struct RuleDraft: Equatable {
             case .accelerated: object["speedMultiplier"] = .number(speed)
             case .byLines: object["distanceLines"] = .number(Double(lines))
             case .byPixels: object["distancePixels"] = .number(pixels)
+            case .smoothed:
+                object["distancePixels"] = .number(pixels)
+                object["smoothing"] = .object(["response": .number(duration)])
             }
             return .object(object)
         }
@@ -63,13 +71,14 @@ struct RuleDraft: Equatable {
 
         init?(json value: JSONValue?) {
             guard let value else { return }
-            guard Set(value.keys).isSubset(of: ["reverse", "mode", "speedMultiplier", "distanceLines", "distancePixels"]),
+            guard Set(value.keys).isSubset(of: ["reverse", "mode", "speedMultiplier", "distanceLines", "distancePixels", "smoothing"]),
                   let mode = Mode(rawValue: value["mode"]?.string ?? "system") else { return nil }
             self.mode = mode
             reverse = value["reverse"] == .bool(true)
             if let speed = value["speedMultiplier"]?.number { self.speed = speed }
             if let lines = value["distanceLines"]?.int { self.lines = lines }
             if let pixels = value["distancePixels"]?.number { self.pixels = pixels }
+            if let duration = value["smoothing"]?["response"]?.number { self.duration = duration }
         }
     }
 

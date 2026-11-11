@@ -138,12 +138,9 @@ struct RuleEditorView: View {
                 Text(draft.policy.explanation + " Letter-key chords can delay that letter while typing.")
             }
         case .wheel:
-            ScrollAxisEditor(title: "Vertical scrolling", axis: $draft.vertical)
-            ScrollAxisEditor(title: "Horizontal scrolling", axis: $draft.horizontal)
             Section {
-                EmptyView()
-            } footer: {
-                Text("Applies to mouse wheels only. Trackpad and Magic Mouse scrolling keep the system settings.")
+                Text(String(localized: "Mouse wheel settings are edited in Mouse & Scrolling."))
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -293,44 +290,6 @@ final class KeyRecorder {
 }
 
 // MARK: - Small editors
-
-struct ScrollAxisEditor: View {
-    let title: String
-    @Binding var axis: RuleDraft.Axis
-
-    var body: some View {
-        Section {
-            Toggle("Reverse direction", isOn: $axis.reverse)
-            Picker("Mode", selection: $axis.mode) {
-                ForEach(RuleDraft.Axis.Mode.allCases) { Text($0.title).tag($0) }
-            }
-            switch axis.mode {
-            case .system:
-                EmptyView()
-            case .accelerated:
-                LabeledContent("Speed") {
-                    HStack {
-                        Slider(value: $axis.speed, in: 0.1...5, step: 0.1)
-                        Text("\(axis.speed.formatted(.number.precision(.fractionLength(1))))x").monospacedDigit().frame(width: 44)
-                    }
-                }
-            case .byLines:
-                Stepper("Lines per notch: \(axis.lines)", value: $axis.lines, in: ScrollMode.linesRange)
-            case .byPixels:
-                LabeledContent("Pixels per notch") {
-                    HStack {
-                        Slider(value: $axis.pixels, in: 10...300, step: 5)
-                        Text("\(Int(axis.pixels))").monospacedDigit().frame(width: 44)
-                    }
-                }
-            }
-        } header: {
-            Text(title)
-        } footer: {
-            Text(axis.mode.explanation)
-        }
-    }
-}
 
 struct ButtonPicker: View {
     @Binding var button: Int

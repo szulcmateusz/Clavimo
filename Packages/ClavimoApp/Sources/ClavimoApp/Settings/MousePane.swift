@@ -162,6 +162,18 @@ private struct AxisControls: View {
                     Text("\(Int(axis.pixels)) px").monospacedDigit().frame(width: 52)
                 }
                 .frame(maxWidth: 260)
+            case .smoothed:
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    HStack {
+                        Slider(value: $axis.pixels, in: 10...300, step: 5) { Text(String(localized: "Distance")) }
+                        Text("\(Int(axis.pixels)) px").monospacedDigit().frame(width: 52)
+                    }
+                    HStack {
+                        Slider(value: $axis.duration, in: 0.05...1.0, step: 0.05) { Text(String(localized: "Glide")) }
+                        Text("\(Int(axis.duration * 1000)) ms").monospacedDigit().frame(width: 52)
+                    }
+                }
+                .frame(maxWidth: 280)
             }
             Text(axis.mode.localizedExplanation).font(.caption).foregroundStyle(.secondary)
                 .frame(maxWidth: 260, alignment: .leading)
@@ -177,6 +189,7 @@ extension RuleDraft.Axis.Mode {
         case .accelerated: String(localized: "Accelerated")
         case .byLines: String(localized: "By lines")
         case .byPixels: String(localized: "By pixels")
+        case .smoothed: String(localized: "Smooth")
         }
     }
 
@@ -186,6 +199,7 @@ extension RuleDraft.Axis.Mode {
         case .accelerated: String(localized: "The macOS acceleration curve, faster or slower.")
         case .byLines: String(localized: "The same number of lines for every notch, without acceleration.")
         case .byPixels: String(localized: "The same distance for every notch, without acceleration. Experimental.")
+        case .smoothed: String(localized: "Each notch glides a fixed distance over a short animation, like a trackpad. Moving the trackpad or pausing stops it.")
         }
     }
 }

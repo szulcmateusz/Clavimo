@@ -70,6 +70,21 @@ struct RuleDraftTests {
         ])
     }
 
+    @Test func smoothScrollingSurvivesRoundTrip() throws {
+        var smooth = RuleDraft()
+        smooth.kind = .wheel
+        smooth.name = "Smooth"
+        smooth.vertical.mode = .smoothed
+        smooth.vertical.pixels = 80
+        smooth.vertical.duration = 0.3
+        let setting = smooth.makeDeviceSetting(id: "s")
+        #expect(RuleDraft(deviceSetting: setting) == smooth)
+        #expect(try ConfigDocument(deviceSettings: [setting]).interpret().definitions == [
+            .wheel(vertical: ScrollAxisSettings(reverse: true, mode: .smoothed(SmoothScroller.Settings(pixelsPerNotch: 80, duration: 0.3))),
+                   horizontal: .unchanged),
+        ])
+    }
+
     @Test func invalidDraftsExplainWhy() {
         var sameKeys = RuleDraft()
         sameKeys.secondKey = sameKeys.firstKey

@@ -9,6 +9,13 @@ public enum ScrollMode: Hashable, Sendable {
     /// Scroll a fixed number of pixels per wheel notch, without
     /// acceleration. The event is delivered as precise scrolling.
     case byPixels(Double)
+    /// Animate each notch smoothly over a short time (see SmoothScroller).
+    /// The platform adapter performs the animation.
+    case smoothed(SmoothScroller.Settings)
+
+    public var isSmoothed: Bool {
+        if case .smoothed = self { true } else { false }
+    }
 
     public static let speedRange: ClosedRange<Double> = 0.1...10
     public static let linesRange: ClosedRange<Int> = 1...30
@@ -60,7 +67,7 @@ public enum ScrollTransform {
         let sign: Double = (direction > 0) != settings.reverse ? 1 : -1
 
         switch settings.mode {
-        case .system:
+        case .system, .smoothed:
             guard settings.reverse else { return deltas }
             return ScrollDeltas(lines: -deltas.lines, fixed: -deltas.fixed, points: -deltas.points)
 

@@ -87,7 +87,8 @@ Changes discrete mouse wheel scrolling; each axis is configured separately. Cont
 | `accelerated` | `speedMultiplier` (0.1-10) | The macOS acceleration curve, scaled. |
 | `byLines` | `distanceLines` (1-30) | A fixed number of lines per wheel notch, without acceleration. |
 | `byPixels` | `distancePixels` (1-512) | Experimental. A fixed number of pixels per wheel notch, delivered as precise scrolling. |
+| `smoothed` | `distancePixels` (10-300, default 60), `smoothing.response` (0.05-1.0 seconds, default 0.25) | Each notch glides `distancePixels` over about `response` seconds with an ease-out curve. Scrolling the other way, using the trackpad, pausing or switching users stops the animation; pending distance is capped at 25 notches and an animation never runs longer than 3 seconds. |
 
 `reverse` inverts the axis in any mode. In `byLines` and `byPixels`, movements smaller than one line from high-resolution wheels are ignored so they do not each count as a full notch.
 
-Not supported yet: `smoothed` scrolling, `acceleration` and `smoothing` fields, per-device scope (`vendorId`/`productId`), `displayId`, and pointer speed and acceleration.
+Not supported yet: the `acceleration` field, `smoothing` fields other than `response`, per-device scope (`vendorId`/`productId`), `displayId`, and pointer speed and acceleration.

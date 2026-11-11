@@ -100,6 +100,8 @@ public final class EventTapController: @unchecked Sendable {
     private var reenableTimes: [UInt64] = []
     private var attributor: HIDDeviceAttributor?
     private var deviceAttributionAvailable = false
+    private var smoothScroller = SmoothScroller()
+    private var smoothTimer: CFRunLoopTimer?
     private var inspectorEnabled = false
     private var inspected: [InspectedEvent] = []
     private static let inspectorCapacity = 30
@@ -215,6 +217,11 @@ public final class EventTapController: @unchecked Sendable {
             self?.deadlineFired()
         }
         CFRunLoopAddTimer(loop, timer, .commonModes)
+        let smooth = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, .infinity, 1.0 / 120, 0, 0) { [weak self] _ in
+            self?.smoothScrollFrame()
+        }
+        CFRunLoopAddTimer(loop, smooth, .commonModes)
+        smoothTimer = smooth
         tap = port
         runLoop = loop
         deadlineTimer = timer
@@ -233,6 +240,8 @@ public final class EventTapController: @unchecked Sendable {
         CGEvent.tapEnable(tap: port, enable: false)
         CFMachPortInvalidate(port)
         if let deadlineTimer { CFRunLoopTimerInvalidate(deadlineTimer) }
+        if let smoothTimer { CFRunLoopTimerInvalidate(smoothTimer) }
+        smoothTimer = nil
         tap = nil
         deadlineTimer = nil
         attributor?.stop()
@@ -260,9 +269,9 @@ public final class EventTapController: @unchecked Sendable {
         let start = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
         eventsSeen &+= 1
         if type == .scrollWheel {
-            applyWheelSettings(event)
+            let keep = applyWheelSettings(event)
             passThroughLatency.record(clock_gettime_nsec_np(CLOCK_UPTIME_RAW) &- start)
-            return Unmanaged.passUnretained(event)
+            return keep ? Unmanaged.passUnretained(event) : nil
         }
         guard let input = normalize(type: type, event: event, time: start) else {
             return Unmanaged.passUnretained(event)
@@ -285,18 +294,36 @@ public final class EventTapController: @unchecked Sendable {
         return result
     }
 
-    /// Applies wheel settings to discrete wheel events in place.
-    /// Continuous scrolling (trackpads, Magic Mouse) is identified by the
-    /// system's continuous flag and left untouched.
-    private func applyWheelSettings(_ event: CGEvent) {
+    /// Applies wheel settings to discrete wheel events in place. Returns
+    /// false when the event is consumed because smooth scrolling animates
+    /// it instead. Continuous scrolling (trackpads, Magic Mouse) is
+    /// identified by the system's continuous flag and left untouched; it
+    /// also stops a running smooth animation.
+    private func applyWheelSettings(_ event: CGEvent) -> Bool {
         let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0
-        guard let settings = engine.wheelSettings(isContinuous: isContinuous, device: nil) else { return }
+        if isContinuous {
+            if smoothScroller.isActive { stopSmoothScrolling() }
+            return true
+        }
+        guard let settings = engine.wheelSettings(isContinuous: false, device: nil) else { return true }
+
+        if case let .smoothed(vertical) = settings.vertical.mode {
+            let notches = Self.notches(event, .scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, reverse: settings.vertical.reverse)
+            addSmoothImpulse(vertical: notches, horizontal: 0, verticalSettings: vertical, horizontalSettings: .standard)
+            Self.clear(event, .scrollWheelEventDeltaAxis1, .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1)
+        }
+        if case let .smoothed(horizontal) = settings.horizontal.mode {
+            let notches = Self.notches(event, .scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, reverse: settings.horizontal.reverse)
+            addSmoothImpulse(vertical: 0, horizontal: notches, verticalSettings: .standard, horizontalSettings: horizontal)
+            Self.clear(event, .scrollWheelEventDeltaAxis2, .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2)
+        }
+
         var precise = false
-        if settings.vertical.changesEvents {
+        if settings.vertical.changesEvents, !settings.vertical.mode.isSmoothed {
             precise = Self.transform(event, settings.vertical, .scrollWheelEventDeltaAxis1,
                                      .scrollWheelEventFixedPtDeltaAxis1, .scrollWheelEventPointDeltaAxis1) || precise
         }
-        if settings.horizontal.changesEvents {
+        if settings.horizontal.changesEvents, !settings.horizontal.mode.isSmoothed {
             precise = Self.transform(event, settings.horizontal, .scrollWheelEventDeltaAxis2,
                                      .scrollWheelEventFixedPtDeltaAxis2, .scrollWheelEventPointDeltaAxis2) || precise
         }
@@ -305,6 +332,71 @@ public final class EventTapController: @unchecked Sendable {
             // scroll events; apps treat other wheel events as line counts.
             event.setIntegerValueField(.scrollWheelEventIsContinuous, value: 1)
         }
+        // Drop events that no longer move anything (fully animated).
+        return event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis1) != 0
+            || event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis2) != 0
+            || event.getIntegerValueField(.scrollWheelEventPointDeltaAxis1) != 0
+            || event.getIntegerValueField(.scrollWheelEventPointDeltaAxis2) != 0
+    }
+
+    /// One notch per wheel event in its direction, ignoring the system's
+    /// acceleration; fragments from high-resolution wheels count partially.
+    private static func notches(_ event: CGEvent, _ lineField: CGEventField, _ fixedField: CGEventField, reverse: Bool) -> Double {
+        let lines = event.getIntegerValueField(lineField)
+        let fixed = event.getDoubleValueField(fixedField)
+        var value = lines != 0 ? (lines > 0 ? 1.0 : -1.0) : fixed
+        if reverse { value = -value }
+        return value
+    }
+
+    private static func clear(_ event: CGEvent, _ line: CGEventField, _ fixed: CGEventField, _ point: CGEventField) {
+        event.setIntegerValueField(line, value: 0)
+        event.setDoubleValueField(fixed, value: 0)
+        event.setIntegerValueField(point, value: 0)
+    }
+
+    private func addSmoothImpulse(vertical: Double, horizontal: Double, verticalSettings: SmoothScroller.Settings,
+                                  horizontalSettings: SmoothScroller.Settings) {
+        guard vertical != 0 || horizontal != 0 else { return }
+        let started = smoothScroller.addImpulse(vertical: vertical, horizontal: horizontal, verticalSettings: verticalSettings,
+                                                horizontalSettings: horizontalSettings, now: CFAbsoluteTimeGetCurrent())
+        if started, let smoothTimer {
+            CFRunLoopTimerSetNextFireDate(smoothTimer, CFAbsoluteTimeGetCurrent())
+        }
+    }
+
+    private func smoothScrollFrame() {
+        guard let frame = smoothScroller.step(now: CFAbsoluteTimeGetCurrent()) else {
+            if let smoothTimer { CFRunLoopTimerSetNextFireDate(smoothTimer, .infinity) }
+            return
+        }
+        postSmoothFrame(vertical: Int32(frame.vertical), horizontal: Int32(frame.horizontal), phase: frame.phase)
+        if frame.phase == .ended, let smoothTimer {
+            CFRunLoopTimerSetNextFireDate(smoothTimer, .infinity)
+        }
+    }
+
+    /// Stops a running animation, ending its gesture cleanly.
+    private func stopSmoothScrolling() {
+        guard smoothScroller.isActive else { return }
+        smoothScroller.cancel()
+        postSmoothFrame(vertical: 0, horizontal: 0, phase: .ended)
+        if let smoothTimer { CFRunLoopTimerSetNextFireDate(smoothTimer, .infinity) }
+    }
+
+    private func postSmoothFrame(vertical: Int32, horizontal: Int32, phase: SmoothScroller.Phase) {
+        guard let event = CGEvent(scrollWheelEvent2Source: source, units: .pixel, wheelCount: 2,
+                                  wheel1: vertical, wheel2: horizontal, wheel3: 0) else { return }
+        event.setIntegerValueField(.scrollWheelEventIsContinuous, value: 1)
+        // kCGScrollPhaseBegan = 1, Changed = 2, Ended = 4.
+        let phaseValue: Int64 = switch phase {
+        case .began: 1
+        case .changed: 2
+        case .ended: 4
+        }
+        event.setIntegerValueField(.scrollWheelEventScrollPhase, value: phaseValue)
+        event.setIntegerValueField(.eventSourceUserData, value: Self.syntheticTag)
+        event.post(tap: .cgSessionEventTap)
     }
 
     /// Returns true when the axis now carries a pixel distance.
@@ -486,6 +578,7 @@ public final class EventTapController: @unchecked Sendable {
     }
 
     private func resetEngine(insideCallback _: CGEventTapProxy?) {
+        stopSmoothScrolling()
         let output = engine.reset()
         postOutsideCallback(output)
         if let deadlineTimer { CFRunLoopTimerSetNextFireDate(deadlineTimer, .infinity) }

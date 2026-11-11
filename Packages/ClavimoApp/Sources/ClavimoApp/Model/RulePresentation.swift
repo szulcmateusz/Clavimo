@@ -156,6 +156,7 @@ extension RuleDraft.Axis {
         case .accelerated: parts.append(String(localized: "speed \(speed.formatted(.number.precision(.fractionLength(1))))×"))
         case .byLines: parts.append(String(localized: "\(lines) lines per notch"))
         case .byPixels: parts.append(String(localized: "\(Int(pixels)) px per notch"))
+        case .smoothed: parts.append(String(localized: "smooth, \(Int(pixels)) px per notch"))
         }
         return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }

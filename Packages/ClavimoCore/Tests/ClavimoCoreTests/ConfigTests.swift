@@ -199,15 +199,20 @@ struct ConfigTests {
            "scrolling": {"vertical": {"mode": "byLines", "distanceLines": 99}}},
           {"id": "smooth", "name": "Smooth", "enabled": true, "profileId": "default", "priority": 1,
            "scope": {"deviceClass": "mouse", "appBundleId": "com.example.other"},
-           "scrolling": {"vertical": {"mode": "smoothed"}}}
+           "scrolling": {"vertical": {"mode": "smoothed", "distancePixels": 80, "smoothing": {"response": 0.3}}}},
+          {"id": "smooth-bad", "name": "Too slow", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse", "appBundleId": "com.example.third"},
+           "scrolling": {"vertical": {"mode": "smoothed", "smoothing": {"response": 1.8}}}}
         ]
         """)
         let result = try interpret(json)
         #expect(result.definitions == [
             .wheel(vertical: ScrollAxisSettings(reverse: true, mode: .byLines(3)),
                    horizontal: ScrollAxisSettings(mode: .accelerated(speed: 1.5))),
+            .wheel(vertical: ScrollAxisSettings(mode: .smoothed(SmoothScroller.Settings(pixelsPerNotch: 80, duration: 0.3))),
+                   horizontal: .unchanged, conditions: RuleConditions(onlyApps: ["com.example.other"])),
         ])
-        #expect(result.unsupported.map(\.ruleID) == ["bad", "smooth"])
+        #expect(result.unsupported.map(\.ruleID) == ["bad", "smooth-bad"])
     }
 
     static func profiles(_ json: String, active: String) -> String {
