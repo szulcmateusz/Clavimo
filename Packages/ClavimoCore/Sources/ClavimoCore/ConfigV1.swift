@@ -210,6 +210,8 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
 public enum ConfigLoadError: Error, Equatable, Sendable {
     case unsupportedSchemaVersion(Int)
     case unknownActiveProfile(String)
+    case unknownParentProfile(String)
+    case profileCycle(String)
 }
 
 /// Why an enabled rule or device setting cannot run in the current engine.
@@ -282,33 +284,60 @@ public struct InterpretedConfig: Equatable, Sendable {
 }
 
 extension ConfigDocument {
+    /// The active profile followed by the profiles it inherits from,
+    /// nearest first.
+    public func profileChain() throws -> [String] {
+        var chain: [String] = []
+        var current: String? = activeProfileId
+        while let id = current {
+            guard let profile = profiles.first(where: { $0.id == id }) else {
+                throw id == activeProfileId ? ConfigLoadError.unknownActiveProfile(id) : ConfigLoadError.unknownParentProfile(id)
+            }
+            guard !chain.contains(id) else { throw ConfigLoadError.profileCycle(id) }
+            chain.append(id)
+            current = profile.inherits
+        }
+        return chain
+    }
+
     /// Translates enabled rules and device settings of the active profile
-    /// into engine rule definitions. Profile inheritance is not supported
-    /// yet; anything the engine cannot run is reported as unsupported.
+    /// and the profiles it inherits from into engine rule definitions.
+    /// A rule in a nearer profile replaces inherited rules with the same
+    /// trigger. Anything the engine cannot run is reported as unsupported.
     public func interpret() throws -> InterpretedConfig {
-        guard profiles.contains(where: { $0.id == activeProfileId }) else {
-            throw ConfigLoadError.unknownActiveProfile(activeProfileId)
-        }
+        let chain = try profileChain()
         var result = InterpretedConfig(definitions: [], unsupported: [])
-        for rule in rules where rule.enabled && rule.profileId == activeProfileId {
-            switch Self.translate(rule) {
-            case let .success(definition):
+        var claimed: Set<String> = []
+        // Nearest profile first, so its rules claim triggers before
+        // inherited rules are considered.
+        for profileID in chain {
+            var level: [RuleDefinition] = []
+            for rule in rules where rule.enabled && rule.profileId == profileID {
+                switch Self.translate(rule) {
+                case let .success(definition):
+                    level.append(definition)
+                case let .failure(reason):
+                    result.unsupported.append(ConfigIssue(ruleID: rule.id, ruleName: rule.name, reason: reason.reason))
+                }
+            }
+            for setting in deviceSettings ?? [] {
+                guard setting["enabled"] == .bool(true), setting["profileId"]?.string == profileID else { continue }
+                let id = setting["id"]?.string ?? "?"
+                let name = setting["name"]?.string ?? id
+                do {
+                    level.append(try Self.translateDeviceSetting(setting))
+                } catch let error as Unsupported {
+                    result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: error.reason))
+                } catch {
+                    result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: .invalidRule))
+                }
+            }
+            var levelClaims: Set<String> = []
+            for definition in level where definition.triggerSignatures.isDisjoint(with: claimed) {
                 result.definitions.append(definition)
-            case let .failure(reason):
-                result.unsupported.append(ConfigIssue(ruleID: rule.id, ruleName: rule.name, reason: reason.reason))
+                levelClaims.formUnion(definition.triggerSignatures)
             }
-        }
-        for setting in deviceSettings ?? [] {
-            guard setting["enabled"] == .bool(true), setting["profileId"]?.string == activeProfileId else { continue }
-            let id = setting["id"]?.string ?? "?"
-            let name = setting["name"]?.string ?? id
-            do {
-                result.definitions.append(try Self.translateDeviceSetting(setting))
-            } catch let error as Unsupported {
-                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: error.reason))
-            } catch {
-                result.unsupported.append(ConfigIssue(ruleID: id, ruleName: name, reason: .invalidRule))
-            }
+            claimed.formUnion(levelClaims)
         }
         return result
     }

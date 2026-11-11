@@ -209,4 +209,42 @@ struct ConfigTests {
         ])
         #expect(result.unsupported.map(\.ruleID) == ["bad", "smooth"])
     }
+
+    static func profiles(_ json: String, active: String) -> String {
+        Self.document(rules: json, active: active).replacingOccurrences(
+            of: #""profiles": [{"id": "default", "name": "Default", "inherits": null}]"#,
+            with: #""profiles": [{"id": "default", "name": "Default", "inherits": null}, {"id": "games", "name": "Games", "inherits": "default"}]"#)
+    }
+
+    @Test func childProfileInheritsAndOverrides() throws {
+        let swap = #"{"kind": "keyPair", "first": {"codeNamespace": "macVirtualKeyCode", "code": 54}, "second": {"codeNamespace": "macVirtualKeyCode", "code": 61}}"#
+        let remap = #"{"kind": "key", "key": {"codeNamespace": "macVirtualKeyCode", "code": 54}}"#
+        let chord = #"{"kind": "modifierChord", "requiredModifiers": ["function"], "mouseButton": 4}"#
+        let rules = [
+            Self.rule(id: "base-swap", trigger: swap, action: #"{"kind": "swapKeys", "sideMode": "right"}"#),
+            Self.rule(id: "base-chord", trigger: chord, action: #"{"kind": "missionControl"}"#),
+            Self.rule(id: "game-remap", profile: "games", trigger: remap, action: #"{"kind": "sendKey", "key": {"codeNamespace": "macVirtualKeyCode", "code": 53}}"#),
+        ].joined(separator: ",")
+
+        let inGames = try interpret(Self.profiles(rules, active: "games"))
+        #expect(inGames.definitions.count == 2, "the game remap replaces the inherited swap, the chord is inherited")
+        #expect(inGames.definitions.contains(.remap(from: .rightCommand, to: .escape)))
+        #expect(!inGames.definitions.contains(.swap(.rightCommand, .rightOption)))
+        #expect(try CompiledRules.compile(inGames.definitions).get().keyRemaps[.rightCommand] == .escape)
+
+        let inDefault = try interpret(Self.profiles(rules, active: "default"))
+        #expect(inDefault.definitions.count == 2)
+        #expect(inDefault.definitions.contains(.swap(.rightCommand, .rightOption)))
+    }
+
+    @Test func profileCyclesAndMissingParentsAreErrors() {
+        let cycle = Self.document(rules: "", active: "a").replacingOccurrences(
+            of: #""profiles": [{"id": "default", "name": "Default", "inherits": null}]"#,
+            with: #""profiles": [{"id": "a", "name": "A", "inherits": "b"}, {"id": "b", "name": "B", "inherits": "a"}]"#)
+        #expect(throws: ConfigLoadError.profileCycle("a")) { try interpret(cycle) }
+        let orphan = Self.document(rules: "", active: "a").replacingOccurrences(
+            of: #""profiles": [{"id": "default", "name": "Default", "inherits": null}]"#,
+            with: #""profiles": [{"id": "a", "name": "A", "inherits": "gone"}]"#)
+        #expect(throws: ConfigLoadError.unknownParentProfile("gone")) { try interpret(orphan) }
+    }
 }

@@ -109,6 +109,39 @@ public enum RuleDefinition: Equatable, Sendable {
     case wheel(vertical: ScrollAxisSettings, horizontal: ScrollAxisSettings, conditions: RuleConditions = .always)
 }
 
+extension RuleDefinition {
+    /// Identifies what a rule reacts to, so a rule in a profile can replace
+    /// an inherited rule with the same trigger and conditions.
+    public var triggerSignatures: Set<String> {
+        switch self {
+        case let .remap(from, _, conditions):
+            ["key:\(from.rawValue):\(conditions.signature)"]
+        case let .swap(first, second, conditions):
+            ["key:\(first.rawValue):\(conditions.signature)", "key:\(second.rawValue):\(conditions.signature)"]
+        case let .mouseChord(_, leader, button, _, _, _, conditions):
+            ["chord:\(leader.signature):\(button.rawValue):\(conditions.signature)"]
+        case let .wheel(_, _, conditions):
+            ["wheel:\(conditions.signature)"]
+        }
+    }
+}
+
+extension RuleConditions {
+    var signature: String {
+        [onlyApps.sorted().joined(separator: ","), exceptApps.sorted().joined(separator: ","),
+         devices.sorted().map(\.description).joined(separator: ",")].joined(separator: "|")
+    }
+}
+
+extension ChordLeader {
+    var signature: String {
+        switch self {
+        case let .modifiers(modifiers): "mods:\(modifiers.rawValue)"
+        case let .key(key, _): "key:\(key.rawValue)"
+        }
+    }
+}
+
 public enum RuleValidationError: Error, Equatable, Sendable {
     case duplicateRemapSource(KeyCode)
     case swapWithItself(KeyCode)
