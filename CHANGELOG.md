@@ -4,7 +4,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
-## [1.2.1] - 2026-11-11
+## [1.2.1] - 2026-11-12
 
 First public release of the 1.2 features below.
 
@@ -16,7 +16,7 @@ First public release of the 1.2 features below.
 
 ### Fixed
 
-- Clavimo 1.2.0 quit right after launch while checking keyboards for a leftover Caps Lock mapping. Version 1.2.0 was tagged but never published.
+- Clavimo 1.2.0 quit right after launch while checking keyboards for a leftover Caps Lock mapping, and its Keyboard pane was missing from the settings sidebar. Version 1.2.0 was tagged but never published.
 
 ## [1.2.0] - 2026-11-11
 
