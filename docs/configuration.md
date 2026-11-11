@@ -72,8 +72,22 @@ When several mouse chords share a trigger, the higher `priority` wins; for equal
 {
   "id": "...", "name": "Mouse wheel", "enabled": true, "profileId": "default", "priority": 50,
   "scope": {"deviceClass": "mouse"},
-  "scrolling": {"vertical": {"reverse": true}, "horizontal": {"reverse": false}}
+  "scrolling": {
+    "vertical": {"reverse": true, "mode": "byLines", "distanceLines": 3},
+    "horizontal": {"reverse": false, "mode": "system"}
+  }
 }
 ```
 
-Reverses discrete mouse wheel scrolling. Continuous scrolling from trackpads and Magic Mouse is never changed. `scope.appBundleId` limits the setting to one app. Not supported yet: per-device scope (`vendorId`/`productId`), `displayId`, pointer speed and acceleration, and scroll modes other than `system`.
+Changes discrete mouse wheel scrolling; each axis is configured separately. Continuous scrolling from trackpads and Magic Mouse is never changed. `scope.appBundleId` limits the setting to one app.
+
+| `mode` | Field | Behavior |
+| --- | --- | --- |
+| `system` | | Distance and acceleration as set in macOS. |
+| `accelerated` | `speedMultiplier` (0.1-10) | The macOS acceleration curve, scaled. |
+| `byLines` | `distanceLines` (1-30) | A fixed number of lines per wheel notch, without acceleration. |
+| `byPixels` | `distancePixels` (1-512) | Experimental. A fixed number of pixels per wheel notch, delivered as precise scrolling. |
+
+`reverse` inverts the axis in any mode. In `byLines` and `byPixels`, movements smaller than one line from high-resolution wheels are ignored so they do not each count as a full notch.
+
+Not supported yet: `smoothed` scrolling, `acceleration` and `smoothing` fields, per-device scope (`vendorId`/`productId`), `displayId`, and pointer speed and acceleration.

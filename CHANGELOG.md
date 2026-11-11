@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Added
+
+- Scroll modes for mouse wheels, configured per axis: system, accelerated with a speed multiplier, a fixed number of lines per notch, or (experimental) a fixed number of pixels per notch.
+
 ## [0.1.0] - 2026-11-11
 
 First preview release. Most features are experimental: they are covered by automated tests but have been verified on only one Mac (macOS 27.2, Apple Silicon). Release builds are not notarized by Apple.

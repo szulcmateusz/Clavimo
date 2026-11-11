@@ -14,13 +14,13 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Modifier + mouse button (including Fn, and left or right click with explicit opt-in) | Experimental | Ordinary clicks are never affected. |
 | Letter key + mouse button, with a choice of how the letter is buffered | Experimental | The letter may be slightly delayed while typing; see [leader policies](docs/configuration.md#leader-policies-for-key--mouse-button). |
 | Actions: next and previous Space, Mission Control, application windows | Experimental | Uses the macOS Control + Arrow shortcuts, which must be enabled. |
-| Reverse mouse wheel direction, trackpad unchanged | Experimental | Applies to all mouse wheels; per-device scrolling is not supported yet. |
+| Mouse wheel direction and scroll distance: system, accelerated, a fixed number of lines or pixels per notch; trackpad unchanged | Experimental | Applies to all mouse wheels; per-device scrolling and smooth scrolling are not supported yet. |
 | Rules limited to apps or excluded from apps | Experimental | |
 | Rules limited to one keyboard or mouse | Experimental | Works without a driver by asking devices which one is pressing the key; if that is ambiguous, the rule does not apply. Identical devices cannot be told apart. |
 | Visual rule editor with key recording | Experimental | |
 | Pause, emergency disable and safe mode | Experimental | |
 | Launch at Login, automatic pause while another macOS account is active | Experimental | Multi-account behavior not yet verified on hardware. |
-| Pointer speed and acceleration, scroll speed and smoothing, macros, layers, tap-hold | Planned | |
+| Pointer speed and acceleration, smooth scrolling, macros, layers, tap-hold | Planned | |
 | Remapping at the login window or before FileVault unlock | Unsupported | macOS does not allow it for apps like Clavimo. |
 
 **Available** means implemented, covered by automated tests and verified on real hardware. **Experimental** means implemented and covered by automated tests, but not yet verified on hardware, so it may not work everywhere. **Planned** features do not exist yet.
@@ -82,7 +82,7 @@ Only clicks made while Fn is held are replaced. Normal clicks, drags and right-c
 
 ## How rules work
 
-- **Rule types:** swap two keys, remap a key, modifier + mouse button, key + mouse button, and mouse wheel direction.
+- **Rule types:** swap two keys, remap a key, modifier + mouse button, key + mouse button, and mouse wheel settings (direction and scroll distance per axis).
 - **Conditions:** only in certain apps, never in certain apps, and (experimental) only for a specific keyboard or mouse. Leave them empty to apply a rule everywhere.
 - **Precedence:** for mouse chords with the same trigger, the higher priority wins, then the more specific conditions. Two rules for the same key need different conditions; the most specific one wins. Conflicting rules are rejected when you save, with an explanation.
 - **Letter key + mouse button** needs a buffering choice, because the letter would otherwise type before Clavimo knows a click is coming: wait briefly then type (default 120 ms), wait until the key is released, or type immediately and accept the stray character. The letter is only held back in apps where its chord can apply.
@@ -132,7 +132,7 @@ Each macOS account has its own rules, permissions and startup setting. When you 
 - **Device-specific rules are experimental.** macOS does not tell apps which device produced a keyboard event. Clavimo asks the connected devices which one currently reports the key as pressed. If two devices report it, or none does, the rule does not apply. Two devices of the same model share an ID. Devices behind a shared Logitech Bolt or Unifying receiver may not be distinguishable.
 - **Caps Lock and Fn** cannot be remapped. Fn works as a modifier in mouse chords.
 - **Spaces** are switched through the macOS keyboard shortcuts, not a private API. If those shortcuts are disabled or changed, the actions do nothing.
-- **Mouse wheel reversal** applies to every mouse wheel. Trackpads and Magic Mouse (continuous scrolling) keep the system direction.
+- **Mouse wheel settings** apply to every mouse wheel. Trackpads and Magic Mouse (continuous scrolling) keep the system behavior.
 - **Secure input:** while a password field or another app enables Secure Event Input, macOS hides keystrokes from all event taps, so key rules pause.
 - **Other input tools:** running Karabiner-Elements, LinearMouse, BetterTouchTool or Logi Options+ alongside Clavimo can apply changes twice or hide events from it. Clavimo warns when it detects some of them but never quits or changes other apps. Logi Options+ may turn side buttons into shortcuts before Clavimo sees them.
 
