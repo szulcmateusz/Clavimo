@@ -144,7 +144,7 @@ struct DiagnosticsPane: View {
     private func copyReport() {
         let info = Bundle.main.infoDictionary
         var lines = [
-            "Clavimo \(info?["CFBundleShortVersionString"] as? String ?? "dev") (\(info?["CFBundleVersion"] as? String ?? "-"))",
+            "Clavimo \(AppVersion.releaseName) (\(info?["CFBundleVersion"] as? String ?? "-"))",
             "macOS \(ProcessInfo.processInfo.operatingSystemVersionString)",
             "Architecture: \(Self.architecture)",
             "Status: \(model.status.title)",

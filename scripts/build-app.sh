@@ -9,10 +9,13 @@ set -eu
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 OUT_DIR="$ROOT/build"
-# Provisional identifiers; the public name is not final.
 BUNDLE_ID=${CLAVIMO_BUNDLE_ID_PREFIX:-dev.clavimo}.app
 DISPLAY_NAME=${CLAVIMO_DISPLAY_NAME:-Clavimo}
-VERSION=0.1.0
+# Marketing version (numbers only, as macOS requires), build number, and
+# the release name shown in the app and used for release archives.
+VERSION=1.0.0
+BUILD=2
+RELEASE_NAME=1.0.0-rc.1
 APP="$OUT_DIR/Clavimo.app"
 PACKAGE="$ROOT/Packages/ClavimoApp"
 
@@ -60,7 +63,9 @@ cat > "$APP/Contents/Info.plist" <<EOF
     <key>CFBundleShortVersionString</key>
     <string>$VERSION</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>$BUILD</string>
+    <key>ClavimoReleaseName</key>
+    <string>$RELEASE_NAME</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>LSUIElement</key>

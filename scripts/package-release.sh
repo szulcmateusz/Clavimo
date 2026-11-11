@@ -19,7 +19,7 @@ if codesign -dv "$APP" 2>&1 | grep -q "Signature=adhoc"; then
 fi
 codesign --verify --strict --deep "$APP"
 
-VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP/Contents/Info.plist")
+VERSION=$(/usr/libexec/PlistBuddy -c "Print :ClavimoReleaseName" "$APP/Contents/Info.plist")
 OUT="$ROOT/build/release"
 ZIP="$OUT/Clavimo-$VERSION.zip"
 rm -rf "$OUT"

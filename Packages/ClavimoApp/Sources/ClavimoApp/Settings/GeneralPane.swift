@@ -96,7 +96,7 @@ struct AboutPane: View {
                 .accessibilityHidden(true)
             Text("Clavimo").font(.largeTitle.bold())
             Text(String(localized: "Keyboard and mouse rules for macOS")).foregroundStyle(.secondary)
-            Text(String(localized: "Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev")"))
+            Text(String(localized: "Version \(AppVersion.releaseName)"))
                 .font(.callout)
             Text(String(localized: "Open source under the MIT License. Clavimo processes input on your Mac only: it never records typed text and makes no network connections."))
                 .multilineTextAlignment(.center)
