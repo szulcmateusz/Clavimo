@@ -213,7 +213,7 @@ struct EmptyRulesView: View {
             VStack(alignment: .leading, spacing: Spacing.l) {
                 SectionHeader(title: String(localized: "Start with a template"),
                               subtitle: String(localized: "Pick one and adjust it, or create a rule from scratch."))
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Spacing.m)], spacing: Spacing.m) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Spacing.m, alignment: .top)], spacing: Spacing.m) {
                     ForEach(RuleTemplates.all) { template in
                         Button { create(template.draft) } label: {
                             Card {

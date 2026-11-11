@@ -34,7 +34,7 @@ struct BackupSection: View {
         } header: {
             Text(String(localized: "Backup and Import"))
         } footer: {
-            Text(String(localized: "Exported files contain your rules, app identifiers and device IDs, never anything you typed. Importing shows the changes before anything is applied."))
+            Text(String(localized: "Exported files contain your rules, app identifiers and device IDs, never anything you typed. Importing shows the changes before anything is applied.")).formFooterStyle()
         }
         .sheet(item: $preview) { item in
             ImportPreviewView(editor: editor, title: item.title, incoming: item.document) { result in

@@ -15,7 +15,7 @@ struct DevicesPane: View {
                     Spacer()
                     Button { refresh() } label: { Label(String(localized: "Refresh"), systemImage: "arrow.clockwise") }
                 }
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Spacing.m)], spacing: Spacing.m) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 260), spacing: Spacing.m, alignment: .top)], spacing: Spacing.m) {
                     ForEach(devices) { device in DeviceCard(device: device, navigation: navigation) }
                 }
                 WarningCard(symbol: "flask", color: Brand.violet,

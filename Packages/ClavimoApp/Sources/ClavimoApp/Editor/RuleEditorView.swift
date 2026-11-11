@@ -40,7 +40,7 @@ struct RuleEditorView: View {
                     Toggle("Enabled", isOn: $draft.enabled)
                     Stepper("Priority: \(draft.priority)", value: $draft.priority, in: 1...1000, step: 10)
                 } footer: {
-                    Text("Priority decides between mouse chords with the same trigger. Key rules for the same key need different conditions; the most specific one wins.")
+                    Text("Priority decides between mouse chords with the same trigger. Key rules for the same key need different conditions; the most specific one wins.").formFooterStyle()
                 }
             }
             .formStyle(.grouped)
@@ -85,17 +85,17 @@ struct RuleEditorView: View {
         switch draft.kind {
         case .swapKeys:
             Section {
-                KeyField(title: "First key", code: $draft.firstKey, model: model)
-                KeyField(title: "Second key", code: $draft.secondKey, model: model)
+                KeyField(title: String(localized: "First key"), code: $draft.firstKey, model: model)
+                KeyField(title: String(localized: "Second key"), code: $draft.secondKey, model: model)
             } header: {
                 Text("Swap")
             } footer: {
-                Text("Both directions are created: pressing either key produces the other, including in shortcuts. Left and right modifiers are separate keys.")
+                Text("Both directions are created: pressing either key produces the other, including in shortcuts. Left and right modifiers are separate keys.").formFooterStyle()
             }
         case .remapKey:
             Section("Remap") {
-                KeyField(title: "When I press", code: $draft.firstKey, model: model)
-                KeyField(title: "Send", code: $draft.secondKey, model: model)
+                KeyField(title: String(localized: "When I press"), code: $draft.firstKey, model: model)
+                KeyField(title: String(localized: "Send"), code: $draft.secondKey, model: model)
             }
         case .modifierClick:
             Section {
@@ -116,14 +116,14 @@ struct RuleEditorView: View {
                 Text("When")
             } footer: {
                 if draft.button <= 2 {
-                    Text("Ordinary clicks are never affected: only clicks made while exactly these modifiers are held are replaced by the action.")
+                    Text("Ordinary clicks are never affected: only clicks made while exactly these modifiers are held are replaced by the action.").formFooterStyle()
                 } else {
-                    Text("The exact set of held modifiers must match.")
+                    Text("The exact set of held modifiers must match.").formFooterStyle()
                 }
             }
         case .keyClick:
             Section {
-                KeyField(title: "Hold key", code: $draft.firstKey, model: model)
+                KeyField(title: String(localized: "Hold key"), code: $draft.firstKey, model: model)
                 ButtonPicker(button: $draft.button, allowsPrimary: false)
                 Picker("While waiting", selection: $draft.policy) {
                     ForEach(RuleDraft.Policy.allCases) { Text($0.title).tag($0) }
@@ -135,7 +135,7 @@ struct RuleEditorView: View {
             } header: {
                 Text("When")
             } footer: {
-                Text(draft.policy.explanation + " Letter-key chords can delay that letter while typing.")
+                Text(draft.policy.explanation + " " + String(localized: "Letter-key chords can delay that letter while typing.")).formFooterStyle()
             }
         case .wheel:
             Section {
@@ -149,7 +149,7 @@ struct RuleEditorView: View {
     private var conditionsSection: some View {
         Section {
             if draft.kind != .wheel && draft.kind != .keyClick {
-                DisclosureGroup("Devices (\(draft.devices.isEmpty ? "all" : "\(draft.devices.count)"))") {
+                DisclosureGroup(draft.devices.isEmpty ? String(localized: "Devices (all)") : String(localized: "Devices (\(draft.devices.count))")) {
                     ForEach(devices.filter { draft.kind == .modifierClick ? $0.isPointer : $0.isKeyboard }) { device in
                         Toggle(isOn: Binding(
                             get: { draft.devices.contains(device.id.description) },
@@ -167,14 +167,14 @@ struct RuleEditorView: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
-            AppListEditor(title: "Only in apps", apps: $draft.onlyApps, limit: draft.kind == .wheel ? 1 : nil)
+            AppListEditor(title: String(localized: "Only in apps"), apps: $draft.onlyApps, limit: draft.kind == .wheel ? 1 : nil)
             if draft.kind != .wheel {
-                AppListEditor(title: "Not in apps", apps: $draft.exceptApps, limit: nil)
+                AppListEditor(title: String(localized: "Not in apps"), apps: $draft.exceptApps, limit: nil)
             }
         } header: {
             Text("Conditions")
         } footer: {
-            Text("Leave everything empty to apply the rule everywhere.")
+            Text("Leave everything empty to apply the rule everywhere.").formFooterStyle()
         }
     }
 }
@@ -309,7 +309,7 @@ struct AppListEditor: View {
     @State private var newApp = ""
 
     var body: some View {
-        DisclosureGroup("\(title) (\(apps.isEmpty ? "none" : "\(apps.count)"))") {
+        DisclosureGroup(apps.isEmpty ? String(localized: "\(title) (none)") : String(localized: "\(title) (\(apps.count))")) {
             ForEach(apps, id: \.self) { app in
                 HStack {
                     Text(app).font(.callout.monospaced())

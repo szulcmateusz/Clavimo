@@ -174,3 +174,14 @@ struct SectionHeader: View {
         }
     }
 }
+
+extension View {
+    /// Explanatory text under a grouped form section, aligned with the
+    /// section content even when it wraps to several lines.
+    func formFooterStyle() -> some View {
+        self.font(.callout)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}

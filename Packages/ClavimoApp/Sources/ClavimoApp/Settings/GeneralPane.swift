@@ -25,7 +25,7 @@ struct GeneralPane: View {
             } header: {
                 Text(String(localized: "Startup"))
             } footer: {
-                Text(String(localized: "Clavimo starts in the background when you sign in to this macOS account. It cannot change input at the login screen."))
+                Text(String(localized: "Clavimo starts in the background when you sign in to this macOS account. It cannot change input at the login screen.")).formFooterStyle()
             }
 
             Section {
@@ -41,7 +41,7 @@ struct GeneralPane: View {
             } header: {
                 Text(String(localized: "Permissions"))
             } footer: {
-                Text(String(localized: "Each macOS account grants permissions separately. Clavimo never records typed text and makes no network connections."))
+                Text(String(localized: "Each macOS account grants permissions separately. Clavimo never records typed text and makes no network connections.")).formFooterStyle()
             }
 
             BackupSection(editor: editor)
