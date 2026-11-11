@@ -215,12 +215,15 @@ public struct GestureRecognizer: Sendable {
 
     private mutating func updateSnapshot(at now: Double) {
         if tracks.count == 1 { lastSingleFinger = tracks.values.first?.last }
-        let corner: TrackpadCorner? = tracks.count == 1 ? tracks.values.first.flatMap { corner(of: $0.last) } : nil
+        var resting: TrackpadCorner?
+        if tracks.count == 1, let finger = tracks.values.first {
+            resting = corner(of: finger.last)
+        }
         var tapped: TrackpadCorner?
         if let lastTap, now - lastTap.at <= tuning.tappedCornerLifetime, tracks.isEmpty {
             tapped = lastTap.corner
         }
-        snapshot = TouchSnapshot(fingers: tracks.count, corner: corner, tappedCorner: tapped)
+        snapshot = TouchSnapshot(fingers: tracks.count, corner: resting, tappedCorner: tapped)
     }
 
     /// The corner containing `point`, with y growing upwards.
