@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-11
+
+### Added
+
+- Trackpad gestures as rule triggers: taps with two to five fingers, tip taps beside a resting finger and swipes with three to five fingers, each optionally with held modifiers and app conditions. Experimental; finger positions come from Apple's private MultitouchSupport framework, read only while a trackpad rule is enabled or the Trackpad pane is open, and the feature turns itself off if macOS changes that framework.
+- Trackpad clicks with three to five fingers, and clicks or taps in a corner, replaced by an action.
+- Trackpad scrolling separate from the mouse wheel: direction per axis, speed and momentum.
+- Actions for every rule: click a mouse button, send a keyboard shortcut, open an app, press a media or brightness key.
+- Trackpad pane with a live finger preview, templates, trackpad scrolling and warnings about overlapping macOS gestures.
+- `clavimo-probe touches` to inspect trackpad data on new macOS versions.
+
+
 ## [1.0.0] - 2026-11-11
 
 First stable release. Features marked Experimental in the README are complete and covered by automated tests but not yet verified on real hardware. Release builds are not notarized by Apple.
@@ -41,6 +53,7 @@ First preview release. Most features are experimental: they are covered by autom
 - Opt-in Launch at Login through `SMAppService`; input handling pauses automatically while another macOS account is active.
 - Draft v1 configuration schema, an example configuration and validation tools.
 
-[Unreleased]: https://github.com/szulcmateusz/Clavimo/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/szulcmateusz/Clavimo/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/szulcmateusz/Clavimo/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/szulcmateusz/Clavimo/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/szulcmateusz/Clavimo/releases/tag/v0.1.0

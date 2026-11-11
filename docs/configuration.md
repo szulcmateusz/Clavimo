@@ -22,7 +22,7 @@ Check a file without touching input:
 | `engine.enabledOnLaunch` | Turn remapping on when the app starts. |
 | `activeProfileId` | Only rules and device settings with this `profileId` are used. Profile inheritance is not supported yet. |
 | `rules` | Keyboard and mouse rules (below). |
-| `deviceSettings` | Mouse wheel settings (below). |
+| `deviceSettings` | Mouse wheel and trackpad scrolling settings (below). |
 | `macros` | Reserved; macros are not supported yet. |
 
 Rules that are enabled but cannot run are listed as unsupported in the menu and the settings window. They are never applied partially.
@@ -35,10 +35,36 @@ Every rule has `id`, `name`, `enabled`, `priority`, `profileId`, `trigger`, `con
 | --- | --- | --- | --- |
 | Swap two keys | `keyPair` | `swapKeys` | Both directions. Left and right modifiers are distinct keys. `sideMode: both` is not supported; add one rule per side. |
 | Remap a key | `key` | `sendKey` | |
-| Modifier + mouse button | `modifierChord` with `requiredModifiers` and `mouseButton` | `nextWorkspace`, `previousWorkspace`, `missionControl`, `applicationWindows` | Modifiers: `control`, `option`, `shift`, `command`, `function`. The held set must match exactly. Buttons 1 and 2 require `behavior.allowProtectedButton: true`. |
-| Key + mouse button | `keyMouseChord` with `leaderKey`, `mouseButton`, `order: leaderThenMouse` | same as above | Requires `behavior.leaderPolicy` (below). |
+| Modifier + mouse button | `modifierChord` with `requiredModifiers` and `mouseButton` | any action (below) | Modifiers: `control`, `option`, `shift`, `command`, `function`. The held set must match exactly. Buttons 1 and 2 require `behavior.allowProtectedButton: true`. |
+| Key + mouse button | `keyMouseChord` with `leaderKey`, `mouseButton`, `order: leaderThenMouse` | any action | Requires `behavior.leaderPolicy` (below). |
+| Trackpad gesture | `trackpadGesture` (below) | any action | Experimental. |
+| Trackpad click | `trackpadClick` (below) | any action | Experimental. Replaces the click. |
 
-Chords require `behavior` `{"consumeTrigger": true, "fireOn": "down", "repeat": "once"}`.
+Chords and trackpad rules require `behavior` `{"consumeTrigger": true, "fireOn": "down", "repeat": "once"}`.
+
+### Actions
+
+| `action` | Effect |
+| --- | --- |
+| `{"kind": "nextWorkspace"}`, `previousWorkspace`, `missionControl`, `applicationWindows` | Posts the macOS Mission Control shortcuts (Control + arrow keys), which must be enabled in Keyboard Shortcuts. |
+| `{"kind": "sendShortcut", "key": {...}, "modifiers": ["command"]}` | Presses a keyboard shortcut. |
+| `{"kind": "mouseClick", "mouseButton": 3}` | Clicks a mouse button at the pointer (3 is the middle button, 4 back, 5 forward). |
+| `{"kind": "launchApp", "bundleId": "com.apple.Safari"}` | Opens or activates an app. |
+| `{"kind": "mediaKey", "key": "playPause"}` | Presses a media key: `playPause`, `nextTrack`, `previousTrack`, `volumeUp`, `volumeDown`, `mute`, `brightnessUp`, `brightnessDown`. Brightness keys may not work with external displays. |
+
+### Trackpad gestures and clicks
+
+Experimental. Finger positions come from Apple's private MultitouchSupport framework (see [decisions](decisions.md)); if it is missing or changes, trackpad rules do nothing and everything else keeps working.
+
+| `trigger` | Meaning |
+| --- | --- |
+| `{"kind": "trackpadGesture", "gesture": "tap", "fingers": 3}` | Fingers (2-5) touch down together and lift quickly without moving. A two-finger tap is the macOS secondary click, so it needs `requiredModifiers`. |
+| `{"kind": "trackpadGesture", "gesture": "tipTap", "side": "right"}` | One finger rests while another taps to its `left` or `right`. |
+| `{"kind": "trackpadGesture", "gesture": "swipe", "fingers": 3, "direction": "left"}` | Fingers (3-5) move together `up`, `down`, `left` or `right`. One swipe per touch. |
+| `{"kind": "trackpadClick", "fingers": 3}` | The trackpad is pressed with this many fingers (3-5). The click is replaced by the action. |
+| `{"kind": "trackpadClick", "corner": "topRight"}` | One finger clicks, or taps with tap to click, in a corner: `topLeft`, `topRight`, `bottomLeft`, `bottomRight`. |
+
+Every trackpad trigger accepts `requiredModifiers`; the held set must match exactly, so a rule without modifiers does not run while a modifier is held. App conditions work as usual; device conditions are not supported. macOS keeps recognizing its own gestures: a rule using a movement macOS also uses (for example three-finger swipes) runs together with the macOS gesture, even while a key is held. The Trackpad pane lists such overlaps.
 
 Caps Lock and Fn cannot be remapped yet.
 
@@ -66,6 +92,22 @@ The leader is only held back in apps where at least one of its chords can apply.
 
 When several mouse chords share a trigger, the higher `priority` wins; for equal priority, the rule with more specific conditions wins, then the earlier rule. Key swaps and remaps for the same key must have different conditions; the most specific matching rule wins (a device condition is more specific than app conditions).
 
+## Device settings: trackpad scrolling
+
+```json
+{
+  "id": "...", "name": "Trackpad", "enabled": true, "profileId": "default", "priority": 50,
+  "scope": {"deviceClass": "trackpad"},
+  "scrolling": {
+    "vertical": {"reverse": true, "mode": "accelerated", "speedMultiplier": 1.5},
+    "horizontal": {"reverse": false, "mode": "accelerated", "speedMultiplier": 1.5},
+    "momentum": false
+  }
+}
+```
+
+Changes continuous scrolling from trackpads and Magic Mouse, separately from mouse wheels. Each axis can be reversed; `mode` is `system` or `accelerated` with one `speedMultiplier` (0.25-4) for both axes; `momentum: false` stops scrolling as soon as the fingers lift. Scroll phases are kept, so apps still see complete gestures. `scope.appBundleId` limits the setting to one app.
+
 ## Device settings: mouse wheel
 
 ```json
@@ -79,7 +121,7 @@ When several mouse chords share a trigger, the higher `priority` wins; for equal
 }
 ```
 
-Changes discrete mouse wheel scrolling; each axis is configured separately. Continuous scrolling from trackpads and Magic Mouse is never changed. `scope.appBundleId` limits the setting to one app.
+Changes discrete mouse wheel scrolling; each axis is configured separately. Continuous scrolling from trackpads and Magic Mouse has its own setting (above). `scope.appBundleId` limits the setting to one app.
 
 | `mode` | Field | Behavior |
 | --- | --- | --- |

@@ -4,7 +4,7 @@
 
 **Keyboard and mouse rules for macOS.**
 
-Clavimo is a native, open source menu bar app that remaps keys and combines your keyboard and mouse into shortcuts. Swap Command and Option, switch Spaces with Fn + click, open Mission Control with a side mouse button, hold a letter and click to run an action, or reverse the mouse wheel without touching your trackpad. Rules are created in a visual editor, stored in a readable JSON file, and processed locally on your Mac.
+Clavimo is a native, open source menu bar app that remaps keys and combines your keyboard, mouse and trackpad into shortcuts. Swap Command and Option, switch Spaces with Fn + click, open Mission Control with a side mouse button, middle-click with a three-finger tap, go back with Fn and a three-finger swipe, or reverse the mouse wheel and the trackpad independently. Rules are created in a visual editor, stored in a readable JSON file, and processed locally on your Mac.
 
 > **Project status: 1.0.** Clavimo is used daily by its maintainer on one Mac. Features marked **Experimental** below are complete and covered by automated tests, but have not yet been verified on real hardware; the checklist in [docs/testing.md](docs/testing.md) tracks that. See [Compatibility](#compatibility-and-limitations) before relying on it.
 
@@ -23,6 +23,10 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Actions: next and previous Space, Mission Control, application windows | Experimental | Uses the macOS Control + Arrow shortcuts, which must be enabled. |
 | Reverse the mouse wheel without changing the trackpad | Available | Verified in daily use with a USB Logitech G102. |
 | Scroll distance per axis: system, accelerated, a fixed number of lines or pixels per notch, or smooth scrolling that glides each notch like a trackpad | Experimental | Applies to all mouse wheels; per-device scrolling is not supported yet. |
+| Trackpad gestures: taps with 2-5 fingers, tip taps, swipes with 3-5 fingers, optionally with a held key | Experimental | Uses Apple's private MultitouchSupport framework, like other gesture tools; reading touches was verified on a built-in trackpad. macOS keeps its own gestures, so overlapping movements do both. |
+| Trackpad clicks with 3-5 fingers or in a corner (also with tap to click) | Experimental | The click is replaced by the action. |
+| Trackpad scrolling separate from the mouse: direction per axis, speed, momentum on or off | Experimental | Also applies to Magic Mouse. |
+| Actions: click a mouse button, keyboard shortcut, open an app, media and volume keys | Experimental | Available to every rule with an action. |
 | Rules limited to apps or excluded from apps | Experimental | |
 | Rules limited to one keyboard or mouse | Experimental | Works without a driver by asking devices which one is pressing the key; if that is ambiguous, the rule does not apply. Identical devices cannot be told apart. |
 | Visual rule editor with key recording, rule templates and a live preview in words | Experimental | |
@@ -33,7 +37,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Pause for 5 minutes, 1 hour or until resumed; emergency disable and safe mode | Experimental | |
 | English and Polish interface | Available | Follows the macOS language setting. |
 | Launch at Login, automatic pause while another macOS account is active | Experimental | Multi-account behavior not yet verified on hardware. |
-| Per-device pointer speed and scrolling, macros, layers, tap-hold, more languages | Planned | |
+| Per-device pointer speed and scrolling, pinch and edge gestures, macros, layers, tap-hold, more languages | Planned | |
 | Remapping at the login window or before FileVault unlock | Unsupported | macOS does not allow it for apps like Clavimo. |
 
 **Available** means implemented, covered by automated tests and verified on real hardware. **Experimental** means implemented and covered by automated tests, but not yet verified on hardware, so it may not work everywhere. **Planned** features do not exist yet.
@@ -85,6 +89,15 @@ open /Applications/Clavimo.app
 4. **Turn remapping on** with the switch in **Overview**, and decide in **General** whether it should be on when Clavimo starts.
 
 <p align="center"><img src="docs/images/editor-light.png" width="55%" alt="Rule editor for a letter key + mouse button rule, with keycap preview and a sentence describing it"></p>
+
+### Trackpad gestures
+
+<p align="center">
+  <img src="docs/images/trackpad-light.png" width="58%" alt="Trackpad pane: live drawing of three fingers on the trackpad, the recognized three-finger tap and the rule it runs">
+  <img src="docs/images/editor-trackpad-dark.png" width="36%" alt="Rule editor for Fn + three-finger swipe left, with a warning that macOS also uses three-finger swipes">
+</p>
+
+Open **Trackpad** in the settings window. The live preview draws your fingers and names each gesture Clavimo recognizes, with the rule it would run, so you can try gestures before using them. Pick a template, such as a three-finger tap for a middle click, or create a rule with **New Rule**. If macOS already uses the same movement, the editor says so: macOS gestures cannot be blocked, so turn the macOS gesture off in **System Settings > Trackpad** first.
 
 ### Example: swap Command and Option
 
@@ -150,7 +163,8 @@ Each macOS account has its own rules, permissions and startup setting. When you 
 - **Device-specific rules are experimental.** macOS does not tell apps which device produced a keyboard event. Clavimo asks the connected devices which one currently reports the key as pressed. If two devices report it, or none does, the rule does not apply. Two devices of the same model share an ID. Devices behind a shared Logitech Bolt or Unifying receiver may not be distinguishable.
 - **Caps Lock and Fn** cannot be remapped. Fn works as a modifier in mouse chords.
 - **Spaces** are switched through the macOS keyboard shortcuts, not a private API. If those shortcuts are disabled or changed, the actions do nothing.
-- **Mouse wheel settings** apply to every mouse wheel. Trackpads and Magic Mouse (continuous scrolling) keep the system behavior.
+- **Mouse wheel settings** apply to every mouse wheel; **trackpad scrolling settings** apply to trackpads and Magic Mouse (both report continuous scrolling).
+- **Trackpad gestures** rely on a private macOS framework. If a macOS update changes it, gestures turn themselves off and the Trackpad pane says so; other rules keep working. macOS's own gestures cannot be blocked: turn off a macOS gesture in Trackpad settings before reusing its movement.
 - **Secure input:** while a password field or another app enables Secure Event Input, macOS hides keystrokes from all event taps, so key rules pause.
 - **Other input tools:** running Karabiner-Elements, LinearMouse, BetterTouchTool or Logi Options+ alongside Clavimo can apply changes twice or hide events from it. Clavimo warns when it detects some of them but never quits or changes other apps. Logi Options+ may turn side buttons into shortcuts before Clavimo sees them.
 

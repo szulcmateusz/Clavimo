@@ -4,10 +4,12 @@ Clavimo changes keyboard and mouse input, so it can see sensitive events. This d
 
 ## What Clavimo processes
 
-- **Keyboard events** (key codes, modifier state, autorepeat), **mouse button events** and, only when a mouse wheel rule is enabled, **scroll events**. Pointer movement is never observed.
+- **Keyboard events** (key codes, modifier state, autorepeat), **mouse button events** and, only when a scrolling setting is enabled, **scroll events**. Left and right clicks are observed only when a rule uses them. Pointer movement is never observed.
 - Events are processed in memory, one at a time, to decide whether a rule applies. They are **not stored, logged or transmitted**. Clavimo never records typed text.
 - For rules limited to a device, Clavimo asks connected input devices whether a specific key or button is currently pressed. Only the device's vendor and product ID are used.
 - To evaluate app conditions, Clavimo keeps the bundle identifier of the frontmost app in memory.
+- **Finger positions on trackpads** are read only while a trackpad rule is enabled or the Trackpad pane is open. They are used in memory to recognize gestures and to tell which corner or how many fingers a click used, then discarded. They are never stored, logged or included in the diagnostic report. Without trackpad rules, touches are not read at all.
+- For trackpad scrolling settings, Clavimo reads the scroll distance of trackpad scroll events, like it does for mouse wheels.
 
 ## What is stored
 

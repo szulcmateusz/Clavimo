@@ -194,6 +194,123 @@
       "ui": {
         "order": 5
       }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d20",
+      "name": "Three-finger tap: middle click",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadGesture",
+        "gesture": "tap",
+        "fingers": 3,
+        "requiredModifiers": []
+      },
+      "conditions": [],
+      "action": {
+        "kind": "mouseClick",
+        "mouseButton": 3
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 6
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d21",
+      "name": "Fn + three-finger swipe left: back",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadGesture",
+        "gesture": "swipe",
+        "fingers": 3,
+        "direction": "left",
+        "requiredModifiers": [
+          "function"
+        ]
+      },
+      "conditions": [],
+      "action": {
+        "kind": "mouseClick",
+        "mouseButton": 4
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 7
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d22",
+      "name": "Top right corner click: close tab",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadClick",
+        "corner": "topRight",
+        "requiredModifiers": []
+      },
+      "conditions": [
+        {
+          "kind": "appIs",
+          "bundleId": "com.apple.Safari"
+        }
+      ],
+      "action": {
+        "kind": "sendShortcut",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 13
+        },
+        "modifiers": [
+          "command"
+        ]
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 8
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d23",
+      "name": "Five-finger tap: play or pause",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadGesture",
+        "gesture": "tap",
+        "fingers": 5,
+        "requiredModifiers": []
+      },
+      "conditions": [],
+      "action": {
+        "kind": "mediaKey",
+        "key": "playPause"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 9
+      }
     }
   ],
   "macros": [],
@@ -217,6 +334,29 @@
           "reverse": false,
           "mode": "system"
         }
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d30",
+      "name": "Trackpad",
+      "enabled": true,
+      "profileId": "default",
+      "priority": 50,
+      "scope": {
+        "deviceClass": "trackpad"
+      },
+      "scrolling": {
+        "vertical": {
+          "reverse": false,
+          "mode": "accelerated",
+          "speedMultiplier": 1.25
+        },
+        "horizontal": {
+          "reverse": false,
+          "mode": "accelerated",
+          "speedMultiplier": 1.25
+        },
+        "momentum": true
       }
     }
   ]

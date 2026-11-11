@@ -42,6 +42,10 @@ macOS ties privacy permissions to the code signature. A self-signed identity in 
 
 The project has no paid Apple Developer membership, so releases cannot be signed with a Developer ID or notarized, and users must approve the first launch in System Settings. Releases are signed with the maintainer's self-signed certificate instead of ad hoc: its identity stays the same across versions, so macOS keeps the app's privacy permissions after updates. Developer ID signing and notarization can be adopted later without changing the app.
 
+## Optional trackpad gestures through a private framework
+
+macOS has no public API for finger positions on a trackpad; every gesture tool (MiddleClick, Jitouch, BetterTouchTool) uses Apple's private MultitouchSupport framework. Clavimo does the same for trackpad rules, isolated so that it can only fail closed: the framework is loaded at run time and every function is looked up first; touches are read only while a trackpad rule is enabled or the Trackpad pane is open; decoded frames are validated and, if they stop making sense because macOS changed the private structure, the backend stops itself and reports that gestures are unavailable. The framework only observes touches; physical clicks are replaced through the event tap like other rules. Everything else in Clavimo keeps using public APIs only. Trackpad scrolling uses public scroll event fields and does not need the framework.
+
 ## No telemetry
 
 Clavimo makes no network connections. Diagnostics are aggregate and local.

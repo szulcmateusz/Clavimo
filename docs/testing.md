@@ -15,6 +15,8 @@ The engine tests cover key down/up pairing after rule changes, reference-counted
 
 **Random input.** `EnginePropertyTests` plays 600 seeded random sessions of 400 events each against four rule sets: presses, releases and repeats of keys and buttons, chord windows expiring, app switches, rule reloads and resets. After every event, every key up must match an earlier key down and the modifier flags on each event must match the modifier keys apps have seen; once everything is released, nothing may stay held and the engine must be idle. Failures name the seed, so they can be replayed. Breaking the engine on purpose (for example, releasing a shared output while another key still holds it) makes these tests fail.
 
+**Trackpad.** `GestureRecognizerTests` plays scripted finger movements for every gesture and the cases that must not be gestures (slow taps, moving fingers, fingers landing far apart, diagonal movement, slow three-finger drags, two-finger scrolling), plus 300 random touch sessions after which the recognizer must be idle and every reported gesture must match the fingers it saw. `TrackpadRuleTests` cover modifiers, app conditions, priorities and replaced clicks; the random engine sessions include trackpad click rules. `TouchDecodingTests` check the private structure offsets and that implausible data turns the backend off.
+
 **Performance.** `EnginePerformanceTests` compiles 1000 app-scoped rules and handles 50,000 events, failing if the average exceeds 50 µs per event in a debug build.
 
 **Scrolling.** `SmoothScrollerTests` checks that the animation covers exactly the requested distance, stops on reversal, and respects the distance and time limits; `ScrollTransformTests` covers every scroll mode.
@@ -42,6 +44,10 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 15. **First launch.** On an account without Clavimo settings, the guide appears, its permission page updates by itself, and a template creates a working rule.
 16. **Input inspector.** Shows keys and buttons with what Clavimo did, and is empty after leaving Diagnostics.
 17. **Language.** With Polish as the macOS language, the whole interface is in Polish without cut-off labels.
+18. **Trackpad data.** `clavimo-probe touches --seconds 15 --raw` lists the trackpad, decodes fingers in 0-1 coordinates with y growing upwards, and reports no invalid frames.
+19. **Trackpad gestures.** The Trackpad pane's live preview names three- and four-finger taps, tip taps on both sides and swipes in four directions; typing, pointing, two-finger scrolling and slow three-finger drags produce no gestures.
+20. **Trackpad clicks.** With a three-finger click rule, a three-finger click runs the action and ordinary clicks, drags and right clicks are unchanged. A corner rule works with a physical click and with tap to click.
+21. **Trackpad scrolling.** Reversing vertical trackpad scrolling does not change the mouse wheel; turning momentum off stops scrolling when the fingers lift.
 
 ### Results
 
@@ -52,7 +58,9 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 
 | 2026-11-11 | 27.2 (26B123) | MacBook Pro, Apple M1 Pro | Logitech G102 (USB) | 5 (wheel reversed, 3 lines per notch) | Works in daily use; trackpad not explicitly checked |
 
-Not yet verified: items 2 to 4 and 6 to 17, Intel Macs, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
+| 2026-11-11 | 27.2 (26B123) | MacBook Pro, Apple M1 Pro | Built-in Force Touch trackpad (family 105) | 18 (probe, 15 s) | 884 valid frames, none invalid; 96-byte records decode at the expected offsets; top right corner reads x 0.98, y 0.94, so y grows upwards; three fingers detected |
+
+Not yet verified: items 2 to 4, 6 to 17 and 19 to 21, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
 
 ### Latency measurement
 
