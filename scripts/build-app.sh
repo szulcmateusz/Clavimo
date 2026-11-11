@@ -20,8 +20,13 @@ swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --pr
 BIN_DIR=$(swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --show-bin-path)
 
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/Clavimo" "$APP/Contents/MacOS/Clavimo"
+
+# App icon and menu bar glyphs are drawn from vector geometry.
+ICONS="$OUT_DIR/icons"
+swift "$ROOT/scripts/render-icon.swift" "$ICONS" >/dev/null
+cp "$ICONS/AppIcon.icns" "$ICONS"/MenuBarIcon*.pdf "$APP/Contents/Resources/"
 
 cat > "$APP/Contents/Info.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -30,6 +35,8 @@ cat > "$APP/Contents/Info.plist" <<EOF
 <dict>
     <key>CFBundleExecutable</key>
     <string>Clavimo</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
     <string>$BUNDLE_ID</string>
     <key>CFBundleName</key>

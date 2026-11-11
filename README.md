@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/icon.png" width="128" height="128" alt="Clavimo icon: a keycap and a mouse outline linked like two chain links"></p>
+
 # Clavimo
 
 **Keyboard and mouse rules for macOS.**

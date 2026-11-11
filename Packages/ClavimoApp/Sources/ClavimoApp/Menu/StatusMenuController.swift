@@ -113,18 +113,22 @@ final class ClosureMenuItem: NSMenuItem {
     }
 }
 
-/// The menu bar icon. Until the final logo exists, SF Symbols indicate
-/// the state; the image is a template so it adapts to light and dark bars.
+/// The menu bar icon: the Clavimo mark as a template image, so it adapts
+/// to light and dark menu bars. Paused states are dimmed and states that
+/// need attention carry a badge. Outside an app bundle (tests, development
+/// runs) SF Symbols stand in.
 enum MenuBarIcon {
     @MainActor
     static func image(for status: AgentStatus) -> NSImage? {
-        let symbol = switch status {
-        case .active: "keyboard"
-        case .pausedByUser, .pausedInactiveSession: "pause.circle"
-        case .needsPermission, .configurationError, .safeMode: "exclamationmark.triangle"
+        let (resource, symbol) = switch status {
+        case .active: ("MenuBarIcon", "keyboard")
+        case .pausedByUser, .pausedInactiveSession: ("MenuBarIcon-paused", "pause.circle")
+        case .needsPermission, .configurationError, .safeMode: ("MenuBarIcon-attention", "exclamationmark.triangle")
         }
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: status.title)
+        let image = Bundle.main.image(forResource: resource)
+            ?? NSImage(systemSymbolName: symbol, accessibilityDescription: status.title)
         image?.isTemplate = true
+        image?.accessibilityDescription = status.title
         return image
     }
 }

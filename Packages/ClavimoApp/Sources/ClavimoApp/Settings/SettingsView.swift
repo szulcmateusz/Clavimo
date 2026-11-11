@@ -356,9 +356,9 @@ struct PermissionRow: View {
 struct AboutPane: View {
     var body: some View {
         VStack(spacing: 12) {
-            Image(systemName: "keyboard")
-                .font(.system(size: 48))
-                .foregroundStyle(.tint)
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .frame(width: 128, height: 128)
                 .accessibilityHidden(true)
             Text("Clavimo").font(.largeTitle.bold())
             Text("Keyboard and mouse rules for macOS").foregroundStyle(.secondary)
