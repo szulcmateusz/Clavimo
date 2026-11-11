@@ -25,7 +25,7 @@ struct SettingsView: View {
         }
     }
 
-    @Bindable var model: AppModel
+    @Bindable var model: AgentController
     @Bindable var editor: ConfigEditor
     @State private var pane: Pane? = .rules
 
@@ -50,7 +50,7 @@ struct SettingsView: View {
 // MARK: - Status
 
 struct StatusBanner: View {
-    @Bindable var model: AppModel
+    @Bindable var model: AgentController
 
     var body: some View {
         HStack(spacing: 12) {
@@ -87,7 +87,7 @@ struct StatusBanner: View {
 // MARK: - Rules
 
 struct RulesPane: View {
-    @Bindable var model: AppModel
+    @Bindable var model: AgentController
     @Bindable var editor: ConfigEditor
     @State private var editing: EditingRule?
     @State private var errorMessage: String?
@@ -206,7 +206,7 @@ struct RuleRow: View {
     }
 
     private var status: (text: String, color: Color) {
-        if let issue { return ("Unsupported: \(issue.reason)", .red) }
+        if let issue { return (Messages.describe(issue.reason), .red) }
         if !row.enabled { return ("Off", .secondary) }
         return isActive ? ("Active", .green) : ("Paused", .orange)
     }
@@ -264,7 +264,7 @@ struct DevicesPane: View {
 // MARK: - General
 
 struct GeneralPane: View {
-    @Bindable var model: AppModel
+    @Bindable var model: AgentController
     @Bindable var editor: ConfigEditor
     @State private var loginError: String?
 

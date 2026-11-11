@@ -32,12 +32,12 @@ enum AgentStatus: Equatable {
 
     var title: String {
         switch self {
-        case .active: "Active"
-        case .pausedByUser: "Paused"
-        case .pausedInactiveSession: "Paused - Another User Session"
-        case .needsPermission: "Paused - Permissions Required"
-        case .configurationError: "Paused - Configuration Error"
-        case .safeMode: "Stopped - Safe Mode"
+        case .active: String(localized: "Active")
+        case .pausedByUser: String(localized: "Paused")
+        case .pausedInactiveSession: String(localized: "Paused while another user is active")
+        case .needsPermission: String(localized: "Waiting for permissions")
+        case .configurationError: String(localized: "Configuration error")
+        case .safeMode: String(localized: "Stopped (safe mode)")
         }
     }
 }

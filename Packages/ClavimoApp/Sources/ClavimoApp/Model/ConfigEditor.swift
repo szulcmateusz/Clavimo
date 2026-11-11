@@ -36,7 +36,7 @@ final class ConfigEditor {
             lastError = nil
         case let .failure(error):
             document = nil
-            lastError = error.description
+            lastError = Messages.describe(error)
         }
         rebuildRows()
     }
@@ -124,7 +124,9 @@ final class ConfigEditor {
             onSaved()
             return nil
         } catch {
-            return (error as? ConfigStore.LoadError)?.description ?? error.localizedDescription
+            let names = Dictionary(updated.rules.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
+            if let error = error as? ConfigStore.LoadError { return Messages.describe(error, ruleNames: names) }
+            return error.localizedDescription
         }
     }
 }

@@ -4,7 +4,7 @@ import ClavimoQuartz
 import SwiftUI
 
 struct RuleEditorView: View {
-    @Bindable var model: AppModel
+    @Bindable var model: AgentController
     @State var draft: RuleDraft
     let isNew: Bool
     /// Returns an error message, or nil when the rule was saved.
@@ -169,7 +169,7 @@ struct RuleEditorView: View {
 struct KeyField: View {
     let title: String
     @Binding var code: UInt16
-    let model: AppModel
+    let model: AgentController
     @State private var recorder = KeyRecorder()
 
     var body: some View {
