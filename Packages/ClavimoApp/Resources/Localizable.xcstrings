@@ -2623,6 +2623,16 @@
         }
       }
     },
+    "Only mouse and trackpad settings are supported.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obsługiwane są tylko ustawienia myszy i gładzika."
+          }
+        }
+      }
+    },
     "Only on %@.": {
       "localizations": {
         "pl": {
@@ -4117,6 +4127,16 @@
         }
       }
     },
+    "The trackpad scrolling setting changes nothing.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To ustawienie przewijania gładzika niczego nie zmienia."
+          }
+        }
+      }
+    },
     "The waiting time for %@ (%lld ms) must be between 50 and 500 ms.": {
       "localizations": {
         "pl": {
@@ -4169,16 +4189,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Czas, jaki Clavimo dodaje do każdego zdarzenia, zmierzony na tym Macu. Nie obejmuje opóźnień USB, Bluetooth ani ekranu."
-          }
-        }
-      }
-    },
-    "Trackpad settings are not changed by Clavimo.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clavimo nie zmienia ustawień gładzika."
           }
         }
       }
@@ -4259,6 +4269,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dwa narzędzia zmieniające klawiaturę lub mysz naraz mogą zastosować reguły podwójnie. Zakończ jedno z nich."
+          }
+        }
+      }
+    },
+    "Two trackpad scrolling settings apply in the same situation. Keep one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dwa ustawienia przewijania gładzika dotyczą tej samej sytuacji. Zostaw jedno."
           }
         }
       }

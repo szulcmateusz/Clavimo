@@ -78,6 +78,12 @@ public struct InputEngine: Sendable {
         return rules.wheelSettings(app: frontmostApp, device: device)
     }
 
+    /// Settings for continuous (trackpad) scrolling in the frontmost app,
+    /// or nil to leave it unchanged.
+    public func trackpadScrollSettings() -> TrackpadScrollSettings? {
+        rules.trackpadScrollSettings(app: frontmostApp)
+    }
+
     /// Replaces the rule snapshot. Held activations keep the mapping they
     /// started with, so a later key up still releases the right output.
     public mutating func install(_ newRules: CompiledRules) {

@@ -256,7 +256,7 @@ public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
         case .keyNamespace: "only macVirtualKeyCode keys are supported"
         case .sideSpecificChordModifiers: "side-specific chord modifiers are not supported yet"
         case let .unsupportedAction(kind): "action \(kind) is not supported yet"
-        case .trackpadSettings: "only mouse device settings are supported; trackpad behavior is never changed"
+        case .trackpadSettings: "only mouse and trackpad device settings are supported"
         case .pointerSettings: "pointer speed and acceleration are not supported yet"
         case .noScrollChange: "no supported scroll change in this setting"
         case .perDeviceScrolling: "per-device scrolling is not supported yet"
@@ -347,6 +347,9 @@ extension ConfigDocument {
     /// Mouse wheel direction and scroll modes are supported. Pointer
     /// settings and smoothed scrolling are reported as unsupported.
     private static func translateDeviceSetting(_ setting: JSONValue) throws -> RuleDefinition {
+        if setting["scope"]?["deviceClass"]?.string == "trackpad" {
+            return try translateTrackpadSetting(setting)
+        }
         guard setting["scope"]?["deviceClass"]?.string == "mouse" else {
             throw Unsupported(.trackpadSettings)
         }
@@ -372,6 +375,41 @@ extension ConfigDocument {
             throw Unsupported(.displayScope)
         }
         return .wheel(vertical: vertical, horizontal: horizontal, conditions: conditions)
+    }
+
+    /// Trackpad scrolling: direction per axis, one speed for both axes,
+    /// and momentum. Pointer settings are not supported.
+    private static func translateTrackpadSetting(_ setting: JSONValue) throws -> RuleDefinition {
+        if setting["pointer"] != nil { throw Unsupported(.pointerSettings) }
+        let scope = setting["scope"]
+        if scope?["vendorId"] != nil || scope?["productId"] != nil { throw Unsupported(.perDeviceScrolling) }
+        if scope?["displayId"] != nil { throw Unsupported(.displayScope) }
+        var speeds: [Double] = []
+        var reverse: [Bool] = []
+        for axis in ["vertical", "horizontal"] {
+            let config = setting["scrolling"]?[axis]
+            reverse.append(config?["reverse"] == .bool(true))
+            switch config?["mode"]?.string ?? "system" {
+            case "system":
+                break
+            case "accelerated":
+                guard let speed = config?["speedMultiplier"]?.number, TrackpadScrollSettings.speedRange.contains(speed) else {
+                    throw Unsupported(.scrollValueOutOfRange(mode: "accelerated"))
+                }
+                speeds.append(speed)
+            case let other:
+                throw Unsupported(.unsupportedScrollMode(other))
+            }
+        }
+        guard Set(speeds).count <= 1 else { throw Unsupported(.unsupportedScrollField("speedMultiplier")) }
+        let settings = TrackpadScrollSettings(
+            reverseVertical: reverse[0], reverseHorizontal: reverse[1], speed: speeds.first ?? 1,
+            momentum: setting["scrolling"]?["momentum"] != .bool(false)
+        )
+        guard settings.changesEvents else { throw Unsupported(.noScrollChange) }
+        var conditions = RuleConditions()
+        if let app = scope?["appBundleId"]?.string { conditions.onlyApps = [app] }
+        return .trackpadScroll(settings, conditions: conditions)
     }
 
     private static func scrollAxis(_ config: JSONValue?) throws -> ScrollAxisSettings {

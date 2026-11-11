@@ -303,7 +303,7 @@ public final class EventTapController: @unchecked Sendable {
         let isContinuous = event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0
         if isContinuous {
             if smoothScroller.isActive { stopSmoothScrolling() }
-            return true
+            return applyTrackpadScroll(event)
         }
         guard let settings = engine.wheelSettings(isContinuous: false, device: nil) else { return true }
 
@@ -337,6 +337,29 @@ public final class EventTapController: @unchecked Sendable {
             || event.getDoubleValueField(.scrollWheelEventFixedPtDeltaAxis2) != 0
             || event.getIntegerValueField(.scrollWheelEventPointDeltaAxis1) != 0
             || event.getIntegerValueField(.scrollWheelEventPointDeltaAxis2) != 0
+    }
+
+    /// Continuous scrolling from trackpads and Magic Mouse: direction,
+    /// speed and momentum. Phases are left untouched so apps still see a
+    /// complete gesture. Returns false to drop a momentum event.
+    private func applyTrackpadScroll(_ event: CGEvent) -> Bool {
+        guard let settings = engine.trackpadScrollSettings() else { return true }
+        if !settings.momentum, event.getIntegerValueField(.scrollWheelEventMomentumPhase) != 0 {
+            return false
+        }
+        for (vertical, fields) in [
+            (true, (CGEventField.scrollWheelEventDeltaAxis1, CGEventField.scrollWheelEventFixedPtDeltaAxis1, CGEventField.scrollWheelEventPointDeltaAxis1)),
+            (false, (CGEventField.scrollWheelEventDeltaAxis2, CGEventField.scrollWheelEventFixedPtDeltaAxis2, CGEventField.scrollWheelEventPointDeltaAxis2)),
+        ] {
+            let input = ScrollDeltas(lines: event.getIntegerValueField(fields.0), fixed: event.getDoubleValueField(fields.1),
+                                     points: event.getIntegerValueField(fields.2))
+            let output = settings.apply(to: input, vertical: vertical)
+            guard output != input else { continue }
+            event.setIntegerValueField(fields.0, value: output.lines)
+            event.setDoubleValueField(fields.1, value: output.fixed)
+            event.setIntegerValueField(fields.2, value: output.points)
+        }
+        return true
     }
 
     /// One notch per wheel event in its direction, ignoring the system's

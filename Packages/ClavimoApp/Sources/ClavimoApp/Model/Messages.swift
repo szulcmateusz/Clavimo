@@ -38,7 +38,7 @@ enum Messages {
         case let .unsupportedAction(kind):
             String(localized: "The action \(kind) is not supported yet.")
         case .trackpadSettings:
-            String(localized: "Trackpad settings are not changed by Clavimo.")
+            String(localized: "Only mouse and trackpad settings are supported.")
         case .pointerSettings:
             String(localized: "Pointer speed and acceleration are set in System Settings > Mouse.")
         case .noScrollChange:
@@ -102,6 +102,10 @@ enum Messages {
         case let .duplicateTrackpadRule(ids):
             let names = ids.map(rule).joined(separator: ", ")
             return String(localized: "\(names) use the same trackpad gesture in the same situation.")
+        case .duplicateTrackpadScroll:
+            return String(localized: "Two trackpad scrolling settings apply in the same situation. Keep one.")
+        case .trackpadScrollWithoutChanges:
+            return String(localized: "The trackpad scrolling setting changes nothing.")
         }
     }
 

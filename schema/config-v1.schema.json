@@ -982,6 +982,10 @@
             },
             "horizontal": {
               "$ref": "#/$defs/scrollAxis"
+            },
+            "momentum": {
+              "type": "boolean",
+              "description": "Trackpads only: false stops scrolling as soon as the fingers lift."
             }
           }
         }

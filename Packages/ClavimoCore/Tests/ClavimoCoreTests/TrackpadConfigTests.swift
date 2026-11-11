@@ -59,3 +59,57 @@ struct TrackpadConfigTests {
         #expect(result.unsupported.map(\.reason) == [.unsupportedAction("mediaKey")])
     }
 }
+
+@Suite("Trackpad scrolling")
+struct TrackpadScrollTests {
+    @Test func reverseAndSpeedApplyPerAxis() {
+        let settings = TrackpadScrollSettings(reverseVertical: true, speed: 2)
+        let deltas = ScrollDeltas(lines: 1, fixed: 1.5, points: 12)
+        #expect(settings.apply(to: deltas, vertical: true) == ScrollDeltas(lines: -2, fixed: -3, points: -24))
+        #expect(settings.apply(to: deltas, vertical: false) == ScrollDeltas(lines: 2, fixed: 3, points: 24))
+    }
+
+    @Test func slowMovementIsNotRoundedAway() {
+        let settings = TrackpadScrollSettings(speed: 0.25)
+        #expect(settings.apply(to: ScrollDeltas(lines: 0, fixed: 0.5, points: 1), vertical: true).points == 1)
+        #expect(settings.apply(to: ScrollDeltas(lines: 0, fixed: -0.5, points: -1), vertical: true).points == -1)
+    }
+
+    @Test func unchangedSettingsLeaveEventsAlone() {
+        let deltas = ScrollDeltas(lines: 0, fixed: 2.5, points: 7)
+        #expect(TrackpadScrollSettings(momentum: false).apply(to: deltas, vertical: true) == deltas)
+        #expect(!TrackpadScrollSettings.unchanged.changesEvents)
+        #expect(TrackpadScrollSettings(momentum: false).changesEvents)
+    }
+
+    func interpret(_ setting: String) throws -> InterpretedConfig {
+        let json = ConfigTests.document(rules: "").replacingOccurrences(of: #""macros": []"#, with: #""macros": [], "deviceSettings": [\#(setting)]"#)
+        return try ConfigDocument.decode(Data(json.utf8)).interpret()
+    }
+
+    static func setting(_ scrolling: String) -> String {
+        """
+        {"id": "00000000-0000-4000-8000-0000000000aa", "name": "Trackpad", "enabled": true, "profileId": "default", "priority": 50,
+         "scope": {"deviceClass": "trackpad"}, "scrolling": \(scrolling)}
+        """
+    }
+
+    @Test func trackpadDeviceSettingIsRead() throws {
+        let result = try interpret(Self.setting(#"{"vertical": {"reverse": true, "mode": "accelerated", "speedMultiplier": 1.5}, "horizontal": {"mode": "accelerated", "speedMultiplier": 1.5}, "momentum": false}"#))
+        #expect(result.unsupported.isEmpty)
+        #expect(result.definitions == [.trackpadScroll(TrackpadScrollSettings(reverseVertical: true, speed: 1.5, momentum: false))])
+        let rules = try CompiledRules.compile(result.definitions).get()
+        #expect(rules.observesScrollWheel)
+        #expect(rules.trackpadScrollSettings(app: nil)?.momentum == false)
+    }
+
+    @Test func wheelOnlyModesAreReported() throws {
+        let result = try interpret(Self.setting(#"{"vertical": {"mode": "byLines", "distanceLines": 3}}"#))
+        #expect(result.unsupported.map(\.reason) == [.unsupportedScrollMode("byLines")])
+    }
+
+    @Test func differentSpeedsPerAxisAreReported() throws {
+        let result = try interpret(Self.setting(#"{"vertical": {"mode": "accelerated", "speedMultiplier": 2}, "horizontal": {"mode": "accelerated", "speedMultiplier": 1.5}}"#))
+        #expect(result.unsupported.map(\.reason) == [.unsupportedScrollField("speedMultiplier")])
+    }
+}

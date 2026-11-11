@@ -54,6 +54,44 @@ public struct ScrollDeltas: Equatable, Sendable {
     public static let zero = ScrollDeltas(lines: 0, fixed: 0, points: 0)
 }
 
+/// How continuous scrolling (trackpads and Magic Mouse) is changed.
+public struct TrackpadScrollSettings: Hashable, Sendable {
+    public var reverseVertical: Bool
+    public var reverseHorizontal: Bool
+    /// Multiplies the scrolled distance.
+    public var speed: Double
+    /// False drops the momentum (inertia) that continues after the
+    /// fingers lift.
+    public var momentum: Bool
+
+    public init(reverseVertical: Bool = false, reverseHorizontal: Bool = false, speed: Double = 1, momentum: Bool = true) {
+        self.reverseVertical = reverseVertical
+        self.reverseHorizontal = reverseHorizontal
+        self.speed = speed
+        self.momentum = momentum
+    }
+
+    public static let speedRange: ClosedRange<Double> = 0.25...4
+    public static let unchanged = TrackpadScrollSettings()
+
+    public var changesEvents: Bool { self != .unchanged }
+
+    /// Transforms one axis of a continuous scroll event; phases are left
+    /// to the caller, which keeps them unchanged.
+    public func apply(to deltas: ScrollDeltas, vertical: Bool) -> ScrollDeltas {
+        let factor = min(max(speed, Self.speedRange.lowerBound), Self.speedRange.upperBound)
+            * ((vertical ? reverseVertical : reverseHorizontal) ? -1 : 1)
+        guard factor != 1 else { return deltas }
+        func scaled(_ value: Int64) -> Int64 {
+            guard value != 0 else { return 0 }
+            let result = (Double(value) * factor).rounded()
+            // Keep slow movements alive instead of rounding them away.
+            return result == 0 ? (factor * Double(value) > 0 ? 1 : -1) : Int64(result)
+        }
+        return ScrollDeltas(lines: scaled(deltas.lines), fixed: deltas.fixed * factor, points: scaled(deltas.points))
+    }
+}
+
 public enum ScrollTransform {
     /// macOS reports about ten points per line for discrete wheels.
     public static let pointsPerLine = 10.0

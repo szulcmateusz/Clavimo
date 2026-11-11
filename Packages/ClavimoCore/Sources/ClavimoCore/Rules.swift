@@ -107,6 +107,8 @@ public enum RuleDefinition: Equatable, Sendable {
     /// Changes discrete (mouse wheel) scrolling per axis. Continuous
     /// scrolling from trackpads is never changed.
     case wheel(vertical: ScrollAxisSettings, horizontal: ScrollAxisSettings, conditions: RuleConditions = .always)
+    /// Changes continuous scrolling from trackpads (and Magic Mouse).
+    case trackpadScroll(TrackpadScrollSettings, conditions: RuleConditions = .always)
     /// A trackpad gesture or click, with the exact set of modifiers that
     /// must be held (empty means none).
     case trackpad(
@@ -155,6 +157,8 @@ extension RuleDefinition {
             ["chord:\(leader.signature):\(button.rawValue):\(conditions.signature)"]
         case let .wheel(_, _, conditions):
             ["wheel:\(conditions.signature)"]
+        case let .trackpadScroll(_, conditions):
+            ["trackpadScroll:\(conditions.signature)"]
         case let .trackpad(_, trigger, modifiers, _, _, conditions):
             ["trackpad:\(trigger.signature):\(modifiers.rawValue):\(conditions.signature)"]
         }
@@ -213,6 +217,13 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     /// A two-finger tap is the macOS secondary click; it needs modifiers.
     case twoFingerTapNeedsModifiers(id: String)
     case duplicateTrackpadRule(ids: [String])
+    case duplicateTrackpadScroll
+    case trackpadScrollWithoutChanges
+}
+
+public struct ContinuousScrollRule: Equatable, Sendable {
+    public let settings: TrackpadScrollSettings
+    public let conditions: RuleConditions
 }
 
 public struct ChordRule: Equatable, Sendable {
@@ -250,14 +261,18 @@ public struct CompiledRules: Equatable, Sendable {
     /// Trackpad rules per trigger: higher priority first, then more
     /// specific conditions, then definition order.
     public let trackpadRules: [TrackpadTrigger: [TrackpadRule]]
+    /// Continuous scroll settings, most specific first.
+    public let trackpadScroll: [ContinuousScrollRule]
 
     public init(
         remapCandidates: [KeyCode: [RemapCandidate]],
         chordsByButton: [MouseButton: [ChordRule]],
         leaderPolicies: [KeyCode: LeaderPolicy],
         wheelSettings: [WheelSettings],
-        trackpadRules: [TrackpadTrigger: [TrackpadRule]] = [:]
+        trackpadRules: [TrackpadTrigger: [TrackpadRule]] = [:],
+        trackpadScroll: [ContinuousScrollRule] = []
     ) {
+        self.trackpadScroll = trackpadScroll
         self.remapCandidates = remapCandidates
         self.chordsByButton = chordsByButton
         self.leaderPolicies = leaderPolicies
@@ -269,6 +284,7 @@ public struct CompiledRules: Equatable, Sendable {
 
     public var isEmpty: Bool {
         remapCandidates.isEmpty && chordsByButton.isEmpty && wheelSettings.isEmpty && trackpadRules.isEmpty
+            && trackpadScroll.isEmpty
     }
 
     /// Whether any rule needs trackpad touches, so the touch backend runs.
@@ -298,7 +314,11 @@ public struct CompiledRules: Equatable, Sendable {
         chordsByButton.keys.contains { $0.isProtected }
     }
 
-    public var observesScrollWheel: Bool { !wheelSettings.isEmpty }
+    public var observesScrollWheel: Bool { !wheelSettings.isEmpty || !trackpadScroll.isEmpty }
+
+    public func trackpadScrollSettings(app: String?) -> TrackpadScrollSettings? {
+        trackpadScroll.first { $0.conditions.matches(app: app, device: nil) }?.settings
+    }
 
     /// Whether any rule depends on knowing the physical device, which
     /// requires device attribution in the platform adapter.
@@ -346,6 +366,7 @@ public struct CompiledRules: Equatable, Sendable {
         var leaderPolicies: [KeyCode: LeaderPolicy] = [:]
         var wheel: [(WheelSettings, Int)] = []
         var trackpad: [(TrackpadRule, Int)] = []
+        var continuous: [(ContinuousScrollRule, Int)] = []
         var seenIDs: Set<String> = []
 
         func addRemap(_ from: KeyCode, _ to: KeyCode, _ conditions: RuleConditions, _ order: Int) {
@@ -382,6 +403,14 @@ public struct CompiledRules: Equatable, Sendable {
                     errors.append(.wheelRuleWithoutChanges)
                 } else {
                     wheel.append((WheelSettings(vertical: vertical, horizontal: horizontal, conditions: conditions), order))
+                }
+            case let .trackpadScroll(settings, conditions):
+                if continuous.contains(where: { $0.0.conditions == conditions }) {
+                    errors.append(.duplicateTrackpadScroll)
+                } else if !settings.changesEvents {
+                    errors.append(.trackpadScrollWithoutChanges)
+                } else {
+                    continuous.append((ContinuousScrollRule(settings: settings, conditions: conditions), order))
                 }
             case let .trackpad(id, trigger, modifiers, action, priority, conditions):
                 if !seenIDs.insert(id).inserted {
@@ -495,7 +524,8 @@ public struct CompiledRules: Equatable, Sendable {
                 let left = lhs.0.conditions.specificity
                 let right = rhs.0.conditions.specificity
                 return left != right ? left > right : lhs.1 < rhs.1
-            }.map(\.0), by: \.trigger)
+            }.map(\.0), by: \.trigger),
+            trackpadScroll: bySpecificity(continuous) { $0.conditions }
         ))
     }
 }

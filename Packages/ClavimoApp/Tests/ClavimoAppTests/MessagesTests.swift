@@ -12,6 +12,7 @@ struct MessagesTests {
         .duplicateRuleID("r1"), .deviceConditionOnLetterLeader(id: "r1"), .unsupportedKey(.capsLock),
         .duplicateWheelRule, .wheelRuleWithoutChanges, .trackpadFingersOutOfRange(id: "r1"),
         .twoFingerTapNeedsModifiers(id: "r1"), .duplicateTrackpadRule(ids: ["r1", "r2"]),
+        .duplicateTrackpadScroll, .trackpadScrollWithoutChanges,
     ]
 
     static let reasons: [UnsupportedReason] = [

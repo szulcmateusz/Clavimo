@@ -161,8 +161,9 @@ struct ConfigTests {
         let result = try interpret(json)
         #expect(result.definitions == [
             .wheel(vertical: ScrollAxisSettings(reverse: true), horizontal: .unchanged),
+            .trackpadScroll(TrackpadScrollSettings(reverseVertical: true)),
         ])
-        #expect(result.unsupported.map(\.ruleID) == ["d", "t", "p"])
+        #expect(result.unsupported.map(\.ruleID) == ["d", "p"])
     }
 
     @Test func encodingRoundTripsAndKeepsSchemaShape() throws {
