@@ -88,7 +88,7 @@ struct OverviewPane: View {
     private var deviceDetail: String {
         let mice = devices.filter(\.looksLikeMouse).count
         let keyboards = devices.filter { $0.isKeyboard && !$0.looksLikeMouse }.count
-        return String(localized: "\(keyboards) keyboards, \(mice) mice")
+        return [String(localized: "\(keyboards) keyboards"), String(localized: "\(mice) mice")].formatted(.list(type: .and))
     }
 
     private var wheel: RuleDraft? { editor.rows.first { $0.draft?.kind == .wheel && $0.enabled }?.draft }

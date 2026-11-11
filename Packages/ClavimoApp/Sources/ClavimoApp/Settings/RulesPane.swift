@@ -95,7 +95,7 @@ struct RulesPane: View {
             }
 
             if inheritedCount > 0 {
-                Label(String(localized: "This profile also uses \(inheritedCount) rules inherited from \(editor.ancestors(of: selectedProfile).map(editor.profileName).formatted(.list(type: .and)))."),
+                Label(String(localized: "This profile also uses rules inherited from \(editor.ancestors(of: selectedProfile).map(editor.profileName).formatted(.list(type: .and))) (\(inheritedCount))."),
                       systemImage: "arrow.turn.down.right")
                     .font(.callout)
                     .foregroundStyle(.secondary)

@@ -287,28 +287,158 @@
         }
       }
     },
-    "%lld keyboards, %lld mice": {
+    "%lld keyboards": {
       "localizations": {
         "en": {
-          "stringUnit": {
-            "state": "new",
-            "value": "%1$lld keyboards, %2$lld mice"
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld keyboard"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld keyboards"
+                }
+              }
+            }
           }
         },
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "klawiatury: %lld, myszy: %lld"
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld klawiatury"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld klawiatur"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld klawiatura"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld klawiatury"
+                }
+              }
+            }
           }
         }
       }
     },
     "%lld lines per notch": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld line per notch"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld lines per notch"
+                }
+              }
+            }
+          }
+        },
         "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld linie na ząbek"
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld linie na ząbek"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld linii na ząbek"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld linia na ząbek"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld linii na ząbek"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld mice": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld mouse"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld mice"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld myszy"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld myszy"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld mysz"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld myszy"
+                }
+              }
+            }
           }
         }
       }
@@ -325,6 +455,24 @@
     },
     "%lld own rules": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld own rule"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld own rules"
+                }
+              }
+            }
+          }
+        },
         "pl": {
           "stringUnit": {
             "state": "translated",
@@ -355,6 +503,24 @@
     },
     "%lld rules cannot run": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld rule cannot run"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld rules cannot run"
+                }
+              }
+            }
+          }
+        },
         "pl": {
           "stringUnit": {
             "state": "translated",
@@ -365,6 +531,24 @@
     },
     "%lld rules that belong only to this profile will be deleted.": {
       "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld rule that belongs only to this profile will be deleted."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld rules that belong only to this profile will be deleted."
+                }
+              }
+            }
+          }
+        },
         "pl": {
           "stringUnit": {
             "state": "translated",
@@ -3923,18 +4107,18 @@
         }
       }
     },
-    "This profile also uses %lld rules inherited from %@.": {
+    "This profile also uses rules inherited from %@ (%lld).": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "new",
-            "value": "This profile also uses %1$lld rules inherited from %2$@."
+            "value": "This profile also uses rules inherited from %1$@ (%2$lld)."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ten profil używa też odziedziczonych reguł (%lld) z: %@."
+            "value": "Ten profil używa też reguł odziedziczonych z: %@ (%lld)."
           }
         }
       }
