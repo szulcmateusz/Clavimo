@@ -47,6 +47,9 @@ jobs:
           .venv/bin/pip install --quiet jsonschema==4.26.0
           .venv/bin/python scripts/validate-config.py examples/example-config.json
 
+      - name: Check that every string is translated
+        run: python3 scripts/check-translations.py
+
       - name: Check whitespace
         run: git diff --check $(git hash-object -t tree /dev/null) HEAD
 
