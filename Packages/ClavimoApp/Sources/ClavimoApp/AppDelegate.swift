@@ -28,7 +28,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// Validates the configuration without touching input and prints a
     /// summary. Exit status 0 means every enabled rule is active.
     private static func checkConfiguration() -> Int32 {
-        let store = ConfigStore(fileURL: ConfigStore.defaultLocation())
+        let arguments = CommandLine.arguments
+        var location = ConfigStore.defaultLocation()
+        if let index = arguments.firstIndex(of: "--check-config"), index + 1 < arguments.count, !arguments[index + 1].hasPrefix("--") {
+            location = URL(fileURLWithPath: arguments[index + 1])
+            guard FileManager.default.fileExists(atPath: location.path) else {
+                print("No such file: \(location.path)")
+                return 1
+            }
+        }
+        let store = ConfigStore(fileURL: location)
         print("Configuration: \(store.fileURL.path)")
         switch store.load() {
         case let .failure(error):
@@ -38,9 +47,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             let document = loaded.document
             let enabled = document.rules.filter { $0.enabled && $0.profileId == document.activeProfileId }
             print("Active profile: \(document.activeProfileId)")
-            print("Enabled rules: \(enabled.count), supported: \(enabled.count - loaded.unsupported.count)")
+            let settings = (document.deviceSettings ?? []).filter { $0["enabled"] == .bool(true) && $0["profileId"]?.string == document.activeProfileId }
+            print("Enabled rules: \(enabled.count), device settings: \(settings.count), unsupported: \(loaded.unsupported.count)")
             for rule in enabled where !loaded.unsupported.contains(where: { $0.ruleID == rule.id }) {
                 print("  ok    \(rule.name)")
+            }
+            for setting in settings where !loaded.unsupported.contains(where: { $0.ruleID == setting["id"]?.string }) {
+                print("  ok    \(setting["name"]?.string ?? "device setting")")
             }
             for issue in loaded.unsupported {
                 print("  skip  \(issue)")
@@ -304,7 +317,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
 
         if let loaded {
-            let count = loaded.document.rules.filter { $0.enabled && $0.profileId == loaded.document.activeProfileId }.count
+            let document = loaded.document
+            let rules = document.rules.filter { $0.enabled && $0.profileId == document.activeProfileId }.count
+            let settings = (document.deviceSettings ?? []).filter { $0["enabled"] == .bool(true) && $0["profileId"]?.string == document.activeProfileId }.count
+            let count = rules + settings
             menu.addItem(disabled("\(count - loaded.unsupported.count) of \(count) rules supported"))
             if !loaded.unsupported.isEmpty {
                 let submenu = NSMenu()

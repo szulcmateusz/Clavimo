@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "configId": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d00",
+  "engine": {
+    "enabledOnLaunch": false,
+    "failOpen": true
+  },
+  "activeProfileId": "default",
+  "profiles": [
+    {
+      "id": "default",
+      "name": "Default",
+      "inherits": null
+    }
+  ],
+  "rules": [
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d01",
+      "name": "Swap Left Command and Left Option",
+      "enabled": true,
+      "priority": 100,
+      "profileId": "default",
+      "trigger": {
+        "kind": "keyPair",
+        "first": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 55
+        },
+        "second": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 58
+        }
+      },
+      "conditions": [],
+      "action": {
+        "kind": "swapKeys",
+        "sideMode": "asSpecified"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 0
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d02",
+      "name": "ISO keyboard: Section key types grave accent (one keyboard only)",
+      "enabled": true,
+      "priority": 90,
+      "profileId": "default",
+      "trigger": {
+        "kind": "key",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 10
+        }
+      },
+      "conditions": [
+        {
+          "kind": "physicalDeviceIs",
+          "deviceId": "1133:45934"
+        }
+      ],
+      "action": {
+        "kind": "sendKey",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 50
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 1
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d03",
+      "name": "Fn + Left Click: Previous Space",
+      "enabled": true,
+      "priority": 80,
+      "profileId": "default",
+      "trigger": {
+        "kind": "modifierChord",
+        "requiredModifiers": [
+          "function"
+        ],
+        "mouseButton": 1
+      },
+      "conditions": [],
+      "action": {
+        "kind": "previousWorkspace"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once",
+        "allowProtectedButton": true
+      },
+      "ui": {
+        "order": 2
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d04",
+      "name": "Fn + Right Click: Next Space",
+      "enabled": true,
+      "priority": 80,
+      "profileId": "default",
+      "trigger": {
+        "kind": "modifierChord",
+        "requiredModifiers": [
+          "function"
+        ],
+        "mouseButton": 2
+      },
+      "conditions": [],
+      "action": {
+        "kind": "nextWorkspace"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once",
+        "allowProtectedButton": true
+      },
+      "ui": {
+        "order": 3
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d05",
+      "name": "F + Mouse Button 4: Next Space",
+      "enabled": true,
+      "priority": 70,
+      "profileId": "default",
+      "trigger": {
+        "kind": "keyMouseChord",
+        "leaderKey": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 3
+        },
+        "mouseButton": 4,
+        "order": "leaderThenMouse"
+      },
+      "conditions": [
+        {
+          "kind": "appIsNot",
+          "bundleId": "com.apple.Terminal"
+        }
+      ],
+      "action": {
+        "kind": "nextWorkspace"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once",
+        "leaderPolicy": "boundedWindow",
+        "leaderWindowMs": 120
+      },
+      "ui": {
+        "order": 4
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d06",
+      "name": "Shift + Mouse Button 5: Mission Control",
+      "enabled": true,
+      "priority": 70,
+      "profileId": "default",
+      "trigger": {
+        "kind": "modifierChord",
+        "requiredModifiers": [
+          "shift"
+        ],
+        "mouseButton": 5
+      },
+      "conditions": [],
+      "action": {
+        "kind": "missionControl"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 5
+      }
+    }
+  ],
+  "macros": [],
+  "deviceSettings": [
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d07",
+      "name": "Mouse wheel: reverse vertical scrolling",
+      "enabled": true,
+      "profileId": "default",
+      "priority": 50,
+      "scope": {
+        "deviceClass": "mouse"
+      },
+      "scrolling": {
+        "vertical": {
+          "reverse": true
+        }
+      }
+    }
+  ]
+}
