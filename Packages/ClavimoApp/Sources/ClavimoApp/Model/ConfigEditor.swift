@@ -17,6 +17,11 @@ final class ConfigEditor {
         let profileID: String
         /// Nil for advanced rules that can only be edited in the JSON file.
         let draft: RuleDraft?
+        /// Keyboard rules (tap-hold, layers, combos, sequences) edited in
+        /// the Keyboard pane.
+        var keyboard: KeyboardRuleDraft? = nil
+
+        var isEditable: Bool { draft != nil || keyboard != nil }
     }
 
     private let store: ConfigStore
@@ -45,7 +50,9 @@ final class ConfigEditor {
     private func rebuildRows() {
         guard let document else { rows = []; return }
         var result: [Row] = document.rules.map { rule in
-            Row(id: rule.id, source: .rule, name: rule.name, enabled: rule.enabled, profileID: rule.profileId, draft: RuleDraft(rule: rule))
+            let draft = RuleDraft(rule: rule)
+            return Row(id: rule.id, source: .rule, name: rule.name, enabled: rule.enabled, profileID: rule.profileId, draft: draft,
+                       keyboard: draft == nil ? KeyboardRuleDraft(rule: rule) : nil)
         }
         for setting in document.deviceSettings ?? [] {
             guard let id = setting["id"]?.string else { continue }
@@ -73,6 +80,33 @@ final class ConfigEditor {
             let rule = draft.makeRule(id: id, order: updated.rules.count)
             if let index = document?.rules.firstIndex(where: { $0.id == id }), index <= updated.rules.count {
                 updated.rules.insert(rule, at: index)
+            } else {
+                updated.rules.append(rule)
+            }
+        }
+        return commit(updated)
+    }
+
+    /// Inserts or replaces a keyboard rule.
+    @discardableResult
+    func upsertKeyboard(_ draft: KeyboardRuleDraft, id existingID: String?) -> String? {
+        replaceKeyboardRules([(existingID ?? UUID().uuidString.lowercased(), draft)], removing: [])
+    }
+
+    /// Writes several keyboard rules and removes others in one save, so a
+    /// set such as home row modifiers is never half applied.
+    @discardableResult
+    func replaceKeyboardRules(_ drafts: [(id: String, draft: KeyboardRuleDraft)], removing ids: Set<String>) -> String? {
+        guard var updated = document else { return lastError ?? "Configuration is not loaded." }
+        for (_, draft) in drafts {
+            if let message = draft.validationMessage { return message }
+        }
+        for id in ids { remove(id: id, from: &updated) }
+        for (id, draft) in drafts {
+            let index = updated.rules.firstIndex { $0.id == id }
+            let rule = draft.makeRule(id: id, order: index ?? updated.rules.count)
+            if let index {
+                updated.rules[index] = rule
             } else {
                 updated.rules.append(rule)
             }

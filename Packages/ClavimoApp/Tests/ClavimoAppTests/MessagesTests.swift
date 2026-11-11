@@ -13,6 +13,9 @@ struct MessagesTests {
         .duplicateWheelRule, .wheelRuleWithoutChanges, .trackpadFingersOutOfRange(id: "r1"),
         .twoFingerTapNeedsModifiers(id: "r1"), .duplicateTrackpadRule(ids: ["r1", "r2"]),
         .duplicateTrackpadScroll, .trackpadScrollWithoutChanges,
+        .holdOutputNotHeld(id: "r1"), .modifierTapHoldChangesHold(id: "r1"), .tapHoldTimingOutOfRange(id: "r1"),
+        .layerNeverActivated("nav"), .emptyLayerName(id: "r1"), .invalidCombo(id: "r1"), .invalidSequence(id: "r1"),
+        .ambiguousSequence(ids: ["r1", "r2"]), .sequenceWithoutLeader(id: "r1"), .modifierKeyNotAllowed(.leftShift, id: "r1"),
     ]
 
     static let reasons: [UnsupportedReason] = [
@@ -20,7 +23,7 @@ struct MessagesTests {
         .bothSidesSwap, .modifierKeyChord, .chordOrder, .invalidMouseButton, .missingLeaderPolicy, .chordBehavior,
         .keyNamespace, .sideSpecificChordModifiers, .unsupportedAction("x"), .trackpadSettings, .pointerSettings,
         .noScrollChange, .perDeviceScrolling, .displayScope, .unsupportedScrollField("x"), .unsupportedScrollMode("x"),
-        .scrollValueOutOfRange(mode: "byLines"), .invalidTrackpadTrigger,
+        .scrollValueOutOfRange(mode: "byLines"), .invalidTrackpadTrigger, .invalidKeyBehavior("x"),
     ]
 
     @Test(arguments: validationErrors)

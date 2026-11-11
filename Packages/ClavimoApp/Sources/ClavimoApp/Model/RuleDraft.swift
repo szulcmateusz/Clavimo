@@ -278,9 +278,11 @@ struct RuleDraft: Equatable {
         switch kind {
         case .swapKeys, .remapKey:
             if firstKey == secondKey { return String(localized: "Choose two different keys.") }
-            let unsupported: Set<UInt16> = [KeyCode.capsLock.rawValue, KeyCode.function.rawValue]
-            if unsupported.contains(firstKey) || unsupported.contains(secondKey) {
-                return String(localized: "Caps Lock and Fn cannot be remapped yet.")
+            if firstKey == KeyCode.function.rawValue || secondKey == KeyCode.function.rawValue {
+                return String(localized: "Fn cannot be remapped.")
+            }
+            if secondKey == KeyCode.capsLock.rawValue || (kind == .swapKeys && firstKey == KeyCode.capsLock.rawValue) {
+                return String(localized: "Caps Lock can be remapped to another key, but no key can type Caps Lock. Use the Keyboard pane to make Caps Lock toggle on a tap or double tap.")
             }
         case .modifierClick:
             if modifiers.isEmpty { return String(localized: "Choose at least one modifier.") }
@@ -343,11 +345,11 @@ extension MediaKey {
 // MARK: - JSON conversion
 
 extension RuleDraft {
-    private static func key(_ code: UInt16) -> JSONValue {
+    static func key(_ code: UInt16) -> JSONValue {
         .object(["codeNamespace": .string("macVirtualKeyCode"), "code": .number(Double(code))])
     }
 
-    private static func code(_ value: JSONValue?) -> UInt16? {
+    static func code(_ value: JSONValue?) -> UInt16? {
         guard value?["codeNamespace"]?.string == "macVirtualKeyCode", let code = value?["code"]?.int,
               (0...Int(UInt16.max)).contains(code) else { return nil }
         return UInt16(code)
@@ -420,11 +422,11 @@ extension RuleDraft {
         )
     }
 
-    private static func modifierNames(_ set: Set<Modifier>) -> JSONValue {
+    static func modifierNames(_ set: Set<Modifier>) -> JSONValue {
         .array(Modifier.allCases.filter { set.contains($0) }.map { .string($0.rawValue) })
     }
 
-    private var actionJSON: JSONValue {
+    var actionJSON: JSONValue {
         switch action {
         case .nextWorkspace, .previousWorkspace, .missionControl, .applicationWindows:
             .object(["kind": .string(action.rawValue)])
@@ -439,7 +441,7 @@ extension RuleDraft {
     }
 
     /// Reads an action the form can show; false when it cannot.
-    private mutating func readAction(_ value: JSONValue) -> Bool {
+    mutating func readAction(_ value: JSONValue) -> Bool {
         guard let kind = value["kind"]?.string else { return false }
         if let simple = Action(rawValue: kind), simple.isSimple {
             action = simple
@@ -472,7 +474,7 @@ extension RuleDraft {
         return true
     }
 
-    private static func modifierSet(_ value: JSONValue?) -> Set<Modifier>? {
+    static func modifierSet(_ value: JSONValue?) -> Set<Modifier>? {
         var set: Set<Modifier> = []
         for item in value?.array ?? [] {
             guard let modifier = item.string.flatMap(Modifier.init(rawValue:)) else { return nil }

@@ -9,13 +9,14 @@ import SwiftUI
 @Observable
 final class SettingsNavigation {
     enum Pane: String, CaseIterable, Identifiable {
-        case overview, rules, mouse, trackpad, devices, diagnostics, general, about
+        case overview, rules, keyboard, mouse, trackpad, devices, diagnostics, general, about
         var id: String { rawValue }
 
         var title: String {
             switch self {
             case .overview: String(localized: "Overview")
             case .rules: String(localized: "Rules")
+            case .keyboard: String(localized: "Keyboard")
             case .mouse: String(localized: "Mouse & Scrolling")
             case .trackpad: String(localized: "Trackpad")
             case .devices: String(localized: "Devices")
@@ -29,6 +30,7 @@ final class SettingsNavigation {
             switch self {
             case .overview: "gauge.with.dots.needle.33percent"
             case .rules: "list.bullet.rectangle.portrait"
+            case .keyboard: "keyboard.badge.ellipsis"
             case .mouse: "computermouse"
             case .trackpad: "rectangle.and.hand.point.up.left"
             case .devices: "keyboard"
@@ -81,6 +83,7 @@ struct SettingsView: View {
             switch navigation.pane ?? .overview {
             case .overview: OverviewPane(model: model, editor: editor, navigation: navigation)
             case .rules: RulesPane(model: model, editor: editor, navigation: navigation)
+            case .keyboard: KeyboardPane(model: model, editor: editor)
             case .mouse: MousePane(editor: editor)
             case .trackpad: TrackpadPane(model: model, editor: editor)
             case .devices: DevicesPane(navigation: navigation)

@@ -25,6 +25,7 @@ struct RulesPane: View {
     @Bindable var editor: ConfigEditor
     @Bindable var navigation: SettingsNavigation
     @State private var editing: Editing?
+    @State private var editingKeyboard: KeyboardPane.Editing?
     @State private var selection: String?
     @State private var search = ""
     @State private var filter: Filter = .all
@@ -59,11 +60,11 @@ struct RulesPane: View {
             case .all: true
             case .active: row.enabled && !issue
             case .off: !row.enabled
-            case .problems: issue || row.draft == nil
+            case .problems: issue || !row.isEditable
             }
             guard matchesFilter else { return false }
             guard !search.isEmpty else { return true }
-            let text = [row.name, row.draft?.sentence ?? ""].joined(separator: " ")
+            let text = [row.name, row.draft?.sentence ?? row.keyboard?.suggestedName ?? ""].joined(separator: " ")
             return text.localizedCaseInsensitiveContains(search)
         }
     }
@@ -125,7 +126,7 @@ struct RulesPane: View {
                 // Double-click or Return edits; Delete removes the selected rule.
                 .contextMenu(forSelectionType: String.self) { ids in
                     if let row = row(for: ids) {
-                        Button(String(localized: "Edit...")) { edit(row) }.disabled(row.draft == nil)
+                        Button(String(localized: "Edit...")) { edit(row) }.disabled(!row.isEditable)
                         Button(String(localized: "Duplicate")) { duplicate(row) }.disabled(row.draft == nil)
                         Divider()
                         Button(String(localized: "Delete"), role: .destructive) { errorMessage = editor.delete(id: row.id) }
@@ -145,6 +146,12 @@ struct RulesPane: View {
                 editor.upsert(draft, id: item.ruleID)
             }
         }
+        .sheet(item: $editingKeyboard) { item in
+            KeyboardRuleEditor(model: model, draft: item.draft, isNew: false,
+                               layers: Array(Set(editor.rows.compactMap { $0.keyboard?.layer })).sorted()) { draft in
+                editor.upsertKeyboard(draft, id: item.ruleID)
+            }
+        }
         .onAppear(perform: consumeRequest)
         .onChange(of: navigation.ruleToCreate) { consumeRequest() }
     }
@@ -161,6 +168,10 @@ struct RulesPane: View {
     }
 
     private func edit(_ row: ConfigEditor.Row) {
+        if let keyboard = row.keyboard {
+            editingKeyboard = KeyboardPane.Editing(ruleID: row.id, draft: keyboard)
+            return
+        }
         guard let draft = row.draft else { return }
         editing = Editing(ruleID: row.id, draft: draft)
     }
@@ -195,6 +206,13 @@ struct RuleRow: View {
                 if let draft = row.draft {
                     RuleTokensView(tokens: draft.tokens)
                     Text(draft.sentence).font(.callout).foregroundStyle(.secondary).lineLimit(2)
+                } else if let keyboard = row.keyboard {
+                    HStack(spacing: Spacing.s) {
+                        Image(systemName: keyboard.kind.symbol).foregroundStyle(.secondary).accessibilityHidden(true)
+                        KeyCap(label: keyboard.triggerTitle, caption: nil)
+                        Image(systemName: "arrow.right").foregroundStyle(.secondary).accessibilityHidden(true)
+                        Text(keyboard.resultTitle).font(.callout).foregroundStyle(.secondary).lineLimit(2)
+                    }
                 } else {
                     Text(String(localized: "Advanced rule. Edit it in the configuration file."))
                         .font(.callout).foregroundStyle(.secondary)

@@ -55,6 +55,8 @@ enum Messages {
             String(localized: "The scroll distance or speed is outside the allowed range.")
         case .invalidTrackpadTrigger:
             String(localized: "The trackpad gesture is incomplete or not supported.")
+        case .invalidKeyBehavior:
+            String(localized: "The keyboard rule is incomplete. Edit it in the Keyboard pane or delete it.")
         }
     }
 
@@ -73,7 +75,7 @@ enum Messages {
         case let .leaderIsModifierKey(code):
             return String(localized: "\(key(code)) is a modifier. Use a modifier + mouse button rule instead.")
         case let .leaderAlsoRemapped(code):
-            return String(localized: "\(key(code)) is both remapped and used in a mouse shortcut. Keep only one.")
+            return String(localized: "\(key(code)) has a key rule (a remap, tap or hold) and is also used in a key + mouse button rule. Keep only one.")
         case let .conflictingLeaderPolicies(code):
             return String(localized: "Mouse shortcuts with \(key(code)) use different waiting behaviors. Use the same one.")
         case let .emptyModifierLeader(id):
@@ -90,7 +92,7 @@ enum Messages {
         case let .deviceConditionOnLetterLeader(id):
             return String(localized: "\(rule(id)): key + mouse button shortcuts cannot be limited to a device.")
         case let .unsupportedKey(code):
-            return String(localized: "\(key(code)) cannot be remapped yet.")
+            return String(localized: "\(key(code)) cannot be typed by a rule. Rules can react to Caps Lock, but not send it.")
         case .duplicateWheelRule:
             return String(localized: "Two mouse wheel settings apply in the same situation. Keep one.")
         case .wheelRuleWithoutChanges:
@@ -106,6 +108,27 @@ enum Messages {
             return String(localized: "Two trackpad scrolling settings apply in the same situation. Keep one.")
         case .trackpadScrollWithoutChanges:
             return String(localized: "The trackpad scrolling setting changes nothing.")
+        case let .holdOutputNotHeld(id):
+            return String(localized: "\(rule(id)): holding the key must send a key, modifiers or a layer.")
+        case let .modifierTapHoldChangesHold(id):
+            return String(localized: "\(rule(id)): a modifier key keeps working as itself when held; only its tap can be changed.")
+        case let .tapHoldTimingOutOfRange(id):
+            return String(localized: "\(rule(id)): a timing value is outside the allowed range.")
+        case let .layerNeverActivated(layer):
+            return String(localized: "Nothing turns on the layer \(layer). Add a key that holds or switches it.")
+        case let .emptyLayerName(id):
+            return String(localized: "\(rule(id)) needs a layer name.")
+        case let .invalidCombo(id):
+            return String(localized: "\(rule(id)): a combo needs two or three different keys, and each set of keys can be used once.")
+        case let .invalidSequence(id):
+            return String(localized: "\(rule(id)): a sequence needs one to four keys, without Escape.")
+        case let .ambiguousSequence(ids):
+            let names = ids.map(rule).joined(separator: ", ")
+            return String(localized: "\(names): one sequence is the start of the other, so the longer one could never run.")
+        case let .sequenceWithoutLeader(id):
+            return String(localized: "\(rule(id)): no key starts a sequence. Add a leader key.")
+        case let .modifierKeyNotAllowed(code, id):
+            return String(localized: "\(rule(id)): \(key(code)) is a modifier and cannot be used here.")
         }
     }
 

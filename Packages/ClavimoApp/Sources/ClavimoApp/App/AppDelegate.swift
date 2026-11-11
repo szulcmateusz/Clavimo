@@ -23,11 +23,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var editor = ConfigEditor(store: store)
     private lazy var windows = WindowCoordinator(agent: agent, editor: editor)
     private var menu: StatusMenuController?
+    private let overlayPanel = KeyboardOverlayPanel()
 
     func applicationDidFinishLaunching(_: Notification) {
         let menu = StatusMenuController(agent: agent, editor: editor) { [weak self] in self?.windows.showSettings() }
         self.menu = menu
         agent.onChange = { [weak menu] in menu?.updateIcon() }
+        agent.onOverlayChange = { [weak self, weak menu] overlay in
+            self?.overlayPanel.show(overlay)
+            menu?.showLayer(overlay.layers.last)
+        }
         editor.onSaved = { [weak self] in self?.agent.reloadConfiguration() }
         agent.start()
 

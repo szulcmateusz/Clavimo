@@ -95,6 +95,16 @@
         }
       }
     },
+    "%@ asked macOS to hide keystrokes (for example in a password field), so keyboard rules wait until it ends. Mouse and trackpad rules keep working.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ poprosiła macOS o ukrycie naciśnięć klawiszy (na przykład w polu hasła), więc reguły klawiatury czekają, aż to się skończy. Reguły myszy i gładzika działają dalej."
+          }
+        }
+      }
+    },
     "%@ cannot be mapped to itself.": {
       "localizations": {
         "pl": {
@@ -105,12 +115,12 @@
         }
       }
     },
-    "%@ cannot be remapped yet.": {
+    "%@ cannot be typed by a rule. Rules can react to Caps Lock, but not send it.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ nie da się jeszcze przemapować."
+            "value": "Reguła nie może wysłać klawisza %@. Reguły mogą reagować na Caps Lock, ale nie mogą go wysyłać."
           }
         }
       }
@@ -121,6 +131,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ (kopia)"
+          }
+        }
+      }
+    },
+    "%@ for the next key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ dla następnego klawisza"
+          }
+        }
+      }
+    },
+    "%@ has a key rule (a remap, tap or hold) and is also used in a key + mouse button rule. Keep only one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ma regułę klawisza (przemapowanie, stuknięcie lub przytrzymanie) i jest też użyty w regule klawisz + przycisk myszy. Zostaw tylko jedną."
           }
         }
       }
@@ -145,16 +175,6 @@
         }
       }
     },
-    "%@ is both remapped and used in a mouse shortcut. Keep only one.": {
-      "localizations": {
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ jest jednocześnie przemapowany i użyty w skrócie z myszą. Zostaw tylko jedno."
-          }
-        }
-      }
-    },
     "%@ is running": {
       "localizations": {
         "pl": {
@@ -175,12 +195,48 @@
         }
       }
     },
+    "%@ needs a layer name.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: podaj nazwę warstwy."
+          }
+        }
+      }
+    },
     "%@ needs at least one modifier.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ wymaga co najmniej jednego modyfikatora."
+          }
+        }
+      }
+    },
+    "%@ next key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ następny klawisz"
+          }
+        }
+      }
+    },
+    "%@ on layer %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ on layer %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ na warstwie %@"
           }
         }
       }
@@ -283,6 +339,62 @@
         }
       }
     },
+    "%@: %@ is a modifier and cannot be used here.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@: %2$@ is a modifier and cannot be used here."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: %@ to modyfikator i nie może być tu użyty."
+          }
+        }
+      }
+    },
+    "%@: a combo needs two or three different keys, and each set of keys can be used once.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: kombinacja wymaga dwóch lub trzech różnych klawiszy, a każdy zestaw klawiszy może być użyty raz."
+          }
+        }
+      }
+    },
+    "%@: a modifier key keeps working as itself when held; only its tap can be changed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: przytrzymany modyfikator działa dalej jak on sam; zmienić można tylko jego stuknięcie."
+          }
+        }
+      }
+    },
+    "%@: a sequence needs one to four keys, without Escape.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: sekwencja wymaga od jednego do czterech klawiszy, bez Escape."
+          }
+        }
+      }
+    },
+    "%@: a timing value is outside the allowed range.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: jeden z czasów jest poza dozwolonym zakresem."
+          }
+        }
+      }
+    },
     "%@: a two-finger tap is the macOS secondary click. Add a modifier, such as Fn.": {
       "localizations": {
         "pl": {
@@ -293,12 +405,42 @@
         }
       }
     },
+    "%@: holding the key must send a key, modifiers or a layer.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: przytrzymanie klawisza musi wysyłać klawisz, modyfikatory albo warstwę."
+          }
+        }
+      }
+    },
     "%@: key + mouse button shortcuts cannot be limited to a device.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "%@: skrótów klawisz + przycisk myszy nie można ograniczyć do urządzenia."
+          }
+        }
+      }
+    },
+    "%@: no key starts a sequence. Add a leader key.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: żaden klawisz nie rozpoczyna sekwencji. Dodaj klawisz wiodący."
+          }
+        }
+      }
+    },
+    "%@: one sequence is the start of the other, so the longer one could never run.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: jedna sekwencja jest początkiem drugiej, więc dłuższa nigdy by się nie uruchomiła."
           }
         }
       }
@@ -675,12 +817,82 @@
         }
       }
     },
+    "A key can do one thing when tapped and another when held, switch on a layer of other keys, fire with another key pressed at the same moment, or start a short sequence. Keys you do not change keep working exactly as before.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz może robić co innego po stuknięciu, a co innego po przytrzymaniu, włączać warstwę innych klawiszy, działać razem z innym klawiszem naciśniętym w tej samej chwili albo rozpoczynać krótką sekwencję. Klawisze, których nie zmienisz, działają dokładnie tak jak wcześniej."
+          }
+        }
+      }
+    },
+    "A key of the same hand means tap": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz tej samej ręki oznacza stuknięcie"
+          }
+        }
+      }
+    },
+    "A modifier key cannot have a double tap.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikator nie może mieć podwójnego stuknięcia."
+          }
+        }
+      }
+    },
+    "A modifier key keeps working as itself when held; only its tap can be changed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymany modyfikator działa dalej jak on sam; zmienić można tylko jego stuknięcie."
+          }
+        }
+      }
+    },
+    "A number pad under your right hand": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawiatura numeryczna pod prawą ręką"
+          }
+        }
+      }
+    },
     "A profile inherits from %@, which does not exist.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Jeden z profili dziedziczy z profilu %@, który nie istnieje."
+          }
+        }
+      }
+    },
+    "A short press does one thing and holding the key does another. Letter keys can become modifiers (home row modifiers); Caps Lock can become Hyper.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krótkie naciśnięcie robi jedno, a przytrzymanie drugie. Litery mogą stać się modyfikatorami (modyfikatory w środkowym rzędzie), a Caps Lock klawiszem Hyper."
+          }
+        }
+      }
+    },
+    "A single tap then waits briefly to see whether a second one follows.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pojedyncze stuknięcie czeka wtedy chwilę, czy nie przyjdzie drugie."
           }
         }
       }
@@ -781,6 +993,16 @@
         }
       }
     },
+    "Add Key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj klawisz"
+          }
+        }
+      }
+    },
     "Add Profile": {
       "localizations": {
         "pl": {
@@ -831,6 +1053,16 @@
         }
       }
     },
+    "After the leader key, type these keys one after another. A panel shows the keys that can come next; Esc cancels.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Po klawiszu wiodącym naciśnij te klawisze po kolei. Panel pokazuje, jakie klawisze mogą być następne; Esc anuluje."
+          }
+        }
+      }
+    },
     "All": {
       "localizations": {
         "pl": {
@@ -857,6 +1089,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pozwól Clavimo odczytywać i zmieniać wejście"
+          }
+        }
+      }
+    },
+    "An app asked macOS to hide keystrokes (for example in a password field), so keyboard rules wait until it ends. Mouse and trackpad rules keep working.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jakaś aplikacja poprosiła macOS o ukrycie naciśnięć klawiszy (na przykład w polu hasła), więc reguły klawiatury czekają, aż to się skończy. Reguły myszy i gładzika działają dalej."
+          }
+        }
+      }
+    },
+    "Another key pressed meanwhile": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inny klawisz naciśnięty w tym czasie"
           }
         }
       }
@@ -927,6 +1179,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zastosuj"
+          }
+        }
+      }
+    },
+    "Arrows under your right hand": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strzałki pod prawą ręką"
           }
         }
       }
@@ -1161,12 +1423,72 @@
         }
       }
     },
-    "Caps Lock and Fn cannot be remapped yet.": {
+    "Caps Lock (unchanged)": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Caps Lock i Fn nie da się jeszcze przemapować."
+            "value": "Caps Lock (bez zmian)"
+          }
+        }
+      }
+    },
+    "Caps Lock and Fn cannot be typed by a rule. Use the Caps Lock output instead.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguła nie może wysłać Caps Lock ani Fn. Zamiast tego wybierz wynik Caps Lock."
+          }
+        }
+      }
+    },
+    "Caps Lock can be remapped to another key, but no key can type Caps Lock. Use the Keyboard pane to make Caps Lock toggle on a tap or double tap.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock można przemapować na inny klawisz, ale żaden klawisz nie może wysłać Caps Lock. W panelu Klawiatura ustawisz włączanie Caps Lock stuknięciem albo podwójnym stuknięciem."
+          }
+        }
+      }
+    },
+    "Caps Lock does": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock robi"
+          }
+        }
+      }
+    },
+    "Caps Lock is changed in System Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock jest zmieniony w Ustawieniach systemowych"
+          }
+        }
+      }
+    },
+    "Caps Lock to Escape": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock na Escape"
+          }
+        }
+      }
+    },
+    "Caps Lock: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock: %@"
           }
         }
       }
@@ -1211,6 +1533,16 @@
         }
       }
     },
+    "Choose a key that is not a modifier. To add a tap to a modifier key, use Tap or hold a key.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz klawisz, który nie jest modyfikatorem. Aby dodać stuknięcie do modyfikatora, wybierz Stuknij lub przytrzymaj klawisz."
+          }
+        }
+      }
+    },
     "Choose at least one modifier.": {
       "localizations": {
         "pl": {
@@ -1227,6 +1559,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wybierz, jak klawisz ma się zachowywać, gdy Clavimo czeka na kliknięcie."
+          }
+        }
+      }
+    },
+    "Choose one to four keys.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz od jednego do czterech klawiszy."
           }
         }
       }
@@ -1251,6 +1593,16 @@
         }
       }
     },
+    "Choose two or three different keys.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz dwa lub trzy różne klawisze."
+          }
+        }
+      }
+    },
     "Choose...": {
       "localizations": {
         "pl": {
@@ -1267,6 +1619,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clavimo"
+          }
+        }
+      }
+    },
+    "Clavimo moves Caps Lock to a spare key (F18) at the keyboard level while these rules run, and restores it when remapping stops.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdy te reguły działają, Clavimo przenosi Caps Lock na wolny klawisz (F18) na poziomie klawiatury i przywraca go, gdy przemapowanie się zatrzyma."
           }
         }
       }
@@ -1721,6 +2083,26 @@
         }
       }
     },
+    "Double tap does something else": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podwójne stuknięcie robi co innego"
+          }
+        }
+      }
+    },
+    "Double tap turns Caps Lock on or off": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podwójne stuknięcie włącza lub wyłącza Caps Lock"
+          }
+        }
+      }
+    },
     "Double-click or press Return to edit": {
       "localizations": {
         "pl": {
@@ -1747,6 +2129,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Duplikuj"
+          }
+        }
+      }
+    },
+    "Each adds a set of rules you can change or delete later.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każdy dodaje zestaw reguł, które możesz później zmienić lub usunąć."
           }
         }
       }
@@ -1821,12 +2213,32 @@
         }
       }
     },
+    "Esc cancels": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esc anuluje"
+          }
+        }
+      }
+    },
     "Escape": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Escape"
+          }
+        }
+      }
+    },
+    "Escape cancels a sequence, so it cannot be part of one.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escape anuluje sekwencję, więc nie może być jej częścią."
           }
         }
       }
@@ -1857,6 +2269,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wszystko dzieje się na Twoim Macu. Clavimo nigdy nie zapisuje tego, co piszesz, i nie łączy się z siecią."
+          }
+        }
+      }
+    },
+    "Existing": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Istniejące"
           }
         }
       }
@@ -1907,6 +2329,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plik"
+          }
+        }
+      }
+    },
+    "Fine-tune...": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostosuj…"
           }
         }
       }
@@ -2021,6 +2453,26 @@
         }
       }
     },
+    "Fn cannot be changed.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn nie może być zmieniony."
+          }
+        }
+      }
+    },
+    "Fn cannot be remapped.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fn nie może być przemapowany."
+          }
+        }
+      }
+    },
     "For 1 Hour": {
       "localizations": {
         "pl": {
@@ -2037,6 +2489,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Na 5 minut"
+          }
+        }
+      }
+    },
+    "For letter keys, use \"once that key is released\", a key of the same hand means tap, and tap at once while typing: fast typing then never triggers a modifier. For Caps Lock or Space, \"means hold\" feels the most direct.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dla liter wybierz „gdy ten klawisz zostanie puszczony”, klawisz tej samej ręki oznacza stuknięcie i od razu stuknięcie podczas pisania: szybkie pisanie nigdy wtedy nie włączy modyfikatora. Dla Caps Lock lub spacji najbardziej bezpośrednie jest „oznacza przytrzymanie”."
           }
         }
       }
@@ -2077,6 +2539,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stuknięcie czterema palcami: Mission Control"
+          }
+        }
+      }
+    },
+    "From the little finger inwards": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Od małego palca do środka"
           }
         }
       }
@@ -2171,6 +2643,16 @@
         }
       }
     },
+    "Held, the key stays %@. The tap output runs when you press and release it alone.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymany klawisz pozostaje klawiszem %@. Wynik stuknięcia działa, gdy naciśniesz i puścisz go samodzielnie."
+          }
+        }
+      }
+    },
     "Help": {
       "localizations": {
         "pl": {
@@ -2187,6 +2669,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trzymaj"
+          }
+        }
+      }
+    },
+    "Hold A S D F or J K L ; for modifiers without leaving the home row; tap them to type as usual.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj A S D F albo J K L ; jako modyfikatory bez odrywania palców od środkowego rzędu; stuknij, żeby pisać jak zwykle."
           }
         }
       }
@@ -2211,6 +2703,56 @@
         }
       }
     },
+    "Hold Space for arrows": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj spację dla strzałek"
+          }
+        }
+      }
+    },
+    "Hold Space: H J K L are arrows, U I jump by word, Y O go to the line start or end. Tap Space to type a space. Shift still selects.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj spację: H J K L to strzałki, U I przeskakują o słowo, Y O idą na początek lub koniec wiersza. Stuknij spację, żeby wstawić spację. Shift dalej zaznacza."
+          }
+        }
+      }
+    },
+    "Hold Tab for numbers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj Tab dla cyfr"
+          }
+        }
+      }
+    },
+    "Hold Tab: U I O, J K L and M , . type 7 to 1 like a number pad, N types 0. Tap Tab as usual.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj Tab: U I O, J K L oraz M , . wpisują cyfry od 7 do 1 jak klawiatura numeryczna, N wpisuje 0. Tab stuknięty działa jak zwykle."
+          }
+        }
+      }
+    },
+    "Hold after": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymanie po"
+          }
+        }
+      }
+    },
     "Hold key": {
       "localizations": {
         "pl": {
@@ -2221,12 +2763,48 @@
         }
       }
     },
+    "Hold modifiers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj modyfikatory"
+          }
+        }
+      }
+    },
     "Home": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Home"
+          }
+        }
+      }
+    },
+    "Home row modifiers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikatory w środkowym rzędzie"
+          }
+        }
+      }
+    },
+    "Home row: %@ / %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Home row: %1$@ / %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Środkowy rząd: %@ / %@"
           }
         }
       }
@@ -2267,6 +2845,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Jak działają reguły dla urządzeń"
+          }
+        }
+      }
+    },
+    "Hyper (⌃⌥⇧⌘)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hyper (⌃⌥⇧⌘)"
           }
         }
       }
@@ -2381,6 +2969,26 @@
         }
       }
     },
+    "Input sources (%lld)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Źródła wprowadzania (%lld)"
+          }
+        }
+      }
+    },
+    "Input sources (all)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Źródła wprowadzania (wszystkie)"
+          }
+        }
+      }
+    },
     "Inspect input": {
       "localizations": {
         "pl": {
@@ -2401,6 +3009,36 @@
         }
       }
     },
+    "J + K: Escape": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "J + K: Escape"
+          }
+        }
+      }
+    },
+    "J and K together type Escape": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "J i K razem wysyłają Escape"
+          }
+        }
+      }
+    },
+    "Japanese keyboard": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawiatura japońska"
+          }
+        }
+      }
+    },
     "Keep scrolling after lifting the fingers (momentum)": {
       "localizations": {
         "pl": {
@@ -2417,6 +3055,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Klawisz"
+          }
+        }
+      }
+    },
+    "Key %lld": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz %lld"
           }
         }
       }
@@ -2451,6 +3099,36 @@
         }
       }
     },
+    "Key does something else": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz robi co innego"
+          }
+        }
+      }
+    },
+    "Key on a layer": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz na warstwie"
+          }
+        }
+      }
+    },
+    "Key sequence": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekwencja klawiszy"
+          }
+        }
+      }
+    },
     "Keyboard": {
       "localizations": {
         "pl": {
@@ -2481,6 +3159,26 @@
         }
       }
     },
+    "Keyboard rules wait: secure typing (a password field) is on": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły klawiatury czekają: włączone jest bezpieczne pisanie (pole hasła)"
+          }
+        }
+      }
+    },
+    "Keyboard rules wait: secure typing is on in %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguły klawiatury czekają: bezpieczne pisanie jest włączone w %@"
+          }
+        }
+      }
+    },
     "Keyboard shortcut": {
       "localizations": {
         "pl": {
@@ -2491,12 +3189,68 @@
         }
       }
     },
+    "Keypad comma (JIS)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przecinek klawiatury numerycznej (JIS)"
+          }
+        }
+      }
+    },
+    "Keys pressed together": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisze naciśnięte razem"
+          }
+        }
+      }
+    },
     "Launch at login": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Uruchamiaj po zalogowaniu"
+          }
+        }
+      }
+    },
+    "Layer": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warstwa"
+          }
+        }
+      }
+    },
+    "Layer %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warstwa %@"
+          }
+        }
+      }
+    },
+    "Leader → %@: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Leader → %1$@: %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisz wiodący → %@: %@"
           }
         }
       }
@@ -2681,12 +3435,42 @@
         }
       }
     },
+    "Make every key do more": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niech każdy klawisz robi więcej"
+          }
+        }
+      }
+    },
     "Manage Profiles": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Zarządzaj profilami"
+          }
+        }
+      }
+    },
+    "Means hold": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oznacza przytrzymanie"
+          }
+        }
+      }
+    },
+    "Means hold once that key is released": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oznacza przytrzymanie, gdy ten klawisz zostanie puszczony"
           }
         }
       }
@@ -2741,6 +3525,16 @@
         }
       }
     },
+    "Misfires are prevented: a key of the same hand or fast typing always types the letter. If letters still turn into shortcuts, raise the time.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomyłki są blokowane: klawisz tej samej ręki albo szybkie pisanie zawsze wpisuje literę. Jeśli litery nadal zamieniają się w skróty, wydłuż czas."
+          }
+        }
+      }
+    },
     "Mission Control": {
       "localizations": {
         "pl": {
@@ -2791,12 +3585,52 @@
         }
       }
     },
+    "Modifier keys cannot be on a layer.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikatory nie mogą być na warstwie."
+          }
+        }
+      }
+    },
+    "Modifier keys cannot be part of a combo.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikatory nie mogą być częścią kombinacji."
+          }
+        }
+      }
+    },
+    "Modifier keys cannot be part of a sequence.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikatory nie mogą być częścią sekwencji."
+          }
+        }
+      }
+    },
     "Modifiers": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Modyfikatory"
+          }
+        }
+      }
+    },
+    "Modifiers for the next key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modyfikatory dla następnego klawisza"
           }
         }
       }
@@ -2937,6 +3771,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nazwa"
+          }
+        }
+      }
+    },
+    "Name the layer.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwij warstwę."
           }
         }
       }
@@ -3121,12 +3965,32 @@
         }
       }
     },
+    "Nothing": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nic"
+          }
+        }
+      }
+    },
     "Nothing changes.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Nic się nie zmienia."
+          }
+        }
+      }
+    },
+    "Nothing turns on the layer %@. Add a key that holds or switches it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nic nie włącza warstwy %@. Dodaj klawisz, który ją przytrzymuje albo przełącza."
           }
         }
       }
@@ -3147,6 +4011,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Włączone"
+          }
+        }
+      }
+    },
+    "On %@, Caps Lock is set to another key in System Settings > Keyboard > Keyboard Shortcuts > Modifier Keys. Set it back to Caps Lock there to use Caps Lock rules on that keyboard.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na klawiaturze %@ Caps Lock jest ustawiony jako inny klawisz w Ustawieniach systemowych > Klawiatura > Skróty klawiszowe > Klawisze modyfikujące. Przywróć tam Caps Lock, aby używać reguł Caps Lock na tej klawiaturze."
           }
         }
       }
@@ -3197,6 +4071,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Otwórz %@"
+          }
+        }
+      }
+    },
+    "Open Keyboard Settings": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz ustawienia klawiatury"
           }
         }
       }
@@ -3267,6 +4151,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Otwórz aplikację"
+          }
+        }
+      }
+    },
+    "Open apps with a key sequence": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwieraj aplikacje sekwencją klawiszy"
           }
         }
       }
@@ -3353,6 +4247,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "W przeciwnym razie %@ wpisuje się po puszczeniu."
+          }
+        }
+      }
+    },
+    "Output": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wynik"
           }
         }
       }
@@ -3527,6 +4431,16 @@
         }
       }
     },
+    "Press J and K at the same moment for Escape. Typing J or K alone works as usual.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij J i K w tej samej chwili, żeby wysłać Escape. Pojedyncze J lub K działają jak zwykle."
+          }
+        }
+      }
+    },
     "Press a key or a mouse button.": {
       "localizations": {
         "pl": {
@@ -3543,6 +4457,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Naciśnij klawisz, którego chcesz użyć. Na czas nagrywania działanie jest wstrzymane."
+          }
+        }
+      }
+    },
+    "Press together within %lld ms": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij razem w ciągu %lld ms"
           }
         }
       }
@@ -3569,6 +4493,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Naciśnięcie %@ wysyła %@."
+          }
+        }
+      }
+    },
+    "Pressing the key does something else: a shortcut, modifiers, a layer, an action or nothing.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnięcie klawisza robi co innego: skrót, modyfikatory, warstwę, akcję albo nic."
+          }
+        }
+      }
+    },
+    "Pressing the keys at the same moment does something else. Each key is held back for this long while you type, so keep it short.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnięcie klawiszy w tej samej chwili robi co innego. Podczas pisania każdy z tych klawiszy jest wstrzymywany na ten czas, więc ustaw go krótko."
           }
         }
       }
@@ -3839,6 +4783,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Usuń"
+          }
+        }
+      }
+    },
+    "Remove key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń klawisz"
           }
         }
       }
@@ -4239,6 +5193,16 @@
         }
       }
     },
+    "Secure typing is on": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączone jest bezpieczne pisanie"
+          }
+        }
+      }
+    },
     "Send": {
       "localizations": {
         "pl": {
@@ -4255,6 +5219,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Niezależnie od kółka myszy: macOS ma jeden przełącznik naturalnego przewijania dla obu. Dotyczy też Magic Mouse."
+          }
+        }
+      }
+    },
+    "Sequence": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekwencja"
           }
         }
       }
@@ -4335,6 +5309,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pokaż w Finderze"
+          }
+        }
+      }
+    },
+    "Show the active layer and the next keys of a sequence on screen": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokazuj na ekranie aktywną warstwę i następne klawisze sekwencji"
           }
         }
       }
@@ -4445,6 +5429,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uruchamiaj Clavimo po zalogowaniu"
+          }
+        }
+      }
+    },
+    "Start a key sequence": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpocznij sekwencję klawiszy"
           }
         }
       }
@@ -4661,6 +5655,16 @@
         }
       }
     },
+    "Switch layer %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przełącz warstwę %@"
+          }
+        }
+      }
+    },
     "System": {
       "localizations": {
         "pl": {
@@ -4691,12 +5695,138 @@
         }
       }
     },
+    "Tap %@: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Tap %1$@: %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij %@: %@"
+          }
+        }
+      }
+    },
+    "Tap Left Command for 英数 and Right Command for かな, like on a Japanese keyboard. Held, they are Command as always.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij lewy Command, żeby włączyć 英数, i prawy Command dla かな, jak na japońskiej klawiaturze. Przytrzymane działają jak zwykły Command."
+          }
+        }
+      }
+    },
+    "Tap Left Shift alone for ( and Right Shift for ). Held, they are Shift as always.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij sam lewy Shift, żeby wpisać (, a prawy Shift dla ). Przytrzymane działają jak zwykły Shift."
+          }
+        }
+      }
+    },
+    "Tap Right Option alone, then S for Safari, F for Finder, T for Terminal, N for Notes or M for Mail. A panel shows the choices.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij sam prawy Option, a potem S dla Safari, F dla Findera, T dla Terminala, N dla Notatek albo M dla Poczty. Panel pokazuje możliwości."
+          }
+        }
+      }
+    },
+    "Tap Right Option to start a sequence": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij prawy Option, żeby rozpocząć sekwencję"
+          }
+        }
+      }
+    },
+    "Tap Shift for parentheses": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij Shift dla nawiasów"
+          }
+        }
+      }
+    },
+    "Tap at once while typing": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Od razu stuknięcie podczas pisania"
+          }
+        }
+      }
+    },
+    "Tap or hold a key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij lub przytrzymaj klawisz"
+          }
+        }
+      }
+    },
     "Tap with %lld fingers": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Stuknięcie %lld palcami"
+          }
+        }
+      }
+    },
+    "Tap ⌘ to switch input (英数 / かな)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij ⌘, żeby przełączyć wprowadzanie (英数 / かな)"
+          }
+        }
+      }
+    },
+    "Tap: Caps Lock, hold: Hyper (⌃⌥⇧⌘)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie: Caps Lock, przytrzymanie: Hyper (⌃⌥⇧⌘)"
+          }
+        }
+      }
+    },
+    "Tap: Escape, hold: Control": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie: Escape, przytrzymanie: Control"
+          }
+        }
+      }
+    },
+    "Tap: Escape, hold: Hyper (⌃⌥⇧⌘)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie: Escape, przytrzymanie: Hyper (⌃⌥⇧⌘)"
           }
         }
       }
@@ -4841,12 +5971,32 @@
         }
       }
     },
+    "The easiest key to reach that does the least. Hyper (all four modifiers) gives you shortcuts no app uses.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najłatwiej dostępny klawisz, który robi najmniej. Hyper (wszystkie cztery modyfikatory) daje skróty, których nie używa żadna aplikacja."
+          }
+        }
+      }
+    },
     "The exact set of held modifiers must match.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Wciśnięte modyfikatory muszą zgadzać się dokładnie."
+          }
+        }
+      }
+    },
+    "The hold must be a key, modifiers or a layer.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymanie musi wysyłać klawisz, modyfikatory albo warstwę."
           }
         }
       }
@@ -4897,6 +6047,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Klawisz ma zapis kodu, którego Clavimo jeszcze nie odczytuje."
+          }
+        }
+      }
+    },
+    "The keyboard rule is incomplete. Edit it in the Keyboard pane or delete it.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguła klawiatury jest niekompletna. Popraw ją w panelu Klawiatura albo ją usuń."
           }
         }
       }
@@ -5127,6 +6287,16 @@
         }
       }
     },
+    "Timing": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czas"
+          }
+        }
+      }
+    },
     "Tip tap": {
       "localizations": {
         "pl": {
@@ -5329,12 +6499,32 @@
         }
       }
     },
+    "Turn a layer on or off": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz lub wyłącz warstwę"
+          }
+        }
+      }
+    },
     "Turn on Clavimo in both lists. This page updates by itself.": {
       "localizations": {
         "pl": {
           "stringUnit": {
             "state": "translated",
             "value": "Włącz Clavimo na obu listach. Ta strona odświeży się sama."
+          }
+        }
+      }
+    },
+    "Turn on a layer while held": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz warstwę na czas przytrzymania"
           }
         }
       }
@@ -5395,6 +6585,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dwa ustawienia przewijania gładzika dotyczą tej samej sytuacji. Zostaw jedno."
+          }
+        }
+      }
+    },
+    "Type a key": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyślij klawisz"
           }
         }
       }
@@ -5489,6 +6689,26 @@
         }
       }
     },
+    "Use Hyper (⌃⌥⇧⌘)": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Użyj Hyper (⌃⌥⇧⌘)"
+          }
+        }
+      }
+    },
+    "Use home row modifiers": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używaj modyfikatorów w środkowym rzędzie"
+          }
+        }
+      }
+    },
     "Uses the macOS Mission Control keyboard shortcuts (Control + Arrow keys). They must be enabled in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.": {
       "localizations": {
         "pl": {
@@ -5569,6 +6789,16 @@
         }
       }
     },
+    "Waits for the time": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czeka na upływ czasu"
+          }
+        }
+      }
+    },
     "Welcome to Clavimo": {
       "localizations": {
         "pl": {
@@ -5609,6 +6839,26 @@
         }
       }
     },
+    "When held": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Po przytrzymaniu"
+          }
+        }
+      }
+    },
+    "When tapped": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Po stuknięciu"
+          }
+        }
+      }
+    },
     "When you start Clavimo, it lives in the menu bar. Check that everything still feels normal:": {
       "localizations": {
         "pl": {
@@ -5625,6 +6875,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przy przytrzymanym"
+          }
+        }
+      }
+    },
+    "While the layer is on, the key does this instead. Keys not on the layer keep working as usual.": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gdy warstwa jest włączona, klawisz robi to zamiast tego. Klawisze spoza warstwy działają jak zwykle."
           }
         }
       }
@@ -5747,6 +7007,16 @@
         }
       }
     },
+    "Your keyboard rules": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twoje reguły klawiatury"
+          }
+        }
+      }
+    },
     "Your rules are applied to keyboard and mouse input.": {
       "localizations": {
         "pl": {
@@ -5851,6 +7121,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "W górę"
+          }
+        }
+      }
+    },
+    "double tap: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "podwójne stuknięcie: %@"
+          }
+        }
+      }
+    },
+    "hold: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "przytrzymanie: %@"
           }
         }
       }
@@ -6001,6 +7291,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "szybkość %@×"
+          }
+        }
+      }
+    },
+    "tap: %@": {
+      "localizations": {
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stuknięcie: %@"
           }
         }
       }

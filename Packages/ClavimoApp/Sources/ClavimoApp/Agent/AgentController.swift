@@ -23,10 +23,17 @@ final class AgentController {
     private(set) var loadError: String?
     private(set) var otherRemapper: String?
     private(set) var loaded: ConfigStore.Loaded?
+    /// Active layers, a sequence in progress and one-shot modifiers.
+    private(set) var overlay = KeyboardOverlay()
+    /// Secure keyboard entry, which hides keystrokes from keyboard rules.
+    private(set) var secureInput = SecureInput.Status(isEnabled: false, appName: nil)
+    private(set) var capsLockStatus = CapsLockMapping.Status()
     let configURL: URL
 
     /// Called after every state change, for consumers outside SwiftUI.
     @ObservationIgnored var onChange: () -> Void = {}
+    /// Called when the keyboard overlay changes.
+    @ObservationIgnored var onOverlayChange: (KeyboardOverlay) -> Void = { _ in }
 
     // MARK: Private state
 
@@ -39,6 +46,8 @@ final class AgentController {
     @ObservationIgnored private var permissionTimer: Timer?
     @ObservationIgnored private var resumeTimer: Timer?
     @ObservationIgnored private var isRecordingKey = false
+    @ObservationIgnored private let capsLock = CapsLockMapping()
+    @ObservationIgnored private var secureInputTimer: Timer?
 
     init(store: ConfigStore) {
         self.store = store
@@ -50,6 +59,9 @@ final class AgentController {
     // MARK: Lifecycle
 
     func start() {
+        // A Caps Lock mapping left behind by a run that did not stop
+        // cleanly would leave Caps Lock typing nothing.
+        CapsLockMapping.removeAll()
         // Cold start can happen inside an inactive session; do not rely on
         // notifications alone.
         inputs.sessionActive = ConsoleSession.isActive() ?? true
@@ -70,6 +82,9 @@ final class AgentController {
         center.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { [weak self] note in
             let bundleID = (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier
             MainActor.assumeIsolated { self?.controller?.setFrontmostApp(bundleID) }
+        }
+        DistributedNotificationCenter.default().addObserver(forName: InputSources.selectionChanged, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.controller?.setInputSource(InputSources.current()) }
         }
     }
 
@@ -172,6 +187,10 @@ final class AgentController {
         reconcile()
     }
 
+    func refreshCapsLockStatus() {
+        capsLockStatus = capsLock.status
+    }
+
     func setInspectorEnabled(_ enabled: Bool) {
         controller?.setInspectorEnabled(enabled)
     }
@@ -214,12 +233,21 @@ final class AgentController {
             onStop: { [weak self] reason in
                 guard reason == .tooManyTapFailures else { return }
                 Task { @MainActor in self?.enterSafeMode() }
+            },
+            onOverlayChange: { [weak self] overlay in
+                Task { @MainActor in self?.showOverlay(overlay) }
             }
         )
         do {
             try tap.start()
             tap.setFrontmostApp(NSWorkspace.shared.frontmostApplication?.bundleIdentifier)
+            tap.setInputSource(InputSources.current())
             controller = tap
+            if rules.usesCapsLock {
+                capsLock.start()
+                capsLockStatus = capsLock.status
+            }
+            startSecureInputWatch(if: !rules.remapCandidates.isEmpty || !rules.keyBindings.isEmpty)
         } catch {
             // Creation fails when permissions are missing or were revoked.
             inputs.permissionsGranted = false
@@ -229,6 +257,38 @@ final class AgentController {
     private func stopTap() {
         controller?.stop()
         controller = nil
+        capsLock.stop()
+        capsLockStatus = CapsLockMapping.Status()
+        startSecureInputWatch(if: false)
+        showOverlay(KeyboardOverlay())
+    }
+
+    private func showOverlay(_ value: KeyboardOverlay) {
+        guard value != overlay else { return }
+        overlay = value
+        onOverlayChange(value)
+    }
+
+    /// Keyboard rules stop silently while Secure Input is on; checking every
+    /// two seconds lets the menu say why.
+    private func startSecureInputWatch(if needed: Bool) {
+        secureInputTimer?.invalidate()
+        secureInputTimer = nil
+        guard needed else {
+            if secureInput.isEnabled { secureInput = SecureInput.Status(isEnabled: false, appName: nil) }
+            return
+        }
+        refreshSecureInput()
+        secureInputTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshSecureInput() }
+        }
+    }
+
+    private func refreshSecureInput() {
+        let current = SecureInput.current()
+        guard current != secureInput else { return }
+        secureInput = current
+        onChange()
     }
 
     private func enterSafeMode() {

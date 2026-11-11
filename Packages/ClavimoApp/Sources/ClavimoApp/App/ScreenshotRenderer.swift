@@ -41,6 +41,11 @@ enum ScreenshotRenderer {
                     try render(sheet, size: NSSize(width: 600, height: 680), appearance: appearance,
                                to: outputDirectory.appendingPathComponent("editor-\(suffix).png"))
                 }
+                if let draft = editor.rows.first(where: { $0.id == KeyboardPane.capsLockRuleID })?.keyboard {
+                    let sheet = KeyboardRuleEditor(model: agent, draft: draft, isNew: false, layers: ["nav"]) { _ in nil }
+                    try render(sheet, size: NSSize(width: 600, height: 700), appearance: appearance,
+                               to: outputDirectory.appendingPathComponent("editor-keyboard-\(suffix).png"))
+                }
                 if let draft = editor.rows.first(where: { $0.draft?.kind == .trackpadGesture && $0.draft?.gesture == .swipe })?.draft {
                     let sheet = RuleEditorView(model: agent, draft: draft, isNew: false) { _ in nil }
                     try render(sheet, size: NSSize(width: 600, height: 680), appearance: appearance,
@@ -94,7 +99,7 @@ enum ScreenshotRenderer {
         mission.action = .missionControl
         var chord = RuleDraft()
         chord.kind = .keyClick
-        chord.firstKey = KeyCode.f.rawValue
+        chord.firstKey = KeyCode.g.rawValue
         chord.button = 4
         chord.exceptApps = ["com.apple.Terminal"]
         var wheel = RuleDraft()
@@ -123,8 +128,20 @@ enum ScreenshotRenderer {
         trackpadScroll.kind = .trackpadScroll
         trackpadScroll.trackpadScroll = TrackpadScrollSettings(speed: 1.25, momentum: true)
 
-        let rules = [swap, fnLeft, fnRight, mission, chord, tap, back, corner].enumerated().map { index, draft in
+        var rules = [swap, fnLeft, fnRight, mission, chord, tap, back, corner].enumerated().map { index, draft in
             draft.makeRule(id: "sample-\(index)", order: index)
+        }
+        var caps = KeyboardRuleDraft()
+        caps.doubleTapEnabled = true
+        caps.name = String(localized: "Caps Lock: \(KeyboardPane.CapsPreset.hyperEscape.title)")
+        rules.append(caps.makeRule(id: KeyboardPane.capsLockRuleID, order: rules.count))
+        let order = KeyboardPane.HomeRowOrder.commandOptionControlShift.modifiers
+        for (key, modifier) in zip(KeyboardPane.leftHomeRow + KeyboardPane.rightHomeRow, order + order) {
+            let draft = KeyboardRuleDraft.homeRow(key: key, modifier: modifier, holdAfter: 220, profileID: "default")
+            rules.append(draft.makeRule(id: KeyboardPane.homeRowPrefix + "\(key)", order: rules.count))
+        }
+        for (index, draft) in (KeyboardTemplates.navigation.drafts + KeyboardTemplates.escapeCombo.drafts).enumerated() {
+            rules.append(draft.makeRule(id: "sample-keyboard-\(index)", order: rules.count))
         }
         return ConfigDocument(engine: .init(enabledOnLaunch: true), rules: rules,
                               deviceSettings: [wheel.makeDeviceSetting(id: "sample-wheel"),

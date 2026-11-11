@@ -22,6 +22,13 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         updateIcon()
     }
 
+    /// Names the active layer next to the icon, so it is visible even when
+    /// the overlay is turned off.
+    func showLayer(_ layer: String?) {
+        statusItem.button?.title = layer.map { " \($0)" } ?? ""
+        statusItem.button?.imagePosition = .imageLeading
+    }
+
     func updateIcon() {
         statusItem.button?.image = MenuBarIcon.image(for: agent.status)
         statusItem.button?.setAccessibilityLabel(String(localized: "Clavimo: \(agent.status.title)"))
@@ -32,6 +39,11 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.removeAllItems()
 
         menu.addItem(disabled(String(localized: "Clavimo: \(agent.status.title)")))
+        if agent.secureInput.isEnabled, agent.status == .active {
+            let text = agent.secureInput.appName.map { String(localized: "Keyboard rules wait: secure typing is on in \($0)") }
+                ?? String(localized: "Keyboard rules wait: secure typing (a password field) is on")
+            menu.addItem(disabled(text))
+        }
         if let until = agent.pausedUntil {
             menu.addItem(disabled(String(localized: "Resumes at \(until.formatted(date: .omitted, time: .shortened))")))
         }

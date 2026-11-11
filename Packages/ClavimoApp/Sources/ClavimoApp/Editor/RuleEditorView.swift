@@ -255,6 +255,27 @@ private struct ActionSection: View {
 
     var body: some View {
         Section {
+            ActionFields(draft: $draft, model: model)
+        } header: {
+            Text("Then")
+        } footer: {
+            if draft.action.isSimple {
+                Text("Uses the macOS Mission Control keyboard shortcuts (Control + Arrow keys). They must be enabled in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.")
+                    .formFooterStyle()
+            } else if draft.action == .media {
+                Text(String(localized: "Brightness keys may not work with external displays.")).formFooterStyle()
+            }
+        }
+    }
+}
+
+/// The action picker and its details, for use inside a form section.
+struct ActionFields: View {
+    @Binding var draft: RuleDraft
+    let model: AgentController
+
+    var body: some View {
+        Group {
             Picker("Action", selection: $draft.action) {
                 Section(String(localized: "Spaces and windows")) {
                     ForEach([RuleDraft.Action.nextWorkspace, .previousWorkspace, .missionControl, .applicationWindows]) { Text($0.title).tag($0) }
@@ -279,15 +300,6 @@ private struct ActionSection: View {
             default:
                 EmptyView()
             }
-        } header: {
-            Text("Then")
-        } footer: {
-            if draft.action.isSimple {
-                Text("Uses the macOS Mission Control keyboard shortcuts (Control + Arrow keys). They must be enabled in System Settings > Keyboard > Keyboard Shortcuts > Mission Control.")
-                    .formFooterStyle()
-            } else if draft.action == .media {
-                Text(String(localized: "Brightness keys may not work with external displays.")).formFooterStyle()
-            }
         }
     }
 }
@@ -296,12 +308,13 @@ private struct ActionSection: View {
 struct ModifierToggles: View {
     let title: String
     @Binding var selection: Set<RuleDraft.Modifier>
+    var choices: [RuleDraft.Modifier] = RuleDraft.Modifier.allCases
 
     var body: some View {
         HStack {
             Text(title)
             Spacer()
-            ForEach(RuleDraft.Modifier.allCases) { modifier in
+            ForEach(choices) { modifier in
                 Toggle(modifier.symbol, isOn: Binding(
                     get: { selection.contains(modifier) },
                     set: { if $0 { selection.insert(modifier) } else { selection.remove(modifier) } }
@@ -383,6 +396,7 @@ struct KeyField: View {
                     Section("Common") { keyButtons(KeyNames.commonKeys) }
                     Menu("Letters and digits") { keyButtons(KeyNames.letterAndDigitKeys) }
                     Menu("Function keys") { keyButtons(KeyNames.functionKeys) }
+                    Menu(String(localized: "Japanese keyboard")) { keyButtons(KeyNames.japaneseKeys) }
                 }
                 .frame(minWidth: 170)
                 Button(recorder.isRecording ? "Cancel" : "Record") {
@@ -392,7 +406,9 @@ struct KeyField: View {
                     } else {
                         model.setRecording(true)
                         recorder.start { recorded in
-                            code = recorded
+                            // While Caps Lock rules run, Caps Lock arrives as F18.
+                            let capsLockMapped = !model.capsLockStatus.mappedKeyboards.isEmpty
+                            code = recorded == KeyCode.capsLockProxy.rawValue && capsLockMapped ? KeyCode.capsLock.rawValue : recorded
                             model.setRecording(false)
                         }
                     }
