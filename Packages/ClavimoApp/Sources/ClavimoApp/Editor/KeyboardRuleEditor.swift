@@ -240,7 +240,7 @@ struct OutputFields: View {
         case .holdLayer, .toggleLayer:
             LayerField(name: $output.layer, layers: layers)
         case .action:
-            ActionFields(draft: $output.action, model: model)
+            ActionFields(draft: Binding(get: { output.action.ruleDraft }, set: { output.action = ActionChoice($0) }), model: model)
         case .startSequence, .capsLock, .none:
             EmptyView()
         }

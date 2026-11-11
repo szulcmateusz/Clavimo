@@ -1,6 +1,38 @@
 import ClavimoCore
 import Foundation
 
+/// The action of an output: only the fields of `RuleDraft` that describe
+/// an action, so keyboard drafts stay small.
+struct ActionChoice: Equatable {
+    var action: RuleDraft.Action = .missionControl
+    var shortcutKey: UInt16 = 0x11
+    var shortcutModifiers: Set<RuleDraft.Modifier> = [.command]
+    var appBundleID = ""
+    var mediaKey: MediaKey = .playPause
+
+    init() {}
+
+    init(_ draft: RuleDraft) {
+        action = draft.action
+        shortcutKey = draft.shortcutKey
+        shortcutModifiers = draft.shortcutModifiers
+        appBundleID = draft.appBundleID
+        mediaKey = draft.mediaKey
+    }
+
+    /// A rule draft carrying this action, for the shared action editor
+    /// and for reading and writing JSON.
+    var ruleDraft: RuleDraft {
+        var draft = RuleDraft()
+        draft.action = action
+        draft.shortcutKey = shortcutKey
+        draft.shortcutModifiers = shortcutModifiers
+        draft.appBundleID = appBundleID
+        draft.mediaKey = mediaKey
+        return draft
+    }
+}
+
 /// What a keyboard rule produces, as the editor shows it.
 struct OutputDraft: Equatable {
     enum Kind: String, CaseIterable, Identifiable {
@@ -33,12 +65,8 @@ struct OutputDraft: Equatable {
     /// are not changed in the editor (the editor offers generic ones).
     var sideNames: [String]?
     var layer = "nav"
-    /// Holds the action and its details (shortcut, app, media key).
-    var action: RuleDraft = {
-        var draft = RuleDraft()
-        draft.action = .missionControl
-        return draft
-    }()
+    /// The action and its details (shortcut, app, media key).
+    var action = ActionChoice()
 
     static func key(_ code: UInt16) -> OutputDraft {
         var draft = OutputDraft()
@@ -84,7 +112,7 @@ struct OutputDraft: Equatable {
         case .capsLock:
             return .object(["kind": .string("toggleCapsLock")])
         case .action:
-            return action.actionJSON
+            return action.ruleDraft.actionJSON
         case .none:
             return .object(["kind": .string("none")])
         }
@@ -142,7 +170,7 @@ struct OutputDraft: Equatable {
             var draft = RuleDraft()
             guard draft.readAction(value) else { return nil }
             kind = .action
-            action = draft
+            action = ActionChoice(draft)
         }
     }
 
@@ -157,7 +185,7 @@ struct OutputDraft: Equatable {
         case .toggleLayer: String(localized: "Switch layer \(layer)")
         case .startSequence: String(localized: "Key sequence")
         case .capsLock: String(localized: "Caps Lock")
-        case .action: action.actionTitle
+        case .action: action.ruleDraft.actionTitle
         case .none: String(localized: "Nothing")
         }
     }
@@ -444,8 +472,8 @@ struct KeyboardRuleDraft: Equatable {
             output = parsed
         case ("tapHold", "tapHold"):
             guard let code = RuleDraft.code(trigger["key"]), let threshold = trigger["thresholdMs"]?.int,
-                  let tap = rule.action["tap"].flatMap(OutputDraft.init(json:)),
-                  let holdOutput = rule.action["hold"].flatMap(OutputDraft.init(json:)) else { return nil }
+                  let tapValue = rule.action["tap"], let holdValue = rule.action["hold"],
+                  let tap = OutputDraft(json: tapValue), let holdOutput = OutputDraft(json: holdValue) else { return nil }
             kind = .tapHold
             key = code
             output = tap

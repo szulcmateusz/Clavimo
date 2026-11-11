@@ -38,16 +38,22 @@ struct KeyboardRuleDraftTests {
         return [caps, homeRow, output, oneShot, layerKey, combo, sequence]
     }
 
-    @Test func formSurvivesTheFileRoundTrip() throws {
-        for draft in Self.drafts() {
-            #expect(draft.validationMessage == nil, "\(draft.displayName): \(draft.validationMessage ?? "")")
-            let rule = draft.makeRule(id: "r1", order: 0)
-            let data = try JSONEncoder().encode(rule)
-            let decoded = try JSONDecoder().decode(ConfigDocument.Rule.self, from: data)
-            let reread = try #require(KeyboardRuleDraft(rule: decoded), "\(draft.displayName)")
-            #expect(reread.makeRule(id: "r1", order: 0) == rule, "\(draft.displayName)")
-            #expect(reread.kind == draft.kind && reread.key == draft.key && reread.output.kind == draft.output.kind)
+    @Test(arguments: 0..<7)
+    func formSurvivesTheFileRoundTrip(index: Int) throws {
+        let draft = Self.drafts()[index]
+        #expect(draft.validationMessage == nil)
+        let rule = draft.makeRule(id: "r1", order: 0)
+        let data = try JSONEncoder().encode(rule)
+        let decoded = try JSONDecoder().decode(ConfigDocument.Rule.self, from: data)
+        guard let reread = KeyboardRuleDraft(rule: decoded) else {
+            Issue.record("draft \(index) was not read back")
+            return
         }
+        let rewritten = reread.makeRule(id: "r1", order: 0)
+        #expect(rewritten == rule)
+        #expect(reread.kind == draft.kind)
+        #expect(reread.key == draft.key)
+        #expect(reread.output.kind == draft.output.kind)
     }
 
     /// Every template must load and compile as a whole, together with the
