@@ -48,6 +48,11 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 19. **Trackpad gestures.** The Trackpad pane's live preview names three- and four-finger taps, tip taps on both sides and swipes in four directions; typing, pointing, two-finger scrolling and slow three-finger drags produce no gestures.
 20. **Trackpad clicks.** With a three-finger click rule, a three-finger click runs the action and ordinary clicks, drags and right clicks are unchanged. A corner rule works with a physical click and with tap to click.
 21. **Trackpad scrolling.** Reversing vertical trackpad scrolling does not change the mouse wheel; turning momentum off stops scrolling when the fingers lift.
+22. **Caps Lock.** With Escape / Hyper chosen in Keyboard: a tap types Escape, holding Caps Lock and pressing T sends ⌃⌥⇧⌘T, a double tap turns Caps Lock on and off, and the Caps Lock light follows. After pausing remapping or quitting Clavimo, Caps Lock works as before (`hidutil property --get UserKeyMapping` shows no F18 entry).
+23. **Home row modifiers.** With home row modifiers on, typing a paragraph quickly produces no shortcuts; holding F and pressing C copies; holding D and clicking works as a modifier click.
+24. **Layers.** With the Space arrows template, holding Space and pressing H J K L moves the cursor, Shift selects, the layer name appears next to the menu bar icon, and a quick Space types a space.
+25. **Combos and sequences.** J + K together type Escape while J and K alone type letters; tapping Right Option shows the sequence panel and S opens Safari; Escape cancels.
+26. **Secure typing.** In a password field in Safari, keyboard rules pause and the menu names the app; they resume after leaving the field.
 
 ### Results
 
@@ -60,7 +65,7 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 
 | 2026-11-11 | 27.2 (26B123) | MacBook Pro, Apple M1 Pro | Built-in Force Touch trackpad (family 105) | 18 (probe, 15 s) | 884 valid frames, none invalid; 96-byte records decode at the expected offsets; top right corner reads x 0.98, y 0.94, so y grows upwards; three fingers detected |
 
-Not yet verified: items 2 to 4, 6 to 17 and 19 to 21, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
+Not yet verified: items 2 to 4, 6 to 17 and 19 to 26, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
 
 ### Latency measurement
 

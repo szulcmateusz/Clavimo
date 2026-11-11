@@ -4,6 +4,24 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-12
+
+### Added
+
+- Keyboard pane with Caps Lock choices (Escape, or Escape when tapped and Control or Hyper when held, with Caps Lock on a double tap), home row modifiers, templates and all keyboard rules.
+- Tap or hold any key: one output when tapped, another when held, an optional double tap, and a tap output for modifier keys pressed alone. Misfire protection for letter keys: a key of the same hand or fast typing means tap.
+- Layers, turned on while a key is held or switched on and off, with the active layer next to the menu bar icon.
+- Combos (two or three keys pressed at the same moment), key sequences after a leader key with an on-screen list of the next keys, and one-shot modifiers.
+- Keyboard outputs: a key held as long as its trigger, a shortcut, modifiers, a layer, a one-shot modifier, a sequence start, any action, or nothing.
+- Caps Lock as a rule trigger. Clavimo moves Caps Lock to F18 at the keyboard level while such rules run and restores it when remapping stops or Clavimo quits.
+- Condition on the keyboard input source, and the `toggleCapsLock` action.
+- The menu and the Keyboard pane say when secure typing (a password field) pauses keyboard rules, and which app turned it on.
+- Japanese keyboard keys (英数, かな) in key pickers; `clavimo-probe keyboard` lists input sources and secure typing.
+
+### Changed
+
+- Modifiers held by keyboard rules (for example a home row ⌘) count for modifier + mouse button rules and trackpad rules.
+
 ## [1.1.1] - 2026-11-11
 
 First public release of the 1.1 features below.

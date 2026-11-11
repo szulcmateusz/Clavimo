@@ -34,7 +34,12 @@ Every rule has `id`, `name`, `enabled`, `priority`, `profileId`, `trigger`, `con
 | Rule | `trigger.kind` | `action.kind` | Notes |
 | --- | --- | --- | --- |
 | Swap two keys | `keyPair` | `swapKeys` | Both directions. Left and right modifiers are distinct keys. `sideMode: both` is not supported; add one rule per side. |
-| Remap a key | `key` | `sendKey` | |
+| Remap a key | `key` | `sendKey` | Caps Lock (code 57) can be remapped; no rule can send Caps Lock or Fn. |
+| Key with another output | `key` | any keyboard output (below) | A shortcut, modifiers, a layer, a one-shot modifier, a sequence start, an action or `none`. Not for modifier keys. |
+| Tap or hold a key | `tapHold` | `tapHold` | See [keyboard rules](#keyboard-rules-tap-hold-layers-combos-and-sequences). |
+| Key on a layer | `layerKey` with `layerId` and `key` | any keyboard output | |
+| Keys pressed together | `keyCombo` with two or three `keys` | any keyboard output | |
+| Key sequence | `keySequence` with one to four `keys` | any keyboard output | Runs after a key with `startSequence`. |
 | Modifier + mouse button | `modifierChord` with `requiredModifiers` and `mouseButton` | any action (below) | Modifiers: `control`, `option`, `shift`, `command`, `function`. The held set must match exactly. Buttons 1 and 2 require `behavior.allowProtectedButton: true`. |
 | Key + mouse button | `keyMouseChord` with `leaderKey`, `mouseButton`, `order: leaderThenMouse` | any action | Requires `behavior.leaderPolicy` (below). |
 | Trackpad gesture | `trackpadGesture` (below) | any action | Experimental. |
@@ -51,6 +56,7 @@ Chords and trackpad rules require `behavior` `{"consumeTrigger": true, "fireOn":
 | `{"kind": "mouseClick", "mouseButton": 3}` | Clicks a mouse button at the pointer (3 is the middle button, 4 back, 5 forward). |
 | `{"kind": "launchApp", "bundleId": "com.apple.Safari"}` | Opens or activates an app. |
 | `{"kind": "mediaKey", "key": "playPause"}` | Presses a media key: `playPause`, `nextTrack`, `previousTrack`, `volumeUp`, `volumeDown`, `mute`, `brightnessUp`, `brightnessDown`. Brightness keys may not work with external displays. |
+| `{"kind": "toggleCapsLock"}` | Turns Caps Lock on or off. |
 
 ### Trackpad gestures and clicks
 
@@ -66,7 +72,59 @@ Experimental. Finger positions come from Apple's private MultitouchSupport frame
 
 Every trackpad trigger accepts `requiredModifiers`; the held set must match exactly, so a rule without modifiers does not run while a modifier is held. App conditions work as usual; device conditions are not supported. macOS keeps recognizing its own gestures: a rule using a movement macOS also uses (for example three-finger swipes) runs together with the macOS gesture, even while a key is held. The Trackpad pane lists such overlaps.
 
-Caps Lock and Fn cannot be remapped yet.
+## Keyboard rules: tap-hold, layers, combos and sequences
+
+Experimental. These rules hold a key back for a moment while Clavimo decides what it means; held-back keys are always delivered, in their original order, by the deadline at the latest. Clicking the mouse decides at once (a held tap-hold key becomes its hold), so a home row modifier works with a click.
+
+### Keyboard outputs
+
+Keyboard rules accept every action above plus these outputs:
+
+| `action` | Effect |
+| --- | --- |
+| `{"kind": "sendKey", "key": {...}}` | Presses the key for as long as the trigger is held; it repeats like a normal key. |
+| `{"kind": "sendShortcut", "key": {...}, "modifiers": ["command"]}` | The key with extra modifiers, held for as long as the trigger. |
+| `{"kind": "holdModifiers", "modifiers": ["control", "option", "shift", "command"]}` | Holds modifiers (all four make a Hyper key). Generic names mean the left key; `rightCommand` and similar name a side. |
+| `{"kind": "holdLayer", "layerId": "nav"}` | Turns the layer on while held. |
+| `{"kind": "toggleLayer", "layerId": "nav"}` | Turns the layer on, or off when it is on. |
+| `{"kind": "oneShotModifiers", "modifiers": ["shift"]}` | The next key or click gets these modifiers. They expire after three seconds; pressing it again cancels them. |
+| `{"kind": "startSequence"}` | Starts a key sequence (a leader key). |
+| `{"kind": "none"}` | Does nothing: the key is disabled. |
+
+### Tap or hold
+
+```json
+"trigger": {"kind": "tapHold", "key": {"codeNamespace": "macVirtualKeyCode", "code": 57}, "thresholdMs": 200,
+            "interruptPolicy": "anyOtherKey"},
+"action": {"kind": "tapHold", "tap": {"kind": "sendKey", "key": {...}}, "hold": {"kind": "holdModifiers", "modifiers": [...]},
+           "doubleTap": {"kind": "toggleCapsLock"}}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `thresholdMs` | 50-2000. Held longer than this, the key is a hold. |
+| `interruptPolicy` | What another key pressed meanwhile means. `anyOtherKey` (default): a hold at once; best for Caps Lock and Space. `permissiveHold`: a hold only when that other key is also released while this one is held, so overlapping keystrokes while typing stay taps; best for letter keys. `none`: only time decides. |
+| `oppositeHandsOnly` | `true`: a key of the same hand pressed meanwhile means tap. Prevents misfires of home row modifiers during rolls. |
+| `typingStreakMs` | 0-500. Pressed within this many milliseconds of the previous key, the key is a tap at once. 150 suits most typists. |
+| `doubleTap`, `doubleTapMs` | An optional output for two taps within `doubleTapMs` (100-600, default 250). A single tap then waits that long. |
+
+`hold` must be a held output: `holdModifiers`, `holdLayer`, `sendKey` or `sendShortcut`. Tapping the key and pressing it again quickly, then holding, repeats the tap (unless there is a `doubleTap`).
+
+Modifier keys can get a tap output too: `hold` must then be the key's own modifier, for example `{"kind": "holdModifiers", "modifiers": ["rightOption"]}`. The modifier works as usual; the tap output runs when the key is pressed and released alone within `thresholdMs`. Tapping Left Command for 英数 (code 102) and Right Command for かな (code 104) works this way.
+
+**Caps Lock.** macOS toggles Caps Lock below the level apps and Clavimo see. While a rule uses Caps Lock (code 57), Clavimo moves Caps Lock to F18 on every keyboard through the same HID setting `hidutil` and the Modifier Keys settings use, and removes that setting when remapping stops or the app quits. A keyboard whose Caps Lock is changed in System Settings > Keyboard > Keyboard Shortcuts > Modifier Keys is left alone and listed in the Keyboard pane. In apps where no Caps Lock rule applies, Caps Lock keeps toggling. If Clavimo stops without cleaning up (for example after a crash), Caps Lock types nothing until Clavimo starts again or you log out.
+
+### Layers
+
+A layer is a set of `layerKey` rules that apply while the layer is on. Keys not on the layer work as usual, and physically held modifiers still apply (Shift + a layer arrow selects text). A layer must be turned on by some rule (`holdLayer` or `toggleLayer`), otherwise the configuration is rejected. While a layer is on, its name appears next to the menu bar icon.
+
+### Combos
+
+`keyCombo` keys pressed within `windowMs` (20-200, default 50) of each other run the output instead. Each combo key is held back for up to `windowMs` when typed alone, so keep the window short. Modifier keys cannot be part of a combo.
+
+### Sequences
+
+A key with `startSequence` (a `key` rule, a tap output, or a layer key) starts a sequence; then `keySequence` rules match the keys typed next. A panel near the bottom of the screen lists the keys that can come next. Escape, a key that matches nothing, a click or four seconds without a key cancel the sequence. No sequence may be the start of another one.
 
 ### Leader policies for key + mouse button
 
@@ -89,6 +147,7 @@ The leader is only held back in apps where at least one of its chords can apply.
 | `{"kind": "appIs", "bundleId": "com.apple.Safari"}` | Only while this app is frontmost. Several entries mean any of them. |
 | `{"kind": "appIsNot", "bundleId": "..."}` | Never while this app is frontmost. |
 | `{"kind": "physicalDeviceIs", "deviceId": "1133:49298"}` | Experimental. Only for input from this device (`vendorId:productId` in decimal, see `--list-devices`). If the device cannot be determined, the rule does not apply. Not available for key + mouse button rules. |
+| `{"kind": "inputSourceIs", "inputSourceId": "com.apple.keylayout.PolishPro"}` | Only while this keyboard input source is selected. Several entries mean any of them. `clavimo-probe keyboard` lists the identifiers. |
 
 When several mouse chords share a trigger, the higher `priority` wins; for equal priority, the rule with more specific conditions wins, then the earlier rule. Key swaps and remaps for the same key must have different conditions; the most specific matching rule wins (a device condition is more specific than app conditions).
 

@@ -17,7 +17,12 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| Swap or remap keys, including left and right Command, Option, Control and Shift separately | Available | Verified in daily use on a built-in MacBook keyboard. Caps Lock and Fn cannot be remapped. |
+| Swap or remap keys, including left and right Command, Option, Control and Shift separately | Available | Verified in daily use on a built-in MacBook keyboard. Fn cannot be remapped. |
+| Caps Lock as Escape, Control or Hyper (⌃⌥⇧⌘) when held, with Caps Lock on a double tap | Experimental | Clavimo moves Caps Lock to F18 at the keyboard level while these rules run and restores it when remapping stops. |
+| Tap or hold any key: one output when tapped, another when held (home row modifiers, Space or Tab layers); taps on modifier keys alone (for example 英数/かな on Command) | Experimental | Misfire protection for typing: same-hand keys and fast typing always type the letter. |
+| Layers: keys that do something else while a layer key is held or switched on, with the active layer shown next to the menu bar icon | Experimental | |
+| Combos (keys pressed at the same moment), key sequences after a leader key with an on-screen list of next keys, one-shot modifiers | Experimental | A combo key is held back for up to 50 ms while typing. |
+| Keyboard rules limited to a keyboard input source (layout) | Experimental | |
 | Modifier + mouse button (including Fn, and left or right click with explicit opt-in) | Experimental | Ordinary clicks are never affected. |
 | Letter key + mouse button, with a choice of how the letter is buffered | Experimental | The letter may be slightly delayed while typing; see [leader policies](docs/configuration.md#leader-policies-for-key--mouse-button). |
 | Actions: next and previous Space, Mission Control, application windows | Experimental | Uses the macOS Control + Arrow shortcuts, which must be enabled. |
@@ -37,7 +42,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Pause for 5 minutes, 1 hour or until resumed; emergency disable and safe mode | Experimental | |
 | English and Polish interface | Available | Follows the macOS language setting. |
 | Launch at Login, automatic pause while another macOS account is active | Experimental | Multi-account behavior not yet verified on hardware. |
-| Per-device pointer speed and scrolling, pinch and edge gestures, macros, layers, tap-hold, more languages | Planned | |
+| Per-device pointer speed and scrolling, mouse button gestures, pinch, rotate and edge gestures, window actions, macros, importing other apps' settings, more languages | Planned | |
 | Remapping at the login window or before FileVault unlock | Unsupported | macOS does not allow it for apps like Clavimo. |
 
 **Available** means implemented, covered by automated tests and verified on real hardware. **Experimental** means implemented and covered by automated tests, but not yet verified on hardware, so it may not work everywhere. **Planned** features do not exist yet.
@@ -99,6 +104,12 @@ open /Applications/Clavimo.app
 
 Open **Trackpad** in the settings window. The live preview draws your fingers and names each gesture Clavimo recognizes, with the rule it would run, so you can try gestures before using them. Pick a template, such as a three-finger tap for a middle click, or create a rule with **New Rule**. If macOS already uses the same movement, the editor says so: macOS gestures cannot be blocked, so turn the macOS gesture off in **System Settings > Trackpad** first.
 
+### Keyboard: Caps Lock, home row modifiers, layers
+
+<p align="center"><img src="docs/images/keyboard-dark.png" width="70%" alt="Keyboard pane: Caps Lock as Escape when tapped and Hyper when held, home row modifiers with timing, and keyboard rules"></p>
+
+Open **Keyboard** in the settings window. Choose what **Caps Lock** does (for example Escape when tapped and Hyper, all four modifiers, when held), turn on **home row modifiers** (hold A S D F or J K L ; for ⌘ ⌥ ⌃ ⇧), or add a template: arrows under the right hand while holding Space, a number pad while holding Tab, J + K for Escape, app shortcuts after tapping Right Option, parentheses on the Shift keys, or 英数/かな on the Command keys. **New Rule** creates any tap-hold key, layer key, combo or sequence. Keyboard rules pause while an app has secure typing on (a password field); the menu says which app.
+
 ### Example: swap Command and Option
 
 Choose **Swap two keys**, record **Left Command** as the first key and **Left Option** as the second. Both directions are created: Command acts as Option and Option acts as Command, including in shortcuts such as Command + C. Left and right modifiers are separate keys, so add a second rule for the right side if you want it.
@@ -112,9 +123,9 @@ Only clicks made while Fn is held are replaced. Normal clicks, drags and right-c
 
 ## How rules work
 
-- **Rule types:** swap two keys, remap a key, modifier + mouse button, key + mouse button, and mouse wheel settings (direction and scroll distance per axis, set in **Mouse & Scrolling**).
+- **Rule types:** swap two keys, remap a key, modifier + mouse button, key + mouse button, trackpad gestures and clicks, keyboard rules (tap or hold, layers, combos, sequences; set in **Keyboard**), and mouse wheel and trackpad scrolling settings.
 - **Profiles:** every profile uses its own rules plus the rules of Default; a rule in a profile replaces a Default rule with the same trigger. Switch the active profile from the menu bar or the Rules pane.
-- **Conditions:** only in certain apps, never in certain apps, and (experimental) only for a specific keyboard or mouse. Leave them empty to apply a rule everywhere.
+- **Conditions:** only in certain apps, never in certain apps, only with a certain keyboard input source (keyboard rules), and (experimental) only for a specific keyboard or mouse. Leave them empty to apply a rule everywhere.
 - **Precedence:** for mouse chords with the same trigger, the higher priority wins, then the more specific conditions. Two rules for the same key need different conditions; the most specific one wins. Conflicting rules are rejected when you save, with an explanation.
 - **Letter key + mouse button** needs a buffering choice, because the letter would otherwise type before Clavimo knows a click is coming: wait briefly then type (default 120 ms), wait until the key is released, or type immediately and accept the stray character. The letter is only held back in apps where its chord can apply.
 - **Unsupported rules** (for example, ones you wrote by hand with features Clavimo does not have yet) are shown as unsupported and never applied partially.
@@ -161,11 +172,12 @@ Each macOS account has its own rules, permissions and startup setting. When you 
 
 - **Tested:** macOS 27.2 on a MacBook Pro with Apple M1 Pro, built-in keyboard with the Polish Pro layout, and a USB Logitech G102 mouse. Everything else is untested; reports are welcome.
 - **Device-specific rules are experimental.** macOS does not tell apps which device produced a keyboard event. Clavimo asks the connected devices which one currently reports the key as pressed. If two devices report it, or none does, the rule does not apply. Two devices of the same model share an ID. Devices behind a shared Logitech Bolt or Unifying receiver may not be distinguishable.
-- **Caps Lock and Fn** cannot be remapped. Fn works as a modifier in mouse chords.
+- **Caps Lock** rules work by moving Caps Lock to F18 at the keyboard level (the HID setting that `hidutil` and System Settings > Modifier Keys use). A keyboard whose Caps Lock is changed in Modifier Keys is left alone. If Clavimo stops without cleaning up, Caps Lock types nothing until Clavimo starts again or you log out. **Fn** cannot be remapped; it works as a modifier in mouse chords.
+- **Tap-hold keys, combos and sequences** hold a key back for a moment while deciding; held-back keys are always delivered in their original order. Games and apps that read the keyboard directly may ignore Clavimo's keys.
 - **Spaces** are switched through the macOS keyboard shortcuts, not a private API. If those shortcuts are disabled or changed, the actions do nothing.
 - **Mouse wheel settings** apply to every mouse wheel; **trackpad scrolling settings** apply to trackpads and Magic Mouse (both report continuous scrolling).
 - **Trackpad gestures** rely on a private macOS framework. If a macOS update changes it, gestures turn themselves off and the Trackpad pane says so; other rules keep working. macOS's own gestures cannot be blocked: turn off a macOS gesture in Trackpad settings before reusing its movement.
-- **Secure input:** while a password field or another app enables Secure Event Input, macOS hides keystrokes from all event taps, so key rules pause.
+- **Secure input:** while a password field or another app enables Secure Event Input, macOS hides keystrokes from all event taps, so key rules pause. The menu and the Keyboard pane show which app turned it on.
 - **Other input tools:** running Karabiner-Elements, LinearMouse, BetterTouchTool or Logi Options+ alongside Clavimo can apply changes twice or hide events from it. Clavimo warns when it detects some of them but never quits or changes other apps. Logi Options+ may turn side buttons into shortcuts before Clavimo sees them.
 
 ## Troubleshooting

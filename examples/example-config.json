@@ -311,6 +311,424 @@
       "ui": {
         "order": 9
       }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d30",
+      "name": "Caps Lock: tap for Escape, hold for Hyper, double tap for Caps Lock",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "tapHold",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 57
+        },
+        "thresholdMs": 200,
+        "interruptPolicy": "anyOtherKey"
+      },
+      "conditions": [],
+      "action": {
+        "kind": "tapHold",
+        "tap": {
+          "kind": "sendKey",
+          "key": {
+            "codeNamespace": "macVirtualKeyCode",
+            "code": 53
+          }
+        },
+        "hold": {
+          "kind": "holdModifiers",
+          "modifiers": [
+            "control",
+            "option",
+            "shift",
+            "command"
+          ]
+        },
+        "doubleTap": {
+          "kind": "toggleCapsLock"
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 10
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d31",
+      "name": "Hold Space for arrows",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "tapHold",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 49
+        },
+        "thresholdMs": 200,
+        "interruptPolicy": "permissiveHold",
+        "typingStreakMs": 150
+      },
+      "conditions": [],
+      "action": {
+        "kind": "tapHold",
+        "tap": {
+          "kind": "sendKey",
+          "key": {
+            "codeNamespace": "macVirtualKeyCode",
+            "code": 49
+          }
+        },
+        "hold": {
+          "kind": "holdLayer",
+          "layerId": "nav"
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 11
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d32",
+      "name": "nav: H is Left Arrow",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "layerKey",
+        "layerId": "nav",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 4
+        }
+      },
+      "conditions": [],
+      "action": {
+        "kind": "sendKey",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 123
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 12
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d33",
+      "name": "nav: J is Down Arrow",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "layerKey",
+        "layerId": "nav",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 38
+        }
+      },
+      "conditions": [],
+      "action": {
+        "kind": "sendKey",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 125
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 13
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d34",
+      "name": "nav: K is Up Arrow",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "layerKey",
+        "layerId": "nav",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 40
+        }
+      },
+      "conditions": [],
+      "action": {
+        "kind": "sendKey",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 126
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 14
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d35",
+      "name": "nav: L is Right Arrow",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "layerKey",
+        "layerId": "nav",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 37
+        }
+      },
+      "conditions": [],
+      "action": {
+        "kind": "sendKey",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 124
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 15
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d36",
+      "name": "nav: O goes to the end of the line",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "layerKey",
+        "layerId": "nav",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 31
+        }
+      },
+      "conditions": [],
+      "action": {
+        "kind": "sendShortcut",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 124
+        },
+        "modifiers": [
+          "command"
+        ]
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 16
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d37",
+      "name": "J and K together type Escape",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "keyCombo",
+        "keys": [
+          {
+            "codeNamespace": "macVirtualKeyCode",
+            "code": 38
+          },
+          {
+            "codeNamespace": "macVirtualKeyCode",
+            "code": 40
+          }
+        ],
+        "windowMs": 50
+      },
+      "conditions": [],
+      "action": {
+        "kind": "sendKey",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 53
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 17
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d38",
+      "name": "Tap Right Option alone to start a sequence",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "tapHold",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 61
+        },
+        "thresholdMs": 250
+      },
+      "conditions": [],
+      "action": {
+        "kind": "tapHold",
+        "tap": {
+          "kind": "startSequence"
+        },
+        "hold": {
+          "kind": "holdModifiers",
+          "modifiers": [
+            "rightOption"
+          ]
+        }
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 18
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d39",
+      "name": "Sequence S opens Safari",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "keySequence",
+        "keys": [
+          {
+            "codeNamespace": "macVirtualKeyCode",
+            "code": 1
+          }
+        ]
+      },
+      "conditions": [],
+      "action": {
+        "kind": "launchApp",
+        "bundleId": "com.apple.Safari"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 19
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d40",
+      "name": "Sequence N then O opens Notes",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "keySequence",
+        "keys": [
+          {
+            "codeNamespace": "macVirtualKeyCode",
+            "code": 45
+          },
+          {
+            "codeNamespace": "macVirtualKeyCode",
+            "code": 31
+          }
+        ]
+      },
+      "conditions": [],
+      "action": {
+        "kind": "launchApp",
+        "bundleId": "com.apple.Notes"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 20
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d41",
+      "name": "Polish layout only: F16 types a dash shortcut",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "key",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 106
+        }
+      },
+      "conditions": [
+        {
+          "kind": "inputSourceIs",
+          "inputSourceId": "com.apple.keylayout.PolishPro"
+        }
+      ],
+      "action": {
+        "kind": "sendShortcut",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 27
+        },
+        "modifiers": [
+          "option"
+        ]
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "onAutorepeat"
+      },
+      "ui": {
+        "order": 21
+      }
     }
   ],
   "macros": [],
