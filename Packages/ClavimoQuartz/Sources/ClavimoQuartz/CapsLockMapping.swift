@@ -96,7 +96,8 @@ public final class CapsLockMapping: @unchecked Sendable {
 
     private func apply() {
         var result = Status()
-        for (service, name) in Self.keyboards() {
+        Self.withKeyboards { keyboards in
+        for (service, name) in keyboards {
             var entries = Self.entries(of: service)
             if let existing = entries.first(where: { $0[Self.sourceKey] == Self.capsLockUsage }) {
                 if existing[Self.destinationKey] == Self.proxyUsage {
@@ -111,6 +112,7 @@ public final class CapsLockMapping: @unchecked Sendable {
                 result.mappedKeyboards.append(name)
             }
         }
+        }
         lock.lock()
         currentStatus = result
         lock.unlock()
@@ -119,24 +121,32 @@ public final class CapsLockMapping: @unchecked Sendable {
     /// Removes Clavimo's entry from every keyboard, also one left behind by
     /// an earlier run that did not stop cleanly. Safe to call at launch.
     public static func removeAll() {
-        for (service, _) in keyboards() {
-            let entries = entries(of: service)
-            let kept = entries.filter { !($0[sourceKey] == capsLockUsage && $0[destinationKey] == proxyUsage) }
-            if kept.count != entries.count {
-                IOHIDServiceClientSetProperty(service, property, kept as CFArray)
+        withKeyboards { keyboards in
+            for (service, _) in keyboards {
+                let entries = entries(of: service)
+                let kept = entries.filter { !($0[sourceKey] == capsLockUsage && $0[destinationKey] == proxyUsage) }
+                if kept.count != entries.count {
+                    IOHIDServiceClientSetProperty(service, property, kept as CFArray)
+                }
             }
         }
     }
 
-    private static func keyboards() -> [(IOHIDServiceClient, String)] {
+    /// Calls `body` with every keyboard service. The service objects use
+    /// their event system client internally, so the client must stay alive
+    /// until `body` is done; releasing it early crashes in IOKit.
+    private static func withKeyboards(_ body: ([(IOHIDServiceClient, String)]) -> Void) {
         let client = IOHIDEventSystemClientCreateSimpleClient(kCFAllocatorDefault)
-        let services = (IOHIDEventSystemClientCopyServices(client) as? [IOHIDServiceClient]) ?? []
-        return services.compactMap { service in
-            guard IOHIDServiceClientConformsTo(service, UInt32(kHIDPage_GenericDesktop), UInt32(kHIDUsage_GD_Keyboard)) != 0 else {
-                return nil
+        withExtendedLifetime(client) {
+            let services = (IOHIDEventSystemClientCopyServices(client) as? [IOHIDServiceClient]) ?? []
+            let keyboards: [(IOHIDServiceClient, String)] = services.compactMap { service in
+                guard IOHIDServiceClientConformsTo(service, UInt32(kHIDPage_GenericDesktop), UInt32(kHIDUsage_GD_Keyboard)) != 0 else {
+                    return nil
+                }
+                let name = IOHIDServiceClientCopyProperty(service, kIOHIDProductKey as CFString) as? String ?? "Keyboard"
+                return (service, name)
             }
-            let name = IOHIDServiceClientCopyProperty(service, kIOHIDProductKey as CFString) as? String ?? "Keyboard"
-            return (service, name)
+            body(keyboards)
         }
     }
 
