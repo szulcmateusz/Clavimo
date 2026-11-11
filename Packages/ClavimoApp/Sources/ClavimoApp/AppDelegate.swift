@@ -10,6 +10,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if CommandLine.arguments.contains("--check-config") {
             exit(checkConfiguration())
         }
+        if CommandLine.arguments.contains("--list-devices") {
+            for device in HIDDeviceCatalog.connectedDevices() {
+                let kinds = [device.isKeyboard ? "keyboard" : nil, device.isPointer ? "pointer" : nil].compactMap { $0 }
+                print("\(device.id)\t\(device.name) [\(kinds.joined(separator: ", "))] \(device.transport ?? "")")
+            }
+            exit(0)
+        }
         let app = NSApplication.shared
         let delegate = AppDelegate()
         app.delegate = delegate

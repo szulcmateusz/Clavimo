@@ -146,8 +146,10 @@ struct ConfigTests {
         "macros": [],
         "deviceSettings": [
           {"id": "w", "name": "Mouse wheel", "enabled": true, "profileId": "default", "priority": 1,
-           "scope": {"deviceClass": "mouse", "vendorId": 1133, "productId": 49298},
+           "scope": {"deviceClass": "mouse"},
            "scrolling": {"vertical": {"reverse": true}, "horizontal": {"reverse": false, "mode": "system"}}},
+          {"id": "d", "name": "One mouse", "enabled": true, "profileId": "default", "priority": 1,
+           "scope": {"deviceClass": "mouse", "vendorId": 1133, "productId": 49298}, "scrolling": {"vertical": {"reverse": true}}},
           {"id": "t", "name": "Trackpad", "enabled": true, "profileId": "default", "priority": 1,
            "scope": {"deviceClass": "trackpad"}, "scrolling": {"vertical": {"reverse": true}}},
           {"id": "p", "name": "Pointer", "enabled": true, "profileId": "default", "priority": 1,
@@ -158,8 +160,8 @@ struct ConfigTests {
         """)
         let result = try interpret(json)
         #expect(result.definitions == [
-            .reverseWheel(vertical: true, horizontal: false, conditions: RuleConditions(devices: [DeviceID(vendorID: 1133, productID: 49298)])),
+            .reverseWheel(vertical: true, horizontal: false),
         ])
-        #expect(result.unsupported.map(\.ruleID) == ["t", "p"])
+        #expect(result.unsupported.map(\.ruleID) == ["d", "t", "p"])
     }
 }

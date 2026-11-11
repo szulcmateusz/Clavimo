@@ -36,6 +36,8 @@ public final class EventTapController: @unchecked Sendable {
         public var tapDisabledByTimeout: Int
         public var tapDisabledByUserInput: Int
         public var tapReenabled: Int
+        /// Nil when no rule needs device attribution.
+        public var deviceAttributionAvailable: Bool?
     }
 
     /// Marks events posted by Clavimo ("CLV1").
@@ -67,6 +69,9 @@ public final class EventTapController: @unchecked Sendable {
     private let actionQueue = DispatchQueue(label: "clavimo.actions", qos: .userInteractive)
     private let source: CGEventSource?
     private let eventMask: CGEventMask
+    private let keysNeedingDevice: Set<KeyCode>
+    private let buttonsNeedingDevice: Set<MouseButton>
+    private let usesDeviceConditions: Bool
 
     // Tap-thread state.
     private var engine: InputEngine
@@ -80,6 +85,8 @@ public final class EventTapController: @unchecked Sendable {
     private var disabledByTimeout = 0
     private var disabledByUserInput = 0
     private var reenableTimes: [UInt64] = []
+    private var attributor: HIDDeviceAttributor?
+    private var deviceAttributionAvailable = false
 
     public init(
         rules: CompiledRules,
@@ -89,6 +96,9 @@ public final class EventTapController: @unchecked Sendable {
     ) {
         engine = InputEngine(rules: rules)
         eventMask = Self.eventMask(for: rules)
+        keysNeedingDevice = rules.keysNeedingDevice
+        buttonsNeedingDevice = rules.buttonsNeedingDevice
+        usesDeviceConditions = rules.usesDeviceConditions
         self.flagRewrite = flagRewrite
         self.actionHandler = actionHandler
         self.onStop = onStop
@@ -146,7 +156,8 @@ public final class EventTapController: @unchecked Sendable {
                 eventsSeen: eventsSeen,
                 tapDisabledByTimeout: disabledByTimeout,
                 tapDisabledByUserInput: disabledByUserInput,
-                tapReenabled: reenableTimes.count
+                tapReenabled: reenableTimes.count,
+                deviceAttributionAvailable: usesDeviceConditions ? deviceAttributionAvailable : nil
             ))
         }
     }
@@ -165,7 +176,10 @@ public final class EventTapController: @unchecked Sendable {
         ) else {
             return false
         }
-        let loop = CFRunLoopGetCurrent()
+        guard let loop = CFRunLoopGetCurrent() else {
+            CFMachPortInvalidate(port)
+            return false
+        }
         let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, port, 0)
         CFRunLoopAddSource(loop, runLoopSource, .commonModes)
         let timer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, .infinity, 1_000_000, 0, 0) { [weak self] _ in
@@ -175,6 +189,11 @@ public final class EventTapController: @unchecked Sendable {
         tap = port
         runLoop = loop
         deadlineTimer = timer
+        if usesDeviceConditions {
+            let attributor = HIDDeviceAttributor()
+            deviceAttributionAvailable = attributor.start(on: loop)
+            self.attributor = attributor
+        }
         CGEvent.tapEnable(tap: port, enable: true)
         return true
     }
@@ -187,6 +206,8 @@ public final class EventTapController: @unchecked Sendable {
         if let deadlineTimer { CFRunLoopTimerInvalidate(deadlineTimer) }
         tap = nil
         deadlineTimer = nil
+        attributor?.stop()
+        attributor = nil
         if let runLoop { CFRunLoopStop(runLoop) }
         onStop(reason)
     }
@@ -261,22 +282,40 @@ public final class EventTapController: @unchecked Sendable {
         case .keyDown, .keyUp:
             let code = KeyCode(UInt16(truncatingIfNeeded: event.getIntegerValueField(.keyboardEventKeycode)))
             let isRepeat = event.getIntegerValueField(.keyboardEventAutorepeat) != 0
-            return InputEvent(kind: .key(code, isDown: type == .keyDown, isRepeat: isRepeat), modifiers: physical, time: time)
+            let isDown = type == .keyDown
+            let device = isDown && !isRepeat ? attributedDevice(for: code) : nil
+            return InputEvent(kind: .key(code, isDown: isDown, isRepeat: isRepeat), modifiers: physical, time: time, device: device)
         case .flagsChanged:
             let code = KeyCode(UInt16(truncatingIfNeeded: event.getIntegerValueField(.keyboardEventKeycode)))
             // Caps Lock, Fn and unknown keys are forwarded uninterpreted.
             guard let modifier = code.modifierKey else { return nil }
-            return InputEvent(kind: .key(code, isDown: physical.contains(modifier.set), isRepeat: false), modifiers: physical, time: time)
+            let isDown = physical.contains(modifier.set)
+            let device = isDown ? attributedDevice(for: code) : nil
+            return InputEvent(kind: .key(code, isDown: isDown, isRepeat: false), modifiers: physical, time: time, device: device)
         case .otherMouseDown, .otherMouseUp:
             let button = MouseButton(raw: UInt16(truncatingIfNeeded: event.getIntegerValueField(.mouseEventButtonNumber)))
-            return InputEvent(kind: .mouseButton(button, isDown: type == .otherMouseDown), modifiers: physical, time: time)
+            return mouseEvent(button, isDown: type == .otherMouseDown, physical: physical, time: time)
         case .leftMouseDown, .leftMouseUp:
-            return InputEvent(kind: .mouseButton(.primary, isDown: type == .leftMouseDown), modifiers: physical, time: time)
+            return mouseEvent(.primary, isDown: type == .leftMouseDown, physical: physical, time: time)
         case .rightMouseDown, .rightMouseUp:
-            return InputEvent(kind: .mouseButton(.secondary, isDown: type == .rightMouseDown), modifiers: physical, time: time)
+            return mouseEvent(.secondary, isDown: type == .rightMouseDown, physical: physical, time: time)
         default:
             return nil
         }
+    }
+
+    private func mouseEvent(_ button: MouseButton, isDown: Bool, physical: ModifierSet, time: UInt64) -> InputEvent {
+        var device: DeviceID?
+        if isDown, buttonsNeedingDevice.contains(button) {
+            device = attributor?.deviceHolding(button: button)
+        }
+        return InputEvent(kind: .mouseButton(button, isDown: isDown), modifiers: physical, time: time, device: device)
+    }
+
+    /// Only keys used by device-scoped rules pay for the device query.
+    private func attributedDevice(for key: KeyCode) -> DeviceID? {
+        guard keysNeedingDevice.contains(key) else { return nil }
+        return attributor?.deviceHolding(key: key)
     }
 
     private func apply(_ output: EngineOutput, to event: CGEvent, proxy: CGEventTapProxy) -> Unmanaged<CGEvent>? {

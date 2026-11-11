@@ -195,10 +195,10 @@ extension ConfigDocument {
         }
         var conditions = RuleConditions()
         let scope = setting["scope"]
-        if let vendor = scope?["vendorId"]?.int, let product = scope?["productId"]?.int {
-            conditions.devices = [DeviceID(vendorID: vendor, productID: product)]
-        } else if scope?["vendorId"] != nil || scope?["productId"] != nil {
-            throw Unsupported(message: "device scope needs both vendorId and productId")
+        if scope?["vendorId"] != nil || scope?["productId"] != nil {
+            // Scroll events cannot be attributed to a device yet; applying
+            // the setting to every wheel would silently widen its scope.
+            throw Unsupported(message: "per-device scrolling is not supported yet; remove vendorId/productId to apply it to all mouse wheels")
         }
         if let app = scope?["appBundleId"]?.string {
             conditions.onlyApps = [app]
