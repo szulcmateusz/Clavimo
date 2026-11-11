@@ -53,6 +53,7 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 24. **Layers.** With the Space arrows template, holding Space and pressing H J K L moves the cursor, Shift selects, the layer name appears next to the menu bar icon, and a quick Space types a space.
 25. **Combos and sequences.** J + K together type Escape while J and K alone type letters; tapping Right Option shows the sequence panel and S opens Safari; Escape cancels.
 26. **Secure typing.** In a password field in Safari, keyboard rules pause and the menu names the app; they resume after leaving the field.
+27. **Rotation and zones.** Turning two fingers clockwise and counterclockwise changes the volume step by step without scrolling the page; with zone rules, the left half changes volume and the right half brightness. Two-finger scrolling and pinching still work as before.
 
 ### Results
 
@@ -65,7 +66,7 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 
 | 2026-11-11 | 27.2 (26B123) | MacBook Pro, Apple M1 Pro | Built-in Force Touch trackpad (family 105) | 18 (probe, 15 s) | 884 valid frames, none invalid; 96-byte records decode at the expected offsets; top right corner reads x 0.98, y 0.94, so y grows upwards; three fingers detected |
 
-Not yet verified: items 2 to 4, 6 to 17 and 19 to 26, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
+Not yet verified: items 2 to 4, 6 to 17 and 19 to 27, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
 
 ### Latency measurement
 

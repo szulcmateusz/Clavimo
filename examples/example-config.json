@@ -729,6 +729,114 @@
       "ui": {
         "order": 21
       }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d50",
+      "name": "Left half, turn two fingers clockwise: volume up",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadGesture",
+        "gesture": "rotate",
+        "direction": "clockwise",
+        "zone": "left",
+        "requiredModifiers": []
+      },
+      "conditions": [],
+      "action": {
+        "kind": "mediaKey",
+        "key": "volumeUp"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 22
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d51",
+      "name": "Left half, turn two fingers counterclockwise: volume down",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadGesture",
+        "gesture": "rotate",
+        "direction": "counterclockwise",
+        "zone": "left",
+        "requiredModifiers": []
+      },
+      "conditions": [],
+      "action": {
+        "kind": "mediaKey",
+        "key": "volumeDown"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 23
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d52",
+      "name": "Right half, turn two fingers clockwise: brighter",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadGesture",
+        "gesture": "rotate",
+        "direction": "clockwise",
+        "zone": "right",
+        "requiredModifiers": []
+      },
+      "conditions": [],
+      "action": {
+        "kind": "mediaKey",
+        "key": "brightnessUp"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 24
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d53",
+      "name": "Right half, turn two fingers counterclockwise: darker",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "trackpadGesture",
+        "gesture": "rotate",
+        "direction": "counterclockwise",
+        "zone": "right",
+        "requiredModifiers": []
+      },
+      "conditions": [],
+      "action": {
+        "kind": "mediaKey",
+        "key": "brightnessDown"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 25
+      }
     }
   ],
   "macros": [],

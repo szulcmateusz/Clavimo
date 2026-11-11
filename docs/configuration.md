@@ -67,8 +67,11 @@ Experimental. Finger positions come from Apple's private MultitouchSupport frame
 | `{"kind": "trackpadGesture", "gesture": "tap", "fingers": 3}` | Fingers (2-5) touch down together and lift quickly without moving. A two-finger tap is the macOS secondary click, so it needs `requiredModifiers`. |
 | `{"kind": "trackpadGesture", "gesture": "tipTap", "side": "right"}` | One finger rests while another taps to its `left` or `right`. |
 | `{"kind": "trackpadGesture", "gesture": "swipe", "fingers": 3, "direction": "left"}` | Fingers (3-5) move together `up`, `down`, `left` or `right`. One swipe per touch. |
+| `{"kind": "trackpadGesture", "gesture": "rotate", "direction": "clockwise"}` | Two fingers turn like a knob, `clockwise` or `counterclockwise`. The first step needs about 24 degrees, then every further 15 degrees runs the action again, so a media key such as `volumeUp` changes smoothly. While fingers turn, trackpad scrolling is held still. |
 | `{"kind": "trackpadClick", "fingers": 3}` | The trackpad is pressed with this many fingers (3-5). The click is replaced by the action. |
 | `{"kind": "trackpadClick", "corner": "topRight"}` | One finger clicks, or taps with tap to click, in a corner: `topLeft`, `topRight`, `bottomLeft`, `bottomRight`. |
+
+Gestures accept `"zone": "left"`, `"right"`, `"top"` or `"bottom"`: the rule applies only when the gesture starts on that half of the trackpad, so one gesture can have different jobs in different places (for example volume on the left, brightness on the right). A rule with a zone wins over the same gesture without one. Clicks cannot have a zone.
 
 Every trackpad trigger accepts `requiredModifiers`; the held set must match exactly, so a rule without modifiers does not run while a modifier is held. App conditions work as usual; device conditions are not supported. macOS keeps recognizing its own gestures: a rule using a movement macOS also uses (for example three-finger swipes) runs together with the macOS gesture, even while a key is held. The Trackpad pane lists such overlaps.
 

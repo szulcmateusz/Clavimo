@@ -30,6 +30,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Scroll distance per axis: system, accelerated, a fixed number of lines or pixels per notch, or smooth scrolling that glides each notch like a trackpad | Experimental | Applies to all mouse wheels; per-device scrolling is not supported yet. |
 | Trackpad gestures: taps with 2-5 fingers, tip taps, swipes with 3-5 fingers, optionally with a held key | Experimental | Uses Apple's private MultitouchSupport framework, like other gesture tools; reading touches was verified on a built-in trackpad. macOS keeps its own gestures, so overlapping movements do both. |
 | Trackpad clicks with 3-5 fingers or in a corner (also with tap to click) | Experimental | The click is replaced by the action. |
+| Turn two fingers like a knob (for example volume or brightness), and give a gesture different jobs on the left, right, top or bottom half of the trackpad | Experimental | Trackpad scrolling is held still while fingers turn. |
 | Trackpad scrolling separate from the mouse: direction per axis, speed, momentum on or off | Experimental | Also applies to Magic Mouse. |
 | Actions: click a mouse button, keyboard shortcut, open an app, media and volume keys | Experimental | Available to every rule with an action. |
 | Rules limited to apps or excluded from apps | Experimental | |
@@ -42,7 +43,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Pause for 5 minutes, 1 hour or until resumed; emergency disable and safe mode | Experimental | |
 | English and Polish interface | Available | Follows the macOS language setting. |
 | Launch at Login, automatic pause while another macOS account is active | Experimental | Multi-account behavior not yet verified on hardware. |
-| Per-device pointer speed and scrolling, mouse button gestures, pinch, rotate and edge gestures, window actions, macros, importing other apps' settings, more languages | Planned | |
+| Per-device pointer speed and scrolling, mouse button gestures, pinch and edge gestures, window actions, macros, importing other apps' settings, more languages | Planned | |
 | Remapping at the login window or before FileVault unlock | Unsupported | macOS does not allow it for apps like Clavimo. |
 
 **Available** means implemented, covered by automated tests and verified on real hardware. **Experimental** means implemented and covered by automated tests, but not yet verified on hardware, so it may not work everywhere. **Planned** features do not exist yet.
