@@ -27,13 +27,13 @@ jobs:
           swift --version
 
       - name: Test ClavimoCore
-        run: swift test --package-path Packages/ClavimoCore
+        run: scripts/ci-test.sh Packages/ClavimoCore
 
       - name: Test ClavimoQuartz
-        run: swift test --package-path Packages/ClavimoQuartz
+        run: scripts/ci-test.sh Packages/ClavimoQuartz
 
       - name: Test ClavimoApp
-        run: swift test --package-path Packages/ClavimoApp
+        run: scripts/ci-test.sh Packages/ClavimoApp
 
       - name: Build universal app bundle (ad-hoc signed)
         run: scripts/build-app.sh
