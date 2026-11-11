@@ -83,20 +83,20 @@ public final class TouchHub: @unchecked Sendable {
     // MARK: - Backend lifecycle (on `queue`)
 
     private func startBackend() {
-        guard lock.withLock({ !subscribers.isEmpty && backend == nil }) else { return }
-        let backend = TouchBackend { [weak self] device, frame in self?.deliver(device, frame) }
-        lock.withLock { self.backend = backend }
-        backend.start()
+        guard lock.withLock({ !self.subscribers.isEmpty && self.backend == nil }) else { return }
+        let created = TouchBackend { [weak self] device, frame in self?.deliver(device, frame) }
+        lock.withLock { self.backend = created }
+        created.start()
         watchDevices()
     }
 
     private func stopBackend() {
         guard lock.withLock({ subscribers.isEmpty }) else { return }
-        let backend = lock.withLock {
+        let stopping = lock.withLock {
             defer { self.backend = nil }
             return self.backend
         }
-        backend?.stop()
+        stopping?.stop()
         unwatchDevices()
     }
 
@@ -104,8 +104,8 @@ public final class TouchHub: @unchecked Sendable {
     /// the driver needs a moment before the device can be opened.
     private func devicesChanged() {
         queue.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            guard let self, let backend = self.lock.withLock({ self.backend }) else { return }
-            backend.start()
+            guard let self, let running = self.lock.withLock({ self.backend }) else { return }
+            running.start()
         }
     }
 

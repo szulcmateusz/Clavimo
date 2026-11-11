@@ -111,13 +111,13 @@ public final class TouchBackend: @unchecked Sendable {
 
     /// Stops listening and releases the devices.
     public func stop() {
-        let devices: [UnsafeMutableRawPointer] = state.withLock { state in
-            let devices = Array(state.devices.keys)
-            state.devices = [:]
-            return devices
+        let open: [UnsafeMutableRawPointer] = state.withLock { current in
+            let keys = Array(current.devices.keys)
+            current.devices = [:]
+            return keys
         }
         if let api = MultitouchAPI.shared {
-            for device in devices {
+            for device in open {
                 api.unregister(device, touchFrameCallback)
                 api.stop(device)
             }
