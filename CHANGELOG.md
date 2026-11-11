@@ -4,9 +4,9 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
-## [1.0.0-rc.1] - 2026-11-11
+## [1.0.0] - 2026-11-11
 
-Release candidate for 1.0. It becomes 1.0.0 once the hardware checklist in docs/testing.md has been completed; features that do not pass stay marked as experimental. Release builds are not notarized by Apple.
+First stable release. Features marked Experimental in the README are complete and covered by automated tests but not yet verified on real hardware. Release builds are not notarized by Apple.
 
 ### Added
 
@@ -41,6 +41,6 @@ First preview release. Most features are experimental: they are covered by autom
 - Opt-in Launch at Login through `SMAppService`; input handling pauses automatically while another macOS account is active.
 - Draft v1 configuration schema, an example configuration and validation tools.
 
-[Unreleased]: https://github.com/szulcmateusz/Clavimo/compare/v1.0.0-rc.1...HEAD
-[1.0.0-rc.1]: https://github.com/szulcmateusz/Clavimo/compare/v0.1.0...v1.0.0-rc.1
+[Unreleased]: https://github.com/szulcmateusz/Clavimo/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/szulcmateusz/Clavimo/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/szulcmateusz/Clavimo/releases/tag/v0.1.0

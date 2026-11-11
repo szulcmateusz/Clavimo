@@ -14,8 +14,8 @@ DISPLAY_NAME=${CLAVIMO_DISPLAY_NAME:-Clavimo}
 # Marketing version (numbers only, as macOS requires), build number, and
 # the release name shown in the app and used for release archives.
 VERSION=1.0.0
-BUILD=2
-RELEASE_NAME=1.0.0-rc.1
+BUILD=3
+RELEASE_NAME=1.0.0
 APP="$OUT_DIR/Clavimo.app"
 PACKAGE="$ROOT/Packages/ClavimoApp"
 

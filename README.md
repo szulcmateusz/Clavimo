@@ -6,7 +6,7 @@
 
 Clavimo is a native, open source menu bar app that remaps keys and combines your keyboard and mouse into shortcuts. Swap Command and Option, switch Spaces with Fn + click, open Mission Control with a side mouse button, hold a letter and click to run an action, or reverse the mouse wheel without touching your trackpad. Rules are created in a visual editor, stored in a readable JSON file, and processed locally on your Mac.
 
-> **Project status: preview, heading for 1.0.** The latest release, 0.1.0, is a pre-release. The `main` branch contains the 1.0 candidate described below; it becomes 1.0 once every feature marked Available has passed the hardware checklist in [docs/testing.md](docs/testing.md). Clavimo is used daily by its maintainer on one Mac. See [Compatibility](#compatibility-and-limitations) before relying on it.
+> **Project status: 1.0.** Clavimo is used daily by its maintainer on one Mac. Features marked **Experimental** below are complete and covered by automated tests, but have not yet been verified on real hardware; the checklist in [docs/testing.md](docs/testing.md) tracks that. See [Compatibility](#compatibility-and-limitations) before relying on it.
 
 <p align="center">
   <img src="docs/images/overview-light.png" width="49%" alt="Overview: status card with the remapping switch, rule and device counts, and quick actions">
@@ -58,7 +58,7 @@ Never disable Gatekeeper or System Integrity Protection for Clavimo; it does not
 Releases are signed with the project's own self-signed certificate. That certificate is not trusted by Apple, but it stays the same across versions, so macOS keeps Clavimo's permissions when you update. To check that your download is intact, compare its checksum with the `.sha256` file published with the release:
 
 ```sh
-shasum -a 256 Clavimo-0.1.0.zip
+shasum -a 256 Clavimo-1.0.0.zip
 ```
 
 ### Build from source
@@ -108,7 +108,7 @@ Only clicks made while Fn is held are replaced. Normal clicks, drags and right-c
 
 ## Configuration file
 
-Rules are stored per macOS account in `~/Library/Application Support/Clavimo/config.json`, with the previous version kept as `config.backup.json`. **General > Backup and Import** exports the file, imports one after showing what would change, and restores the previous version. You can also edit the file by hand and choose **Reload Configuration** from the menu. The format is a draft and may change before 1.0.
+Rules are stored per macOS account in `~/Library/Application Support/Clavimo/config.json`, with the previous version kept as `config.backup.json`. **General > Backup and Import** exports the file, imports one after showing what would change, and restores the previous version. You can also edit the file by hand and choose **Reload Configuration** from the menu. The format is version 1, described by a JSON schema; any future change to it will be listed in the changelog.
 
 ```sh
 /Applications/Clavimo.app/Contents/MacOS/Clavimo --check-config [path]   # validate a file

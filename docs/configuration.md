@@ -6,7 +6,7 @@ Clavimo stores its configuration per macOS account in:
 ~/Library/Application Support/Clavimo/config.json
 ```
 
-The settings window is the normal way to edit it. The file is plain JSON and can also be edited by hand; use **Reload Configuration** in the menu afterwards. The format is a **draft** (`schemaVersion` 1) described by [`schema/config-v1.schema.json`](../schema/config-v1.schema.json) and may change before the first release. [`examples/example-config.json`](../examples/example-config.json) shows every supported rule type.
+The settings window is the normal way to edit it. The file is plain JSON and can also be edited by hand; use **Reload Configuration** in the menu afterwards. The format is version 1 (`schemaVersion` 1), described by [`schema/config-v1.schema.json`](../schema/config-v1.schema.json); any future change to it will be listed in the changelog. [`examples/example-config.json`](../examples/example-config.json) shows every supported rule type.
 
 Check a file without touching input:
 

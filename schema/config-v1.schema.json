@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:clavimo:schema:config:v1",
-  "title": "Clavimo configuration (draft v1)",
-  "description": "Provisional v1 format for engineering handoff, including optional draft deviceSettings. Replace example.invalid and finalize after macOS feasibility verification. This schema does not guarantee runtime support for any hardware-specific feature.",
+  "title": "Clavimo configuration, version 1",
+  "description": "Format of ~/Library/Application Support/Clavimo/config.json. Some fields are reserved for future features; Clavimo reports rules it cannot run instead of applying them partially.",
   "type": "object",
   "additionalProperties": false,
   "required": [
