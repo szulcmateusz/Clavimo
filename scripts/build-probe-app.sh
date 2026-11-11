@@ -1,5 +1,5 @@
 #!/bin/sh
-# Builds "Modweave Probe.app", a minimal bundle around the P0 probe so
+# Builds "Clavimo Probe.app", a minimal bundle around the P0 probe so
 # macOS attributes Accessibility and Input Monitoring to the probe itself
 # instead of to the terminal that launched it.
 #
@@ -12,16 +12,16 @@ set -eu
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 OUT_DIR=${1:-"$ROOT/build"}
 # Provisional identifier; the public name and identifiers are not final.
-BUNDLE_ID=${MODWEAVE_BUNDLE_ID_PREFIX:-dev.modweave}.probe
-APP="$OUT_DIR/Modweave Probe.app"
-PACKAGE="$ROOT/Packages/ModweaveQuartz"
+BUNDLE_ID=${CLAVIMO_BUNDLE_ID_PREFIX:-dev.clavimo}.probe
+APP="$OUT_DIR/Clavimo Probe.app"
+PACKAGE="$ROOT/Packages/ClavimoQuartz"
 
-swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --product modweave-probe
+swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --product clavimo-probe
 BIN_DIR=$(swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --show-bin-path)
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS"
-cp "$BIN_DIR/modweave-probe" "$APP/Contents/MacOS/modweave-probe"
+cp "$BIN_DIR/clavimo-probe" "$APP/Contents/MacOS/clavimo-probe"
 
 cat > "$APP/Contents/Info.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -29,11 +29,11 @@ cat > "$APP/Contents/Info.plist" <<EOF
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key>
-    <string>modweave-probe</string>
+    <string>clavimo-probe</string>
     <key>CFBundleIdentifier</key>
     <string>$BUNDLE_ID</string>
     <key>CFBundleName</key>
-    <string>Modweave Probe</string>
+    <string>Clavimo Probe</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -49,4 +49,4 @@ cat > "$APP/Contents/Info.plist" <<EOF
 EOF
 
 "$ROOT/scripts/sign-app.sh" "$APP" "$BUNDLE_ID"
-echo "Built $APP ($(lipo -archs "$APP/Contents/MacOS/modweave-probe"))"
+echo "Built $APP ($(lipo -archs "$APP/Contents/MacOS/clavimo-probe"))"

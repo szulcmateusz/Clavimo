@@ -6,12 +6,12 @@
 #
 # The certificate is not trusted system-wide and is not added to the login
 # keychain. It is only suitable for builds you run on this Mac.
-# Remove it with: rm -rf "$HOME/Library/Application Support/ModweaveDev"
+# Remove it with: rm -rf "$HOME/Library/Application Support/ClavimoDev"
 set -eu
 
-DIR="$HOME/Library/Application Support/ModweaveDev"
+DIR="$HOME/Library/Application Support/ClavimoDev"
 KEYCHAIN="$DIR/signing.keychain-db"
-NAME="Modweave Local Development"
+NAME="Clavimo Local Development"
 
 if [ -f "$KEYCHAIN" ]; then
     echo "Local signing identity already exists in $KEYCHAIN"

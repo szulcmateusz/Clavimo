@@ -8,8 +8,8 @@
 set -eu
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-APP="$ROOT/build/Modweave Probe.app"
-LOG=$(mktemp -t modweave-probe)
+APP="$ROOT/build/Clavimo Probe.app"
+LOG=$(mktemp -t clavimo-probe)
 trap 'rm -f "$LOG"' EXIT
 
 if [ ! -d "$APP" ]; then

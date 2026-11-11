@@ -6,9 +6,9 @@ set -eu
 
 APP=$1
 IDENTIFIER=$2
-DIR="$HOME/Library/Application Support/ModweaveDev"
+DIR="$HOME/Library/Application Support/ClavimoDev"
 KEYCHAIN="$DIR/signing.keychain-db"
-NAME="Modweave Local Development"
+NAME="Clavimo Local Development"
 
 if [ -f "$KEYCHAIN" ] && [ -f "$DIR/keychain-password" ]; then
     security unlock-keychain -p "$(cat "$DIR/keychain-password")" "$KEYCHAIN"

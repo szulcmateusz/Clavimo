@@ -1,26 +1,27 @@
 #!/bin/sh
-# Builds the Modweave menu bar app as a universal bundle.
+# Builds the Clavimo menu bar app as a universal bundle.
 #
 # Usage: scripts/build-app.sh [--install]
-#   --install  copy the bundle to ~/Applications/Modweave.app (no admin
-#              rights needed) and restart it if it was running.
+#   --install  copy the bundle to /Applications/Clavimo.app when that
+#              folder is writable (admin accounts), otherwise to
+#              ~/Applications, and restart it if it was running.
 set -eu
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 OUT_DIR="$ROOT/build"
 # Provisional identifiers; the public name is not final.
-BUNDLE_ID=${MODWEAVE_BUNDLE_ID_PREFIX:-dev.modweave}.app
-DISPLAY_NAME=${MODWEAVE_DISPLAY_NAME:-Modweave}
+BUNDLE_ID=${CLAVIMO_BUNDLE_ID_PREFIX:-dev.clavimo}.app
+DISPLAY_NAME=${CLAVIMO_DISPLAY_NAME:-Clavimo}
 VERSION=0.1.0
-APP="$OUT_DIR/Modweave.app"
-PACKAGE="$ROOT/Packages/ModweaveApp"
+APP="$OUT_DIR/Clavimo.app"
+PACKAGE="$ROOT/Packages/ClavimoApp"
 
-swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --product Modweave
+swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --product Clavimo
 BIN_DIR=$(swift build --package-path "$PACKAGE" -c release --arch arm64 --arch x86_64 --show-bin-path)
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS"
-cp "$BIN_DIR/Modweave" "$APP/Contents/MacOS/Modweave"
+cp "$BIN_DIR/Clavimo" "$APP/Contents/MacOS/Clavimo"
 
 cat > "$APP/Contents/Info.plist" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -28,11 +29,11 @@ cat > "$APP/Contents/Info.plist" <<EOF
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key>
-    <string>Modweave</string>
+    <string>Clavimo</string>
     <key>CFBundleIdentifier</key>
     <string>$BUNDLE_ID</string>
     <key>CFBundleName</key>
-    <string>Modweave</string>
+    <string>Clavimo</string>
     <key>CFBundleDisplayName</key>
     <string>$DISPLAY_NAME</string>
     <key>CFBundlePackageType</key>
@@ -50,17 +51,21 @@ cat > "$APP/Contents/Info.plist" <<EOF
 EOF
 
 "$ROOT/scripts/sign-app.sh" "$APP" "$BUNDLE_ID"
-echo "Built $APP ($(lipo -archs "$APP/Contents/MacOS/Modweave"))"
+echo "Built $APP ($(lipo -archs "$APP/Contents/MacOS/Clavimo"))"
 
 if [ "${1:-}" = "--install" ]; then
-    DEST="$HOME/Applications/Modweave.app"
+    if [ -w /Applications ]; then
+        DEST="/Applications/Clavimo.app"
+    else
+        DEST="$HOME/Applications/Clavimo.app"
+    fi
     WAS_RUNNING=false
-    if pgrep -xq Modweave; then
+    if pgrep -xq Clavimo; then
         WAS_RUNNING=true
         osascript -e 'quit app id "'"$BUNDLE_ID"'"' >/dev/null 2>&1 || true
         sleep 1
     fi
-    mkdir -p "$HOME/Applications"
+    mkdir -p "$(dirname "$DEST")"
     rm -rf "$DEST"
     cp -R "$APP" "$DEST"
     echo "Installed $DEST"
