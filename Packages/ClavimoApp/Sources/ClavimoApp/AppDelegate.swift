@@ -372,6 +372,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             "com.logi.optionsplus": "Logi Options+",
             "com.pilotmoon.scroll-reverser": "Scroll Reverser",
             "com.hegenberg.BetterTouchTool": "BetterTouchTool",
+            "com.lujjjh.LinearMouse": "LinearMouse",
         ]
         for app in NSWorkspace.shared.runningApplications {
             guard let id = app.bundleIdentifier else { continue }

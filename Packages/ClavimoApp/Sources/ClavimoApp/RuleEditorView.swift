@@ -38,7 +38,7 @@ struct RuleEditorView: View {
                     Toggle("Enabled", isOn: $draft.enabled)
                     Stepper("Priority: \(draft.priority)", value: $draft.priority, in: 1...1000, step: 10)
                 } footer: {
-                    Text("When several rules share a trigger, the higher priority wins, then the more specific conditions.")
+                    Text("Priority decides between mouse chords with the same trigger. Key rules for the same key need different conditions; the most specific one wins.")
                 }
             }
             .formStyle(.grouped)
