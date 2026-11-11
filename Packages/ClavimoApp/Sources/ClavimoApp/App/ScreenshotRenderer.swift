@@ -81,48 +81,39 @@ enum ScreenshotRenderer {
     /// A realistic configuration that shows every rule type.
     static func sampleDocument() -> ConfigDocument {
         var swap = RuleDraft()
-        swap.name = "Swap Command and Option (right)"
         var fnLeft = RuleDraft()
         fnLeft.kind = .modifierClick
-        fnLeft.name = "Fn + left click: previous Space"
         fnLeft.button = 1
         fnLeft.action = .previousWorkspace
         var fnRight = fnLeft
-        fnRight.name = "Fn + right click: next Space"
         fnRight.button = 2
         fnRight.action = .nextWorkspace
         var mission = RuleDraft()
         mission.kind = .modifierClick
-        mission.name = "Fn + side button: Mission Control"
         mission.button = 4
         mission.action = .missionControl
         var chord = RuleDraft()
         chord.kind = .keyClick
-        chord.name = "Hold F + side button: next Space"
         chord.firstKey = KeyCode.f.rawValue
         chord.button = 4
         chord.exceptApps = ["com.apple.Terminal"]
         var wheel = RuleDraft()
         wheel.kind = .wheel
-        wheel.name = "Mouse wheel"
         wheel.vertical.mode = .byLines
         wheel.vertical.lines = 3
 
         var tap = RuleDraft()
         tap.kind = .trackpadGesture
-        tap.name = "Three-finger tap: middle click"
         tap.fingers = 3
         tap.action = .middleClick
         var back = RuleDraft()
         back.kind = .trackpadGesture
-        back.name = "Fn + three-finger swipe left: back"
         back.gesture = .swipe
         back.direction = .left
         back.trackpadModifiers = [.function]
         back.action = .backClick
         var corner = RuleDraft()
         corner.kind = .trackpadClick
-        corner.name = "Top right corner click: close tab"
         corner.clickPlace = .corner
         corner.corner = .topRight
         corner.action = .shortcut
@@ -130,7 +121,6 @@ enum ScreenshotRenderer {
         corner.shortcutModifiers = [.command]
         var trackpadScroll = RuleDraft()
         trackpadScroll.kind = .trackpadScroll
-        trackpadScroll.name = "Trackpad"
         trackpadScroll.trackpadScroll = TrackpadScrollSettings(speed: 1.25, momentum: true)
 
         let rules = [swap, fnLeft, fnRight, mission, chord, tap, back, corner].enumerated().map { index, draft in
