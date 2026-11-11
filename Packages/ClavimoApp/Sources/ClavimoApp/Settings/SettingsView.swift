@@ -48,7 +48,15 @@ final class SettingsNavigation {
 struct SettingsView: View {
     @Bindable var model: AgentController
     @Bindable var editor: ConfigEditor
-    @State private var navigation = SettingsNavigation()
+    @State private var navigation: SettingsNavigation
+
+    init(model: AgentController, editor: ConfigEditor, initialPane: SettingsNavigation.Pane = .overview) {
+        self.model = model
+        self.editor = editor
+        let navigation = SettingsNavigation()
+        navigation.pane = initialPane
+        _navigation = State(initialValue: navigation)
+    }
 
     var body: some View {
         NavigationSplitView {

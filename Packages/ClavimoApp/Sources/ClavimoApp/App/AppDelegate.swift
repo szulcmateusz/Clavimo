@@ -7,6 +7,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let status = CommandLineTool.run(CommandLine.arguments) {
             exit(status)
         }
+        let arguments = CommandLine.arguments
+        if let index = arguments.firstIndex(of: "--render-screenshots"), index + 1 < arguments.count {
+            exit(ScreenshotRenderer.run(outputDirectory: URL(fileURLWithPath: arguments[index + 1])))
+        }
         let app = NSApplication.shared
         let delegate = AppDelegate()
         app.delegate = delegate

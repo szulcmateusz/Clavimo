@@ -77,6 +77,17 @@ final class AgentController {
         stopTap()
     }
 
+    /// Loads the configuration and shows remapping as active without
+    /// touching input, for rendering screenshots.
+    func loadForPreview() {
+        if case let .success(result) = store.load() {
+            loaded = result
+            unsupported = result.unsupported
+        }
+        userEnabled = true
+        status = .active
+    }
+
     // MARK: User actions
 
     func setEnabled(_ enabled: Bool) {

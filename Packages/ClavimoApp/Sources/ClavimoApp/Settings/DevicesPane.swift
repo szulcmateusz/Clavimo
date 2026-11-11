@@ -42,9 +42,9 @@ private struct DeviceCard: View {
         Card {
             VStack(alignment: .leading, spacing: Spacing.s) {
                 HStack(spacing: Spacing.m) {
-                    Image(systemName: device.isKeyboard && !device.isPointer ? "keyboard" : device.isKeyboard ? "keyboard.badge.ellipsis" : "computermouse")
+                    Image(systemName: isMouse ? "computermouse" : device.isPointer ? "keyboard.badge.ellipsis" : "keyboard")
                         .font(.title2)
-                        .foregroundStyle(device.isKeyboard ? Brand.violet : Brand.mint)
+                        .foregroundStyle(isMouse ? Brand.mint : Brand.violet)
                         .frame(width: 32)
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
@@ -64,7 +64,7 @@ private struct DeviceCard: View {
                     .help(String(localized: "Copy device ID"))
                     .accessibilityLabel(String(localized: "Copy device ID"))
                 }
-                if device.isKeyboard {
+                if device.isKeyboard && !isMouse {
                     Button(String(localized: "Create a Rule for This Keyboard")) {
                         var draft = RuleDraft()
                         draft.devices = [device.id.description]
@@ -76,8 +76,11 @@ private struct DeviceCard: View {
         }
     }
 
+    private var isMouse: Bool { device.looksLikeMouse }
+
     private var kinds: String {
-        [device.isKeyboard ? String(localized: "Keyboard") : nil, device.isPointer ? String(localized: "Pointing device") : nil]
+        if isMouse { return String(localized: "Mouse") }
+        return [device.isKeyboard ? String(localized: "Keyboard") : nil, device.isPointer ? String(localized: "Pointing device") : nil]
             .compactMap { $0 }.joined(separator: ", ")
     }
 

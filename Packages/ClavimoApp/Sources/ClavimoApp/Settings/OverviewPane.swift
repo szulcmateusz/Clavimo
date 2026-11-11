@@ -86,9 +86,9 @@ struct OverviewPane: View {
     }
 
     private var deviceDetail: String {
-        let keyboards = devices.filter(\.isKeyboard).count
-        let pointers = devices.filter(\.isPointer).count
-        return String(localized: "\(keyboards) keyboards, \(pointers) pointing devices")
+        let mice = devices.filter(\.looksLikeMouse).count
+        let keyboards = devices.filter { $0.isKeyboard && !$0.looksLikeMouse }.count
+        return String(localized: "\(keyboards) keyboards, \(mice) mice")
     }
 
     private var wheel: RuleDraft? { editor.rows.first { $0.draft?.kind == .wheel && $0.enabled }?.draft }
@@ -166,7 +166,7 @@ struct StatCard: View {
                 VStack(alignment: .leading, spacing: Spacing.xs) {
                     Label(title, systemImage: symbol).font(.callout).foregroundStyle(.secondary)
                     Text(value).font(.system(.title, design: .rounded).weight(.semibold))
-                    Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(2)
+                    Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(2, reservesSpace: true)
                 }
             }
         }
