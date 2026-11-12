@@ -15,11 +15,15 @@ final class CompassPanel {
         hosting?.rootView = view
         let size = CGSize(width: CompassView.size, height: CompassView.size)
         let screen = NSScreen.screens.first { $0.frame.contains(point) } ?? NSScreen.main
-        var frame = CGRect(x: point.x - size.width / 2, y: point.y - size.height / 2, width: size.width, height: size.height)
+        // The window is larger than the ring so its glow fades out inside it;
+        // only the ring itself has to stay on screen.
+        var centre = point
         if let visible = screen?.visibleFrame {
-            frame.origin.x = min(max(frame.minX, visible.minX), visible.maxX - size.width)
-            frame.origin.y = min(max(frame.minY, visible.minY), visible.maxY - size.height)
+            let half = CompassView.outer + 6
+            centre.x = min(max(centre.x, visible.minX + half), visible.maxX - half)
+            centre.y = min(max(centre.y, visible.minY + half), visible.maxY - half)
         }
+        let frame = CGRect(x: centre.x - size.width / 2, y: centre.y - size.height / 2, width: size.width, height: size.height)
         panel.setFrame(frame, display: true)
         if !panel.isVisible {
             let reduce = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
@@ -49,6 +53,8 @@ final class CompassPanel {
         panel.backgroundColor = .clear
         panel.hasShadow = false
         let hosting = NSHostingView(rootView: view)
+        hosting.wantsLayer = true
+        hosting.layer?.backgroundColor = .clear
         panel.contentView = hosting
         self.hosting = hosting
         self.panel = panel
@@ -74,7 +80,8 @@ struct CompassView: View {
         var held: Bool
     }
 
-    static let size: CGFloat = 420
+    /// Room around the ring for its shadow and glow to fade out completely.
+    static let size: CGFloat = 560
     static let outer: CGFloat = 172
     static let inner: CGFloat = 70
     /// Where icons and labels sit, between the inner and outer edge.
@@ -116,8 +123,8 @@ struct CompassView: View {
                                              startPoint: .top, endPoint: .bottom), lineWidth: 1)
         }
         .frame(width: Self.outer * 2, height: Self.outer * 2)
-        .shadow(color: .black.opacity(0.45), radius: 30, y: 12)
-        .shadow(color: Brand.violet.opacity(0.25), radius: 40)
+        .shadow(color: .black.opacity(0.4), radius: 24, y: 10)
+        .shadow(color: Brand.violet.opacity(0.22), radius: 30)
     }
 
     @ViewBuilder
@@ -137,6 +144,7 @@ struct CompassView: View {
                     Text(tile.title)
                         .font(.system(size: 10.5, weight: .semibold))
                         .lineLimit(2)
+                        .minimumScaleFactor(0.75)
                         .multilineTextAlignment(.center)
                         .frame(width: 76)
                         .opacity(isOn ? 1 : 0.82)

@@ -52,7 +52,7 @@ enum ScreenshotRenderer {
                     let model = CompassView.Model(title: main.name, appName: nil,
                                                   tiles: main.slots(forApp: nil).mapValues { controller.tile(for: $0) },
                                                   highlighted: .right, held: true)
-                    try render(CompassView(model: model).padding(10).background(Brand.heroGradient), size: NSSize(width: 440, height: 440), appearance: appearance,
+                    try render(CompassView(model: model).padding(10).background(Brand.heroGradient), size: NSSize(width: 580, height: 580), appearance: appearance,
                                to: outputDirectory.appendingPathComponent("compass-panel-\(suffix).png"))
                 }
                 if let draft = editor.rows.first(where: { $0.draft?.kind == .trackpadGesture && $0.draft?.gesture == .swipe })?.draft {
