@@ -19,8 +19,8 @@ struct KeyboardPane: View {
         let draft: KeyboardRuleDraft
     }
 
-    static let capsLockRuleID = "keyboard-caps-lock"
-    static let homeRowPrefix = "keyboard-home-row-"
+    nonisolated static let capsLockRuleID = "keyboard-caps-lock"
+    nonisolated static let homeRowPrefix = "keyboard-home-row-"
 
     var body: some View {
         ScrollView {
@@ -211,8 +211,8 @@ struct KeyboardPane: View {
     }
 
     /// A S D F and ; L K J, from the little finger inwards.
-    static let leftHomeRow: [UInt16] = [0x00, 0x01, 0x02, 0x03]
-    static let rightHomeRow: [UInt16] = [0x29, 0x25, 0x28, 0x26]
+    nonisolated static let leftHomeRow: [UInt16] = [0x00, 0x01, 0x02, 0x03]
+    nonisolated static let rightHomeRow: [UInt16] = [0x29, 0x25, 0x28, 0x26]
 
     private var homeRowRows: [ConfigEditor.Row] { editor.rows.filter { $0.id.hasPrefix(Self.homeRowPrefix) } }
 
