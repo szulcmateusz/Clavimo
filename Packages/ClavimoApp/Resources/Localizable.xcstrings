@@ -6957,6 +6957,22 @@
         }
       }
     },
+    "Move towards an action": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beweg dich zu einer Aktion"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesuń w stronę akcji"
+          }
+        }
+      }
+    },
     "Music and volume": {
       "localizations": {
         "de": {

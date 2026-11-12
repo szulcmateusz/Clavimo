@@ -21,7 +21,19 @@ final class CompassPanel {
             frame.origin.y = min(max(frame.minY, visible.minY), visible.maxY - size.height)
         }
         panel.setFrame(frame, display: true)
-        panel.orderFrontRegardless()
+        if !panel.isVisible {
+            let reduce = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+            panel.alphaValue = reduce ? 1 : 0
+            panel.orderFrontRegardless()
+            if !reduce {
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.12
+                    panel.animator().alphaValue = 1
+                }
+            }
+        } else {
+            panel.orderFrontRegardless()
+        }
     }
 
     func hide() {
@@ -44,8 +56,9 @@ final class CompassPanel {
     }
 }
 
-/// Eight tiles around a quiet centre. The highlighted tile is what a
-/// release, a click or Return runs; numbers pick a tile directly.
+/// A dark glass ring of eight segments around a quiet centre. The
+/// highlighted segment is what a release, a click or Return runs; its name
+/// is shown large in the middle. Numbers pick a segment directly.
 struct CompassView: View {
     struct Tile: Hashable {
         var title: String
@@ -61,89 +74,129 @@ struct CompassView: View {
         var held: Bool
     }
 
-    static let size: CGFloat = 460
-    /// Far enough apart that diagonal neighbours never overlap.
-    static let radius: CGFloat = 156
+    static let size: CGFloat = 420
+    static let outer: CGFloat = 172
+    static let inner: CGFloat = 70
+    /// Where icons and labels sit, between the inner and outer edge.
+    static let labelRadius: CGFloat = 122
 
     let model: Model
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Violet near the centre, turning mint towards the rim, like the logo.
+    private var accent: RadialGradient {
+        RadialGradient(colors: [Color(red: 0.43, green: 0.33, blue: 0.93), Brand.violet, Brand.mint.opacity(0.95)],
+                       center: .center, startRadius: Self.inner, endRadius: Self.outer)
+    }
+
     var body: some View {
         ZStack {
-            Circle()
-                .fill(.ultraThinMaterial)
-                .overlay(Circle().strokeBorder(.white.opacity(0.12)))
-                .frame(width: Self.radius * 2 + 120, height: Self.radius * 2 + 120)
-                .shadow(color: .black.opacity(0.35), radius: 24, y: 8)
-            centre
+            base
             ForEach(CompassDirection.allCases, id: \.self) { direction in
-                slot(direction)
-                    .offset(offset(for: direction))
+                segment(direction)
             }
+            centre
         }
         .frame(width: Self.size, height: Self.size)
-        .animation(reduceMotion ? nil : .spring(response: 0.18, dampingFraction: 0.8), value: model.highlighted)
+        .environment(\.colorScheme, .dark)
+        .animation(reduceMotion ? nil : .spring(response: 0.22, dampingFraction: 0.78), value: model.highlighted)
         .accessibilityElement(children: .contain)
         .accessibilityLabel(model.title)
     }
 
-    private var centre: some View {
-        VStack(spacing: 3) {
-            Image(systemName: "safari")
-                .font(.system(size: 18, weight: .semibold))
-                .rotationEffect(.degrees(model.highlighted.map { 90 - $0.degrees } ?? 0))
-                .foregroundStyle(model.highlighted == nil ? .secondary : Color.accentColor)
-            Text(model.title).font(.caption.weight(.semibold)).lineLimit(1)
-            if let appName = model.appName {
-                Text(appName).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
-            }
-            if model.tiles.isEmpty {
-                Text(String(localized: "No actions yet. Add them in Settings > Compass."))
-                    .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            } else if !model.held {
-                Text(String(localized: "Click, number or Esc"))
-                    .font(.caption2).foregroundStyle(.tertiary)
-            }
+    private var base: some View {
+        ZStack {
+            Circle()
+                .fill(.ultraThinMaterial)
+            Circle()
+                .fill(RadialGradient(colors: [Brand.nightTop.opacity(0.92), Brand.nightBottom.opacity(0.96)],
+                                     center: .center, startRadius: Self.inner, endRadius: Self.outer))
+            Circle()
+                .strokeBorder(LinearGradient(colors: [.white.opacity(0.28), .white.opacity(0.04)],
+                                             startPoint: .top, endPoint: .bottom), lineWidth: 1)
         }
-        .frame(width: 112)
-        .padding(10)
-        .background(Circle().fill(.black.opacity(0.18)))
+        .frame(width: Self.outer * 2, height: Self.outer * 2)
+        .shadow(color: .black.opacity(0.45), radius: 30, y: 12)
+        .shadow(color: Brand.violet.opacity(0.25), radius: 40)
     }
 
     @ViewBuilder
-    private func slot(_ direction: CompassDirection) -> some View {
-        if let tile = model.tiles[direction] {
-            let isOn = model.highlighted == direction
-            VStack(spacing: 4) {
-                ZStack(alignment: .topTrailing) {
+    private func segment(_ direction: CompassDirection) -> some View {
+        let tile = model.tiles[direction]
+        let isOn = model.highlighted == direction && tile != nil
+        let shape = RingSector(centre: direction.degrees, inner: Self.inner + 6, outer: Self.outer - 6)
+        ZStack {
+            shape
+                .fill(isOn ? AnyShapeStyle(accent) : AnyShapeStyle(Color.white.opacity(tile == nil ? 0.015 : 0.055)))
+                .overlay(shape.stroke(Color.white.opacity(isOn ? 0.45 : 0.07), lineWidth: 1))
+                .shadow(color: isOn ? Brand.violet.opacity(0.75) : .clear, radius: 16)
+            if let tile {
+                VStack(spacing: 5) {
                     icon(tile)
-                        .frame(width: 34, height: 34)
-                    Text(verbatim: "\(direction.number)")
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .padding(3)
-                        .background(Circle().fill(.background.opacity(0.8)))
-                        .offset(x: 10, y: -8)
+                        .frame(width: 26, height: 26)
+                    Text(tile.title)
+                        .font(.system(size: 10.5, weight: .semibold))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .frame(width: 76)
+                        .opacity(isOn ? 1 : 0.82)
                 }
-                Text(tile.title)
-                    .font(.caption.weight(.medium))
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-                    .frame(width: 88)
+                .foregroundStyle(.white)
+                .offset(offset(direction, radius: Self.labelRadius))
+                Text(verbatim: "\(direction.number)")
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white.opacity(isOn ? 0.85 : 0.35))
+                    .offset(offset(direction, radius: Self.outer - 16, turn: -16))
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(isOn ? Color.accentColor.opacity(0.85) : Color.primary.opacity(0.07))
-            )
-            .foregroundStyle(isOn ? Color.white : Color.primary)
-            .scaleEffect(isOn && !reduceMotion ? 1.12 : 1)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(tile.title)
-            .accessibilityAddTraits(isOn ? .isSelected : [])
-        } else {
-            Circle().fill(Color.primary.opacity(0.12)).frame(width: 6, height: 6)
+        }
+        .scaleEffect(isOn && !reduceMotion ? 1.045 : 1)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(verbatim: tile.map { "\(direction.number): \($0.title)" } ?? String()))
+        .accessibilityHidden(tile == nil)
+        .accessibilityAddTraits(isOn ? .isSelected : [])
+    }
+
+    private var centre: some View {
+        let highlighted = model.highlighted.flatMap { model.tiles[$0] }
+        return ZStack {
+            Circle()
+                .fill(Color.black.opacity(0.42))
+                .overlay(Circle().strokeBorder(Color.white.opacity(0.1), lineWidth: 1))
+                .frame(width: (Self.inner - 4) * 2, height: (Self.inner - 4) * 2)
+            if let direction = model.highlighted, highlighted != nil {
+                Needle()
+                    .fill(Brand.mint)
+                    .frame(width: 12, height: 8)
+                    .rotationEffect(.degrees(90 - direction.degrees))
+                    .offset(offset(direction, radius: Self.inner - 1))
+                    .shadow(color: Brand.mint.opacity(0.8), radius: 6)
+            }
+            VStack(spacing: 3) {
+                Text(model.appName.map { "\(model.title) · \($0)" } ?? model.title)
+                    .font(.system(size: 9.5, weight: .semibold))
+                    .textCase(.uppercase)
+                    .tracking(0.6)
+                    .foregroundStyle(.white.opacity(0.5))
+                    .lineLimit(1)
+                if let highlighted {
+                    Text(highlighted.title)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                } else if model.tiles.isEmpty {
+                    Text(String(localized: "No actions yet. Add them in Settings > Compass."))
+                        .font(.system(size: 10))
+                        .foregroundStyle(.white.opacity(0.7))
+                        .multilineTextAlignment(.center)
+                } else {
+                    Text(model.held ? String(localized: "Move towards an action") : String(localized: "Click, number or Esc"))
+                        .font(.system(size: 10.5, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.65))
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .frame(width: (Self.inner - 14) * 2)
         }
     }
 
@@ -155,13 +208,47 @@ struct CompassView: View {
                 .interpolation(.high)
         } else {
             Image(systemName: tile.symbol)
-                .font(.system(size: 20, weight: .medium))
+                .font(.system(size: 19, weight: .medium))
         }
     }
 
-    private func offset(for direction: CompassDirection) -> CGSize {
-        let angle = direction.degrees * .pi / 180
+    /// `turn` moves the point along the ring, in degrees counterclockwise.
+    private func offset(_ direction: CompassDirection, radius: CGFloat, turn: Double = 0) -> CGSize {
+        let angle = (direction.degrees + turn) * .pi / 180
         // SwiftUI's y grows downwards.
-        return CGSize(width: cos(angle) * Self.radius, height: -sin(angle) * Self.radius)
+        return CGSize(width: cos(angle) * radius, height: -sin(angle) * radius)
+    }
+}
+
+/// One eighth of a ring, centred on a direction (degrees counterclockwise
+/// from the right, as in mathematics).
+struct RingSector: Shape {
+    var centre: Double
+    var inner: CGFloat
+    var outer: CGFloat
+    var gap: Double = 1.2
+
+    func path(in rect: CGRect) -> Path {
+        let c = CGPoint(x: rect.midX, y: rect.midY)
+        // Screen angles grow clockwise because y points down.
+        let start = Angle.degrees(-(centre + 22.5 - gap))
+        let end = Angle.degrees(-(centre - 22.5 + gap))
+        var path = Path()
+        path.addArc(center: c, radius: outer, startAngle: start, endAngle: end, clockwise: false)
+        path.addArc(center: c, radius: inner, startAngle: end, endAngle: start, clockwise: true)
+        path.closeSubpath()
+        return path
+    }
+}
+
+/// A small triangle pointing up, rotated towards the highlighted segment.
+struct Needle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.closeSubpath()
+        return path
     }
 }
