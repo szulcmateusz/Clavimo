@@ -10,6 +10,10 @@ All notable changes to this project are documented in this file. The format is b
 
 - Paste Rules, in Rules and in General > Backup and Import: paste rules an AI assistant wrote, or any Clavimo rules in JSON, without saving a file. One long JSON or several separate rules pasted one after another are accepted (a whole configuration, lists of rules or single rules), also inside Markdown code blocks; missing IDs, names and profiles are filled in, and every change is shown before it is applied.
 
+### Fixed
+
+- Only one copy of Clavimo runs at a time. Two copies each ran every rule, so a key or gesture could act twice; a second launch now quits and leaves the running copy in charge.
+
 ## [1.2.3] - 2026-11-12
 
 First public release of the 1.2 features below.
