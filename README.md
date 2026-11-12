@@ -22,6 +22,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Tap or hold any key: one output when tapped, another when held (home row modifiers, Space or Tab layers); taps on modifier keys alone (for example 英数/かな on Command) | Experimental | Misfire protection for typing: same-hand keys and fast typing always type the letter. |
 | Layers: keys that do something else while a layer key is held or switched on, with the active layer shown next to the menu bar icon | Experimental | |
 | Combos (keys pressed at the same moment), key sequences after a leader key with an on-screen list of next keys, one-shot modifiers | Experimental | A combo key is held back for up to 50 ms while typing. |
+| Modifiers tapped together (for example ⌘ + ⇧ pressed and released alone) as a trigger | Experimental | Shortcuts with the same modifiers keep working. |
 | Keyboard rules limited to a keyboard input source (layout) | Experimental | |
 | Modifier + mouse button (including Fn, and left or right click with explicit opt-in) | Experimental | Ordinary clicks are never affected. |
 | Letter key + mouse button, with a choice of how the letter is buffered | Experimental | The letter may be slightly delayed while typing; see [leader policies](docs/configuration.md#leader-policies-for-key--mouse-button). |

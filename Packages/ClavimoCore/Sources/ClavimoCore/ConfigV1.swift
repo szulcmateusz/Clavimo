@@ -746,6 +746,13 @@ extension ConfigDocument {
                           windowMilliseconds: rule.trigger["windowMs"]?.int ?? ComboRule.defaultWindowMilliseconds,
                           conditions: conditions)
 
+        case ("modifierTap", _):
+            let modifiers = try genericModifiers(rule.trigger["modifiers"])
+            guard ModifierTapRule.modifierCount.contains(modifiers.rawValue.nonzeroBitCount), !modifiers.contains(.function) else {
+                throw Unsupported(.invalidKeyBehavior("a modifier tap needs two to four modifiers, without Fn"))
+            }
+            return .modifierTap(id: rule.id, modifiers: modifiers, output: try keyOutput(rule.action), conditions: conditions)
+
         case ("keySequence", _):
             let keys = try (rule.trigger["keys"]?.array ?? []).map { try key($0) }
             guard SequenceRule.keyCount.contains(keys.count) else {

@@ -105,6 +105,7 @@ struct EnginePropertyTests {
             .trackpad(id: "tap3", trigger: .gesture(.tap(fingers: 3)), action: .openCompass("main")),
             .remap(from: .a, to: .g),
             .swap(.leftCommand, .leftOption),
+            .modifierTap(id: "cs", modifiers: [.command, .shift], output: .action(.openCompass("main"))),
         ],
     ]
 

@@ -9,6 +9,7 @@ All notable changes to this project are documented in this file. The format is b
 ### Added
 
 - Ready-made setups: two tested sets that switch on in one click and off again in one click. MacBook trackpad every day (a middle click and play or pause by tapping, volume with four fingers up or down) and Mouse with side buttons (an action compass, Space switching and the wheel direction). Each change has its own switch and explanation; Clavimo checks what is connected and which gestures macOS uses, recommends the setups that fit, leaves out any change that would clash with your own rules or a macOS gesture and says why, and offers Undo right after.
+- A new trigger: modifiers tapped together, for example ⌘ and ⇧ pressed and released without anything else. Shortcuts that use them keep working. The trackpad setup uses it to open the action compass on a laptop without a mouse, and the Compass pane offers it under Open with.
 - The welcome guide offers the setups that fit your hardware instead of single rules, and can be shown again from General.
 - The Overview recommends two setups for what is connected.
 

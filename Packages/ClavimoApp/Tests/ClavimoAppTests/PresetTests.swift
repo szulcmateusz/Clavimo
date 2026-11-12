@@ -115,7 +115,7 @@ struct PresetTests {
         #expect(mouse.document.rules.contains { $0.id == "mine" }, "the user's own rule stays")
     }
 
-    @Test func theCompassItemStepsAsideForAnExistingCompass() {
+    @Test func theCompassItemOpensTheCompassYouHave() {
         var document = Self.empty
         document.compasses = [ConfigDocument.Compass(id: "main", name: "Main", slots: [])]
         var trigger = RuleDraft()
@@ -125,9 +125,27 @@ struct PresetTests {
         trigger.action = .openCompass
         trigger.compassID = "main"
         document.rules.append(trigger.makeRule(id: "t", order: 0))
+        let outcome = PresetEngine.apply(Presets.trackpad, items: ["compass"], to: document, hardware: Self.everything)
+        #expect(outcome.applied == ["compass"])
+        #expect(outcome.document.compasses?.map(\.id) == ["main"], "no second compass")
+        let tap = outcome.document.rules.last
+        #expect(tap?.trigger["kind"]?.string == "modifierTap")
+        #expect(tap?.action["compassId"]?.string == "main")
+        // Switching the setup off removes the tap and keeps your compass.
+        #expect(PresetEngine.remove(Presets.trackpad, from: outcome.document) == document)
+    }
+
+    @Test func aTriggerYouAlreadyUseIsLeftOut() {
+        var document = Self.empty
+        var mine = RuleDraft()
+        mine.kind = .modifierClick
+        mine.modifiers = [.command]
+        mine.button = 4
+        mine.action = .missionControl
+        document.rules.append(mine.makeRule(id: "mine", order: 0))
         let outcome = PresetEngine.apply(Presets.mouse, items: ["compass"], to: document, hardware: Self.everything)
-        #expect(outcome.applied.isEmpty)
-        #expect(outcome.skipped.first?.reason.isEmpty == false)
+        #expect(outcome.skipped.map(\.item) == ["compass"])
+        #expect(outcome.document == document)
     }
 
     @Test func rulesGoToTheActiveProfile() throws {

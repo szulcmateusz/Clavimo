@@ -43,7 +43,7 @@ enum PresetEngine {
 
     static func apply(_ preset: Preset, items chosen: Set<String>, to document: ConfigDocument, hardware: Hardware) -> Outcome {
         var outcome = Outcome(document: document)
-        let context = PresetContext(hardware: hardware, profileID: document.activeProfileId)
+        var context = PresetContext(hardware: hardware, profileID: document.activeProfileId)
         let already = appliedItems(preset, in: document)
         for item in preset.items where chosen.contains(item.id) {
             if already.contains(item.id) {
@@ -55,6 +55,7 @@ enum PresetEngine {
                 continue
             }
             var candidate = outcome.document
+            context.document = candidate
             if let reason = add(item.changes(context), preset: preset.id, item: item.id, to: &candidate) {
                 outcome.skipped.append(Skipped(item: item.id, reason: reason))
                 continue

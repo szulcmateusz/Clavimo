@@ -175,6 +175,14 @@ public struct InputEngine: Sendable {
     /// Set while held-back events are replayed after a combo did not form.
     private var suppressCombos = false
     private var compass: CompassSession?
+    /// Modifier keys pressed since all modifiers were up, for modifier taps.
+    private struct ModifierTapState: Sendable {
+        var peak: GenericModifiers
+        let start: UInt64
+        /// Another key, a click or Fn came in between: not a tap.
+        var spoiled: Bool
+    }
+    private var modifierTap: ModifierTapState?
     /// The physical key whose tap output is being produced, if any.
     private var tappingKey: KeyCode?
     /// The time of the latest event, deadline or gesture.
@@ -330,6 +338,7 @@ public struct InputEngine: Sendable {
         pendingDoubleTap = nil
         sequence = nil
         aloneCandidate = nil
+        modifierTap = nil
         oneShot = []
         oneShotDeadline = nil
         oneShotHolders.removeAll()
@@ -358,6 +367,13 @@ public struct InputEngine: Sendable {
     /// Routes one event, after any pending decision had a chance to take it.
     private mutating func process(_ event: InputEvent, into output: inout EngineOutput) {
         if compass != nil, takenByCompass(event, into: &output) { return }
+        if modifierTap != nil {
+            switch event.kind {
+            case let .key(code, isDown, _) where isDown && code.modifierKey == nil: modifierTap?.spoiled = true
+            case .mouseButton(_, true): modifierTap?.spoiled = true
+            default: break
+            }
+        }
         switch event.kind {
         case let .key(code, isDown, isRepeat):
             if isDown, !isRepeat, let pending = pendingDoubleTap, pending.key != code || !isDoubleTapPress(code) {
@@ -487,6 +503,8 @@ public struct InputEngine: Sendable {
         device: DeviceID?,
         into output: inout EngineOutput
     ) {
+        let physicalBefore = physicalModifiers
+        defer { trackModifierTap(isDown: isDown, before: physicalBefore, after: physical, time: time, into: &output) }
         // A modifier change while a letter leader is buffered would make
         // the buffered key's flags ambiguous; deliver the leader first.
         if let pending = leader, !pending.chorded {
@@ -535,6 +553,35 @@ public struct InputEngine: Sendable {
         if let tapAlone {
             tapOnce(tapAlone, key: code, time: time, into: &output)
         }
+    }
+
+    /// Modifier taps: the set of modifiers held at most since all were up,
+    /// released within the time limit with nothing else pressed meanwhile.
+    private mutating func trackModifierTap(isDown: Bool, before: ModifierSet, after: ModifierSet, time: UInt64,
+                                           into output: inout EngineOutput) {
+        guard !rules.modifierTaps.isEmpty else {
+            modifierTap = nil
+            return
+        }
+        let held = after.subtracting(.function).generic
+        if isDown {
+            if var state = modifierTap {
+                state.peak.formUnion(held)
+                if after.contains(.function) { state.spoiled = true }
+                modifierTap = state
+            } else {
+                // Starting while another modifier was already down (for
+                // example after a reset) is not a clean tap.
+                modifierTap = ModifierTapState(peak: held, start: time,
+                                               spoiled: !before.subtracting(.function).isEmpty || after.contains(.function))
+            }
+            return
+        }
+        guard held.isEmpty, let state = modifierTap else { return }
+        modifierTap = nil
+        guard !state.spoiled, time &- state.start <= UInt64(ModifierTapRule.maxMilliseconds) * 1_000_000,
+              let rule = rules.modifierTaps.first(where: { $0.modifiers == state.peak && matches($0.conditions) }) else { return }
+        tapOnce(rule.output, time: time, into: &output)
     }
 
     /// Logical modifiers = physical modifiers, minus physical modifier keys
@@ -1133,6 +1180,7 @@ public struct InputEngine: Sendable {
     /// `time` is when it was recognized, for deadlines it starts.
     public mutating func handleGesture(_ gesture: GestureEvent, at point: TrackpadPoint? = nil, time: UInt64? = nil) -> EngineOutput {
         var output = EngineOutput()
+        modifierTap?.spoiled = true
         if let time { now = time }
         let modifiers = physicalModifiers.union(heldModifiers).union(oneShot)
         if let rule = rules.trackpadRule(for: .gesture(gesture), modifiers: modifiers.generic, app: frontmostApp, at: point) {

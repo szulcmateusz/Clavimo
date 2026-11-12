@@ -70,7 +70,9 @@ public final class EventTapController: @unchecked Sendable {
     /// part of the mask.
     public static func eventMask(for rules: CompiledRules) -> CGEventMask {
         var result = baseEventMask
-        if rules.observesProtectedButtons || rules.observesTrackpadClicks || rules.usesCompass {
+        // A click between the modifiers of a modifier tap means it was a
+        // click with modifiers, not a tap, so taps need clicks too.
+        if rules.observesProtectedButtons || rules.observesTrackpadClicks || rules.usesCompass || !rules.modifierTaps.isEmpty {
             result |= mask(of: [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp])
         }
         if rules.observesScrollWheel || rules.observesRotation {

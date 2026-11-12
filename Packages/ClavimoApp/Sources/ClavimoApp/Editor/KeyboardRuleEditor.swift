@@ -72,6 +72,9 @@ struct KeyboardRuleEditor: View {
                     Stepper(String(localized: "Press together within \(draft.windowMilliseconds) ms"),
                             value: $draft.windowMilliseconds, in: ComboRule.windowRange, step: 10)
                 }
+            case .modifierTap:
+                ModifierToggles(title: String(localized: "Tap together"), selection: $draft.tapModifiers,
+                                choices: [.control, .option, .shift, .command])
             }
         } header: {
             Text(String(localized: "When"))
@@ -92,6 +95,8 @@ struct KeyboardRuleEditor: View {
             String(localized: "Pressing the keys at the same moment does something else. Each key is held back for this long while you type, so keep it short.")
         case .sequence:
             String(localized: "After the leader key, type these keys one after another. A panel shows the keys that can come next; Esc cancels.")
+        case .modifierTap:
+            String(localized: "Press these modifiers together and let go without pressing anything else. Shortcuts that use them, such as ⇧⌘4, keep working, and so does holding them.")
         }
     }
 

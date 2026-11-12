@@ -504,6 +504,23 @@
               }
             }
           }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "modifiers"
+          ],
+          "description": "Two to four modifiers pressed together and released without any other key or click, within 600 ms. The modifiers still reach apps as usual.",
+          "properties": {
+            "kind": {
+              "const": "modifierTap"
+            },
+            "modifiers": {
+              "$ref": "#/$defs/mods"
+            }
+          }
         }
       ]
     },

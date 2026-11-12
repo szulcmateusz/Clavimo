@@ -147,6 +147,8 @@ public enum RuleDefinition: Equatable, Sendable {
                windowMilliseconds: Int = ComboRule.defaultWindowMilliseconds, conditions: RuleConditions = .always)
     /// Keys typed one after another after a leader key.
     case sequence(id: String, keys: [KeyCode], output: KeyOutput, conditions: RuleConditions = .always)
+    /// Modifier keys tapped together, with nothing else pressed meanwhile.
+    case modifierTap(id: String, modifiers: GenericModifiers, output: KeyOutput, conditions: RuleConditions = .always)
 }
 
 /// What a trackpad rule reacts to.
@@ -199,6 +201,8 @@ extension RuleDefinition {
             ["combo:\(keys.map(\.rawValue).sorted()):\(conditions.signature)"]
         case let .sequence(_, keys, _, conditions):
             ["sequence:\(keys.map(\.rawValue)):\(conditions.signature)"]
+        case let .modifierTap(_, modifiers, _, conditions):
+            ["modifierTap:\(modifiers.rawValue):\(conditions.signature)"]
         }
     }
 }
@@ -211,7 +215,7 @@ extension RuleDefinition {
         switch self {
         case let .mouseChord(_, _, _, action, _, _, _), let .trackpad(_, _, _, action, _, _, _): actions.append(action)
         case let .keyOutput(_, _, output, _), let .layerKey(_, _, _, output, _), let .combo(_, _, output, _, _),
-             let .sequence(_, _, output, _):
+             let .sequence(_, _, output, _), let .modifierTap(_, _, output, _):
             outputs.append(output)
         case let .tapHold(_, _, tap, hold, doubleTap, _, _): outputs += [tap, hold] + (doubleTap.map { [$0] } ?? [])
         case .remap, .swap, .wheel, .trackpadScroll: break
@@ -294,6 +298,9 @@ public enum RuleValidationError: Error, Equatable, Sendable {
     case sequenceWithoutLeader(id: String)
     /// Modifier keys and Fn cannot be part of a combo, a sequence or a layer.
     case modifierKeyNotAllowed(KeyCode, id: String)
+    /// A modifier tap needs two to four modifiers, without Fn, and only one
+    /// rule per set of modifiers.
+    case invalidModifierTap(id: String)
 }
 
 public struct ContinuousScrollRule: Equatable, Sendable {
@@ -346,6 +353,8 @@ public struct CompiledRules: Equatable, Sendable {
     public let combos: [ComboRule]
     public let comboKeys: Set<KeyCode>
     public let sequences: [SequenceRule]
+    /// Modifier taps, most specific conditions first.
+    public let modifierTaps: [ModifierTapRule]
     /// Whether any rule reacts to Caps Lock, which needs it moved to
     /// `KeyCode.capsLockProxy` at the HID level while rules are active.
     public let usesCapsLock: Bool
@@ -361,6 +370,7 @@ public struct CompiledRules: Equatable, Sendable {
         layerBindings: [String: [KeyCode: [LayerBinding]]] = [:],
         combos: [ComboRule] = [],
         sequences: [SequenceRule] = [],
+        modifierTaps: [ModifierTapRule] = [],
         usesCapsLock: Bool = false
     ) {
         self.trackpadScroll = trackpadScroll
@@ -369,6 +379,7 @@ public struct CompiledRules: Equatable, Sendable {
         self.combos = combos
         comboKeys = Set(combos.flatMap(\.keys))
         self.sequences = sequences
+        self.modifierTaps = modifierTaps
         self.usesCapsLock = usesCapsLock
         self.remapCandidates = remapCandidates
         self.chordsByButton = chordsByButton
@@ -382,6 +393,7 @@ public struct CompiledRules: Equatable, Sendable {
     public var isEmpty: Bool {
         remapCandidates.isEmpty && chordsByButton.isEmpty && wheelSettings.isEmpty && trackpadRules.isEmpty
             && trackpadScroll.isEmpty && keyBindings.isEmpty && layerBindings.isEmpty && combos.isEmpty && sequences.isEmpty
+            && modifierTaps.isEmpty
     }
 
     /// Whether any rule depends on the keyboard input source.
@@ -447,7 +459,7 @@ public struct CompiledRules: Equatable, Sendable {
     public var openedCompasses: Set<String> {
         var actions: [ActionCommand] = chordsByButton.values.flatMap { $0.map(\.action) }
             + trackpadRules.values.flatMap { $0.map(\.action) }
-        var outputs: [KeyOutput] = combos.map(\.output) + sequences.map(\.output)
+        var outputs: [KeyOutput] = combos.map(\.output) + sequences.map(\.output) + modifierTaps.map(\.output)
         for binding in keyBindings.values.flatMap({ $0 }) {
             switch binding.behavior {
             case let .output(_, output): outputs.append(output)
@@ -520,6 +532,7 @@ public struct CompiledRules: Equatable, Sendable {
         var layers: [String: [KeyCode: [(LayerBinding, Int)]]] = [:]
         var combos: [ComboRule] = []
         var sequences: [SequenceRule] = []
+        var modifierTaps: [(ModifierTapRule, Int)] = []
         var activatedLayers: Set<String> = []
         var startsSequence = false
         var usesCapsLock = false
@@ -725,6 +738,20 @@ public struct CompiledRules: Equatable, Sendable {
                 } else if keys.contains(.escape) {
                     errors.append(.invalidSequence(id: id))
                 }
+            case let .modifierTap(id, modifiers, output, conditions):
+                claim(id)
+                // Modifiers and layers last while a key is held; a tap has none.
+                let tapOutput: Bool = switch output {
+                case .modifiers, .layer: false
+                default: true
+                }
+                if !ModifierTapRule.modifierCount.contains(modifiers.rawValue.nonzeroBitCount)
+                    || modifiers.contains(.function) || !tapOutput
+                    || modifierTaps.contains(where: { $0.0.modifiers == modifiers && $0.0.conditions == conditions }) {
+                    errors.append(.invalidModifierTap(id: id))
+                } else if checkOutput(output, id: id) {
+                    modifierTaps.append((ModifierTapRule(id: id, modifiers: modifiers, output: output, conditions: conditions), order))
+                }
             case let .mouseChord(id, leader, button, action, priority, allowProtected, conditions):
                 if !seenIDs.insert(id).inserted {
                     errors.append(.duplicateRuleID(id))
@@ -840,6 +867,7 @@ public struct CompiledRules: Equatable, Sendable {
             layerBindings: layers.mapValues { $0.mapValues { bySpecificity($0) { $0.conditions } } },
             combos: combos.sorted { $0.keys.count > $1.keys.count },
             sequences: sequences,
+            modifierTaps: bySpecificity(modifierTaps) { $0.conditions },
             usesCapsLock: usesCapsLock
         ))
     }

@@ -359,3 +359,89 @@ struct CompassConfigTests {
         #expect(!String(decoding: try document.encoded(), as: UTF8.self).contains("compasses"))
     }
 }
+
+@Suite("Modifier taps")
+struct ModifierTapTests {
+    static let rules: [RuleDefinition] = [
+        .modifierTap(id: "cs", modifiers: [.command, .shift], output: .action(.openCompass("main"))),
+    ]
+
+    @Test func tappingTwoModifiersTogetherOpensThePanel() throws {
+        var h = try EngineHarness(Self.rules)
+        let command = h.down(.leftCommand)
+        #expect(command.items == [passThrough], "the modifiers still reach apps")
+        h.down(.leftShift)
+        h.advance(ms: 120)
+        #expect(h.up(.leftShift).compass.isEmpty, "only once every modifier is up")
+        let released = h.up(.leftCommand)
+        #expect(released.compass == [.open(id: "main", held: false)])
+        #expect(released.items == [passThrough])
+        // The same tap again closes it.
+        h.down(.rightShift)
+        h.down(.rightCommand)
+        h.up(.rightCommand)
+        #expect(h.up(.rightShift).compass == [.cancel], "either side counts")
+    }
+
+    @Test func aShortcutIsNotATap() throws {
+        var h = try EngineHarness(Self.rules)
+        h.down(.leftCommand)
+        h.down(.leftShift)
+        #expect(h.down(KeyCode(0x15)).items == [passThrough], "⇧⌘4 works as usual")
+        h.up(KeyCode(0x15))
+        h.up(.leftShift)
+        #expect(h.up(.leftCommand).compass.isEmpty)
+    }
+
+    @Test func aClickOrALongHoldIsNotATap() throws {
+        var h = try EngineHarness(Self.rules)
+        h.down(.leftCommand)
+        h.down(.leftShift)
+        h.press(.primary)
+        h.release(.primary)
+        h.up(.leftShift)
+        #expect(h.up(.leftCommand).compass.isEmpty, "⇧⌘-click on a link")
+
+        h.down(.leftCommand)
+        h.down(.leftShift)
+        h.advance(ms: UInt64(ModifierTapRule.maxMilliseconds) + 50)
+        h.up(.leftShift)
+        #expect(h.up(.leftCommand).compass.isEmpty, "held while thinking")
+    }
+
+    @Test func onlyTheExactSetCounts() throws {
+        var h = try EngineHarness(Self.rules)
+        h.down(.leftCommand)
+        h.down(.leftShift)
+        h.down(.leftOption)
+        h.up(.leftOption)
+        h.up(.leftShift)
+        #expect(h.up(.leftCommand).compass.isEmpty, "⌘⌥⇧ is another set")
+        h.down(.leftCommand)
+        #expect(h.up(.leftCommand).compass.isEmpty, "⌘ alone")
+    }
+
+    @Test func badTapsAreRejected() {
+        for modifiers: GenericModifiers in [[.command], [.command, .function]] {
+            guard case let .failure(failure) = CompiledRules.compile([
+                .modifierTap(id: "x", modifiers: modifiers, output: .action(.missionControl)),
+            ]) else {
+                Issue.record("expected a failure for \(modifiers)")
+                continue
+            }
+            #expect(failure.errors == [.invalidModifierTap(id: "x")])
+        }
+        #expect((try? CompiledRules.compile([
+            .modifierTap(id: "x", modifiers: [.command, .shift], output: .modifiers(.hyper)),
+        ]).get()) == nil, "a tap cannot hold modifiers")
+    }
+
+    @Test func modifierTapsAreReadFromTheConfiguration() throws {
+        let json = ConfigTests.document(rules: ConfigTests.rule(
+            trigger: #"{"kind": "modifierTap", "modifiers": ["command", "shift"]}"#,
+            action: #"{"kind": "missionControl"}"#
+        ))
+        let config = try ConfigDocument.decode(Data(json.utf8)).interpret()
+        #expect(config.definitions == [.modifierTap(id: "r1", modifiers: [.command, .shift], output: .action(.missionControl))])
+    }
+}

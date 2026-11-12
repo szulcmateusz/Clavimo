@@ -137,6 +137,8 @@ enum Messages {
             return String(localized: "\(names): one sequence is the start of the other, so the longer one could never run.")
         case let .sequenceWithoutLeader(id):
             return String(localized: "\(rule(id)): no key starts a sequence. Add a leader key.")
+        case let .invalidModifierTap(id):
+            return String(localized: "\(rule(id)): tap two to four modifiers together, without Fn, and use each set only once. A tap cannot hold keys or modifiers.")
         case let .modifierKeyNotAllowed(code, id):
             return String(localized: "\(rule(id)): \(key(code)) is a modifier and cannot be used here.")
         }

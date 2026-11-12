@@ -41,6 +41,8 @@ struct PresetItem: Identifiable {
 struct PresetContext {
     let hardware: Hardware
     let profileID: String
+    /// The configuration the changes go into.
+    var document: ConfigDocument = ConfigDocument()
 }
 
 enum PresetChange {
@@ -84,6 +86,17 @@ enum Presets {
             symbol: "rectangle.and.hand.point.up.left",
             need: .trackpad,
             items: [
+                compassItem(
+                    preset: "trackpad", title: String(localized: "Action compass: tap ⌘ and ⇧ together"),
+                    detail: String(localized: "Press ⌘ and ⇧ together and let go: the compass opens at the pointer. Move a finger towards an action and click, or press 1 to 8. Shortcuts with ⌘ and ⇧ keep working.")
+                ) { compassID in
+                    var trigger = KeyboardRuleDraft(kind: .modifierTap)
+                    trigger.tapModifiers = [.command, .shift]
+                    trigger.output = OutputDraft.of(.compass)
+                    trigger.output.action.compassID = compassID
+                    trigger.name = String(localized: "⇧⌘ tapped: compass")
+                    return .keyboard(trigger, id: nil)
+                },
                 PresetItem(id: "middle", title: String(localized: "Three-finger tap: middle click"),
                            detail: String(localized: "Opens a link in a new tab, or closes a tab when you tap its title."),
                            unavailable: taken(.gesture(.tap(fingers: 3)))) { _ in
@@ -126,29 +139,18 @@ enum Presets {
             symbol: "computermouse",
             need: .mouse,
             items: [
-                PresetItem(
-                    id: "compass", title: String(localized: "Action compass under ⌘ + back button"),
-                    detail: String(localized: "Hold ⌘ and the back button, move towards an action and let go: Spaces, windows, a screenshot, and pages for browsers, code editors and Zoom."),
-                    unavailable: { _, document in
-                        let opened = (document.compasses ?? []).contains { compass in
-                            !compass.id.hasPrefix("preset-") && document.rules.contains { ConfigEditor.opens(compass.id, $0) }
-                        }
-                        return opened ? String(localized: "You already have a compass that opens with a trigger.") : nil
-                    }
-                ) { context in
-                    var compass = CompassDraft(id: PresetEngine.compassID("mouse", "compass"), name: String(localized: "Mouse"))
-                    for template in [CompassTemplates.everyday, CompassTemplates.browser, CompassTemplates.codeEditor, CompassTemplates.meetings] {
-                        template.apply(to: &compass)
-                    }
+                compassItem(
+                    preset: "mouse", title: String(localized: "Action compass under ⌘ + back button"),
+                    detail: String(localized: "Hold ⌘ and the back button, move towards an action and let go: Spaces, windows, a screenshot, and pages for browsers, code editors and Zoom.")
+                ) { compassID in
                     var trigger = RuleDraft()
                     trigger.kind = .modifierClick
                     trigger.modifiers = [.command]
                     trigger.button = 4
                     trigger.action = .openCompass
-                    trigger.compassID = compass.id
-                    trigger.profileID = context.profileID
+                    trigger.compassID = compassID
                     trigger.name = String(localized: "⌘ + back button: compass")
-                    return [.compass(compass), .rule(trigger)]
+                    return .rule(trigger)
                 },
                 PresetItem(id: "spaces", title: String(localized: "⌥ + side buttons: switch Spaces"),
                            detail: String(localized: "⌥ + back goes to the previous Space, ⌥ + forward to the next one.")) { context in
@@ -171,6 +173,26 @@ enum Presets {
                     : nil
             }
         )
+    }
+
+    /// A trigger for the action compass. It opens the compass you already
+    /// have; without one it brings a compass made from the templates.
+    static func compassItem(preset: String, title: String, detail: String,
+                            trigger: @escaping (String) -> PresetChange) -> PresetItem {
+        PresetItem(id: "compass", title: title, detail: detail) { context in
+            let document = context.document
+            if let existing = (document.compasses ?? []).first(where: { compass in
+                document.rules.contains { ConfigEditor.opens(compass.id, $0) }
+            }) ?? document.compasses?.first {
+                return [trigger(existing.id)]
+            }
+            let id = PresetEngine.compassID(preset, "compass")
+            var compass = CompassDraft(id: id, name: String(localized: "Main"))
+            for template in [CompassTemplates.everyday, CompassTemplates.browser, CompassTemplates.codeEditor, CompassTemplates.meetings] {
+                template.apply(to: &compass)
+            }
+            return [.compass(compass), trigger(id)]
+        }
     }
 
     /// Discrete wheel scrolling reversed, the way Windows and most PCs work.

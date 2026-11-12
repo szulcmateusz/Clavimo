@@ -316,6 +316,7 @@ struct CompassPane: View {
                         .foregroundStyle(.secondary)
                 }
                 HStack {
+                    Button(String(localized: "Tap ⌘ + ⇧…")) { newModifierTapTrigger(compass) }
                     Button(String(localized: "Hold a Key…")) { newKeyTrigger(compass) }
                     Button(String(localized: "Mouse Button…")) { newRuleTrigger(compass, kind: .modifierClick) }
                     Button(String(localized: "Trackpad Gesture…")) { newRuleTrigger(compass, kind: .trackpadGesture) }
@@ -439,6 +440,14 @@ struct CompassPane: View {
         var draft = KeyboardRuleDraft(kind: .keyOutput)
         draft.profileID = activeProfile
         draft.output = OutputDraft.of(.compass)
+        draft.output.action.compassID = compass.id
+        draft.name = String(localized: "Open \(compass.name)")
+        editingKey = KeyEditing(ruleID: nil, draft: draft)
+    }
+
+    private func newModifierTapTrigger(_ compass: CompassDraft) {
+        var draft = KeyboardRuleDraft(kind: .modifierTap)
+        draft.profileID = activeProfile
         draft.output.action.compassID = compass.id
         draft.name = String(localized: "Open \(compass.name)")
         editingKey = KeyEditing(ruleID: nil, draft: draft)

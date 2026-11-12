@@ -142,6 +142,21 @@ public struct ComboRule: Hashable, Sendable {
     public static let defaultWindowMilliseconds = 50
 }
 
+/// Modifier keys pressed together and released without anything else, such
+/// as ⌘ and ⇧ tapped at once. The modifiers still reach apps as usual; the
+/// output runs on release.
+public struct ModifierTapRule: Hashable, Sendable {
+    public let id: String
+    /// Generic modifiers: either side counts. Fn is not allowed.
+    public let modifiers: GenericModifiers
+    public let output: KeyOutput
+    public let conditions: RuleConditions
+
+    public static let modifierCount = 2...4
+    /// Held longer than this, the modifiers were not a tap.
+    public static let maxMilliseconds = 600
+}
+
 public struct SequenceRule: Hashable, Sendable {
     public let id: String
     public let keys: [KeyCode]

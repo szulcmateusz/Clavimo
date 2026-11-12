@@ -41,6 +41,7 @@ Every rule has `id`, `name`, `enabled`, `priority`, `profileId`, `trigger`, `con
 | Key on a layer | `layerKey` with `layerId` and `key` | any keyboard output | |
 | Keys pressed together | `keyCombo` with two or three `keys` | any keyboard output | |
 | Key sequence | `keySequence` with one to four `keys` | any keyboard output | Runs after a key with `startSequence`. |
+| Modifiers tapped together | `modifierTap` with two to four `modifiers`, e.g. `["command", "shift"]` | a keyboard output that happens once, or `openCompass` | Press them together and release within 600 ms without any other key or click. Either side counts; the modifiers still reach apps, so shortcuts that use them keep working. |
 | Modifier + mouse button | `modifierChord` with `requiredModifiers` and `mouseButton` | any action (below) | Modifiers: `control`, `option`, `shift`, `command`, `function`. The held set must match exactly. Buttons 1 and 2 require `behavior.allowProtectedButton: true`. |
 | Mouse button | `mouseButton` with `mouseButton` and optional `requiredModifiers` | any action | Buttons 3 and up can act alone; without modifiers the button no longer does its usual job. Buttons 1 and 2 need a modifier, like a modifier chord. |
 | Key + mouse button | `keyMouseChord` with `leaderKey`, `mouseButton`, `order: leaderThenMouse` | any action | Requires `behavior.leaderPolicy` (below). |

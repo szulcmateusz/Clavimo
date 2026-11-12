@@ -711,6 +711,22 @@
         }
       }
     },
+    "%@: tap two to four modifiers together, without Fn, and use each set only once. A tap cannot hold keys or modifiers.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: Tippe zwei bis vier Sondertasten zusammen, ohne Fn, und nutze jede Kombination nur einmal. Ein Tippen kann keine Tasten oder Sondertasten halten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: stuknij razem od dwóch do czterech modyfikatorów, bez Fn, i użyj każdego zestawu tylko raz. Stuknięcie nie może przytrzymywać klawiszy ani modyfikatorów."
+          }
+        }
+      }
+    },
     "%@: the %@ can only be combined with modifiers.": {
       "localizations": {
         "de": {
@@ -1387,6 +1403,22 @@
         }
       }
     },
+    "A tap cannot hold modifiers or a layer. Choose something that happens once.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Tippen kann keine Sondertasten oder Ebene halten. Wähle etwas, das einmal passiert."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie nie może przytrzymywać modyfikatorów ani warstwy. Wybierz coś, co dzieje się raz."
+          }
+        }
+      }
+    },
     "A two-finger tap is the macOS secondary click. Add a modifier, such as Fn.": {
       "localizations": {
         "de": {
@@ -1495,6 +1527,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kompas akcji pod ⌘ + przyciskiem Wstecz"
+          }
+        }
+      }
+    },
+    "Action compass: tap ⌘ and ⇧ together": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktionskompass: ⌘ und ⇧ zusammen tippen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas akcji: stuknij razem ⌘ i ⇧"
           }
         }
       }
@@ -2877,6 +2925,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wybierz dwa lub trzy różne klawisze."
+          }
+        }
+      }
+    },
+    "Choose two to four modifiers.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle zwei bis vier Sondertasten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz od dwóch do czterech modyfikatorów."
           }
         }
       }
@@ -7043,6 +7107,22 @@
         }
       }
     },
+    "Modifiers tapped together": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sondertasten zusammen tippen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie kilku modyfikatorów naraz"
+          }
+        }
+      }
+    },
     "More actions for %@": {
       "localizations": {
         "de": {
@@ -8927,6 +9007,22 @@
         }
       }
     },
+    "Press these modifiers together and let go without pressing anything else. Shortcuts that use them, such as ⇧⌘4, keep working, and so does holding them.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drück diese Sondertasten zusammen und lass los, ohne etwas anderes zu drücken. Kurzbefehle mit ihnen, etwa ⇧⌘4, funktionieren weiter, ebenso das Halten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij te modyfikatory razem i puść, nie naciskając nic więcej. Skróty, które ich używają, np. ⇧⌘4, działają dalej, tak samo jak ich przytrzymanie."
+          }
+        }
+      }
+    },
     "Press together within %lld ms": {
       "localizations": {
         "de": {
@@ -8939,6 +9035,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Naciśnij razem w ciągu %lld ms"
+          }
+        }
+      }
+    },
+    "Press ⌘ and ⇧ together and let go: the compass opens at the pointer. Move a finger towards an action and click, or press 1 to 8. Shortcuts with ⌘ and ⇧ keep working.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drück ⌘ und ⇧ zusammen und lass los: Der Kompass öffnet sich am Zeiger. Beweg einen Finger zu einer Aktion und klicke, oder drück 1 bis 8. Kurzbefehle mit ⌘ und ⇧ funktionieren weiter."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naciśnij razem ⌘ i ⇧ i puść: kompas otworzy się przy wskaźniku. Przesuń palec w stronę akcji i kliknij albo naciśnij 1–8. Skróty z ⌘ i ⇧ działają dalej."
           }
         }
       }
@@ -11533,6 +11645,22 @@
         }
       }
     },
+    "Tap together": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zusammen tippen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij razem"
+          }
+        }
+      }
+    },
     "Tap with %lld fingers": {
       "localizations": {
         "de": {
@@ -11545,6 +11673,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stuknięcie %lld palcami"
+          }
+        }
+      }
+    },
+    "Tap ⌘ + ⇧…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌘ + ⇧ tippen …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie ⌘ + ⇧…"
           }
         }
       }
@@ -13969,22 +14113,6 @@
         }
       }
     },
-    "You already have a compass that opens with a trigger.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Du hast bereits einen Kompass mit eigenem Auslöser."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Masz już kompas z własnym wyzwalaczem."
-          }
-        }
-      }
-    },
     "You already have a rule for the same keys or buttons.": {
       "localizations": {
         "de": {
@@ -14713,6 +14841,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "µs"
+          }
+        }
+      }
+    },
+    "⇧⌘ tapped: compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⇧⌘ getippt: Kompass"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie ⇧⌘: kompas"
           }
         }
       }

@@ -59,6 +59,7 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 30. **Compass pages and menus.** In Safari, an app page action replaces the default one and a hidden direction disappears; a direction that opens another compass shows it in the same place; a menu item action without a shortcut (for example File > New Tab) runs; the menu picker lists the menus of a running app.
 31. **Compass from an assistant.** A compass and the rule that opens it, pasted together from an assistant's answer, appear in the preview and work after applying.
 32. **Ready-made setups.** In Ready-made setups, the setups that fit the connected hardware are marked; switching one on adds exactly its listed changes, Undo restores the previous configuration, and Switch Off removes only what the setup added. A change that clashes with an existing rule or a macOS gesture (for example four-finger swipes kept by Mission Control) is left out with its reason. The welcome guide, shown again from General, offers the same setups.
+33. **Modifier tap.** With ⌘ + ⇧ tapped set to open the compass: tapping both alone opens it as a panel and tapping again closes it; ⇧⌘4, ⇧⌘-click on a link and holding ⌘ + ⇧ for a second do not open it.
 
 ### Results
 
@@ -71,7 +72,7 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 
 | 2026-11-11 | 27.2 (26B123) | MacBook Pro, Apple M1 Pro | Built-in Force Touch trackpad (family 105) | 18 (probe, 15 s) | 884 valid frames, none invalid; 96-byte records decode at the expected offsets; top right corner reads x 0.98, y 0.94, so y grows upwards; three fingers detected |
 
-Not yet verified: items 2 to 4, 6 to 17 and 19 to 32, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
+Not yet verified: items 2 to 4, 6 to 17 and 19 to 33, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
 
 ### Latency measurement
 

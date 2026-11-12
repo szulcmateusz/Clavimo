@@ -233,7 +233,7 @@ struct OutputDraft: Equatable {
 /// sequences.
 struct KeyboardRuleDraft: Equatable {
     enum Kind: String, CaseIterable, Identifiable {
-        case tapHold, keyOutput, layerKey, combo, sequence
+        case tapHold, keyOutput, layerKey, combo, sequence, modifierTap
         var id: String { rawValue }
 
         var title: String {
@@ -243,6 +243,7 @@ struct KeyboardRuleDraft: Equatable {
             case .layerKey: String(localized: "Key on a layer")
             case .combo: String(localized: "Keys pressed together")
             case .sequence: String(localized: "Key sequence")
+            case .modifierTap: String(localized: "Modifiers tapped together")
             }
         }
 
@@ -253,6 +254,7 @@ struct KeyboardRuleDraft: Equatable {
             case .layerKey: "square.3.layers.3d"
             case .combo: "rectangle.on.rectangle"
             case .sequence: "arrow.right.to.line"
+            case .modifierTap: "command"
             }
         }
     }
@@ -263,6 +265,8 @@ struct KeyboardRuleDraft: Equatable {
     var enabled = true
     var key: UInt16 = KeyCode.capsLock.rawValue
     var keys: [UInt16] = [0x26, 0x28]
+    /// For modifier taps: the modifiers tapped together.
+    var tapModifiers: Set<RuleDraft.Modifier> = [.command, .shift]
     var layer = "nav"
     /// The output; for tap-hold keys, the tap.
     var output = OutputDraft.key(KeyCode.escape.rawValue)
@@ -295,6 +299,8 @@ struct KeyboardRuleDraft: Equatable {
         case .sequence:
             keys = [0x1F] // O
             output = OutputDraft.of(.action)
+        case .modifierTap:
+            output = OutputDraft.of(.compass)
         case .tapHold:
             break
         }
@@ -326,7 +332,13 @@ struct KeyboardRuleDraft: Equatable {
         case .layerKey: String(localized: "\(KeyNames.name(for: key)) on layer \(layer)")
         case .combo: keysTitle
         case .sequence: keys.map { KeyNames.name(for: $0) }.joined(separator: " → ")
+        case .modifierTap: modifierTapTitle
         }
+    }
+
+    /// The tapped modifiers as symbols, e.g. "⇧⌘".
+    var modifierTapTitle: String {
+        RuleDraft.Modifier.allCases.filter { tapModifiers.contains($0) && $0 != .function }.map(\.symbol).joined()
     }
 
     var resultTitle: String {
@@ -377,6 +389,13 @@ struct KeyboardRuleDraft: Equatable {
             if keys.contains(where: { KeyCode($0).modifierKey != nil || KeyCode($0) == .function }) {
                 return String(localized: "Modifier keys cannot be part of a combo.")
             }
+        case .modifierTap:
+            if !ModifierTapRule.modifierCount.contains(tapModifiers.subtracting([.function]).count) {
+                return String(localized: "Choose two to four modifiers.")
+            }
+            if [.modifiers, .holdLayer].contains(output.kind) {
+                return String(localized: "A tap cannot hold modifiers or a layer. Choose something that happens once.")
+            }
         case .sequence:
             if !SequenceRule.keyCount.contains(keys.count) { return String(localized: "Choose one to four keys.") }
             if keys.contains(KeyCode.escape.rawValue) { return String(localized: "Escape cancels a sequence, so it cannot be part of one.") }
@@ -426,6 +445,9 @@ struct KeyboardRuleDraft: Equatable {
             trigger = .object(object)
         case .sequence:
             trigger = .object(["kind": .string("keySequence"), "keys": .array(keys.map(RuleDraft.key))])
+        case .modifierTap:
+            trigger = .object(["kind": .string("modifierTap"),
+                               "modifiers": RuleDraft.modifierNames(tapModifiers.subtracting([.function]))])
         }
         let conditions: [JSONValue] = onlyApps.map { .object(["kind": .string("appIs"), "bundleId": .string($0)]) }
             + exceptApps.map { .object(["kind": .string("appIsNot"), "bundleId": .string($0)]) }
@@ -508,6 +530,11 @@ struct KeyboardRuleDraft: Equatable {
             }
             oppositeHandsOnly = trigger["oppositeHandsOnly"] == .bool(true)
             typingStreakMilliseconds = trigger["typingStreakMs"]?.int ?? 0
+        case ("modifierTap", _):
+            guard let set = RuleDraft.modifierSet(trigger["modifiers"]), let parsed = OutputDraft(json: rule.action) else { return nil }
+            kind = .modifierTap
+            tapModifiers = set
+            output = parsed
         case ("layerKey", _):
             guard let code = RuleDraft.code(trigger["key"]), let name = trigger["layerId"]?.string,
                   let parsed = OutputDraft(json: rule.action) else { return nil }
