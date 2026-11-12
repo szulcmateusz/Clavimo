@@ -75,23 +75,19 @@ struct PresetTests {
         #expect(outcome.applied == ["play"])
     }
 
-    @Test func fourFingerVolumeOrTheKnob() {
-        let free = Self.everything
+    @Test func fourFingerVolumeNeedsFreeSwipes() {
         let swipe = Presets.trackpad.items.first { $0.id == "swipeVolume" }!
-        let knob = Presets.trackpad.items.first { $0.id == "volume" }!
-        #expect(swipe.unavailable(free, Self.empty) == nil)
-        #expect(!knob.defaultOn(free), "with four fingers free, the swipe sets the volume")
-        var busy = free
+        #expect(swipe.unavailable(Self.everything, Self.empty) == nil)
+        var busy = Self.everything
         busy.systemGestures = [.fourFingerVertical]
         #expect(swipe.unavailable(busy, Self.empty) != nil, "macOS opens Mission Control with four fingers")
-        #expect(knob.defaultOn(busy))
     }
 
     @Test func applyingTwiceAddsNothing() {
         let preset = Presets.trackpad
-        let first = PresetEngine.apply(preset, items: ["middle", "volume"], to: Self.empty, hardware: Self.everything)
-        #expect(PresetEngine.appliedItems(preset, in: first.document) == ["middle", "volume"])
-        let second = PresetEngine.apply(preset, items: ["middle", "volume"], to: first.document, hardware: Self.everything)
+        let first = PresetEngine.apply(preset, items: ["middle", "swipeVolume"], to: Self.empty, hardware: Self.everything)
+        #expect(PresetEngine.appliedItems(preset, in: first.document) == ["middle", "swipeVolume"])
+        let second = PresetEngine.apply(preset, items: ["middle", "swipeVolume"], to: first.document, hardware: Self.everything)
         #expect(second.applied.isEmpty)
         #expect(second.document == first.document)
     }

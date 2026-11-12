@@ -3153,38 +3153,6 @@
         }
       }
     },
-    "Clockwise is brighter, counterclockwise darker. Brightness keys may not work with external displays.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Im Uhrzeigersinn heller, dagegen dunkler. Helligkeitstasten funktionieren mit externen Displays eventuell nicht."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "W prawo jaśniej, w lewo ciemniej. Klawisze jasności mogą nie działać z zewnętrznymi monitorami."
-          }
-        }
-      }
-    },
-    "Clockwise is louder, counterclockwise quieter, like a knob. Scrolling works as before.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Im Uhrzeigersinn lauter, dagegen leiser, wie ein Drehregler. Scrollen funktioniert wie bisher."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "W prawo głośniej, w lewo ciszej, jak pokrętłem. Przewijanie działa jak dawniej."
-          }
-        }
-      }
-    },
     "Close tab": {
       "localizations": {
         "de": {
@@ -6473,38 +6441,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lewa połowa"
-          }
-        }
-      }
-    },
-    "Left half, turn clockwise: brighter": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Linke Hälfte, im Uhrzeigersinn: heller"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lewa połowa, obrót w prawo: jaśniej"
-          }
-        }
-      }
-    },
-    "Left half, turn counterclockwise: darker": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Linke Hälfte, gegen den Uhrzeigersinn: dunkler"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lewa połowa, obrót w lewo: ciemniej"
           }
         }
       }
@@ -10053,38 +9989,6 @@
         }
       }
     },
-    "Right half, turn clockwise: louder": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rechte Hälfte, im Uhrzeigersinn: lauter"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prawa połowa, obrót w prawo: głośniej"
-          }
-        }
-      }
-    },
-    "Right half, turn counterclockwise: quieter": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rechte Hälfte, gegen den Uhrzeigersinn: leiser"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prawa połowa, obrót w lewo: ciszej"
-          }
-        }
-      }
-    },
     "Right of the resting finger": {
       "localizations": {
         "de": {
@@ -10539,18 +10443,18 @@
         }
       }
     },
-    "Set Mission Control and App Exposé to three fingers or off, or use the knob below.": {
+    "Set Mission Control and App Exposé to three fingers or off.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stell Mission Control und App Exposé auf drei Finger oder aus, oder nutze den Drehregler darunter."
+            "value": "Stell Mission Control und App Exposé auf drei Finger oder aus."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ustaw Mission Control i App Exposé na trzy palce albo je wyłącz, albo użyj pokrętła poniżej."
+            "value": "Ustaw Mission Control i App Exposé na trzy palce albo je wyłącz."
           }
         }
       }
@@ -13227,38 +13131,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kręć dwoma palcami jak pokrętłem: co 15 stopni akcja wykonuje się jeszcze raz, więc świetnie nadaje się do głośności albo jasności. Żeby nie zadziałała przypadkiem, wybierz róg gładzika albo klawisz do przytrzymania, np. fn."
-          }
-        }
-      }
-    },
-    "Turn two fingers on the left half: brightness": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zwei Finger in der linken Hälfte drehen: Helligkeit"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Obrót dwoma palcami w lewej połowie: jasność"
-          }
-        }
-      }
-    },
-    "Turn two fingers on the right half: volume": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zwei Finger in der rechten Hälfte drehen: Lautstärke"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Obrót dwoma palcami w prawej połowie: głośność"
           }
         }
       }

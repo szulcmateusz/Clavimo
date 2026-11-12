@@ -93,7 +93,7 @@ enum Presets {
                            detail: String(localized: "Each swipe changes the volume by one step."),
                            unavailable: { hardware, document in
                                taken(.gesture(.swipe(fingers: 4, .up)))(hardware, document).map {
-                                   $0 + " " + String(localized: "Set Mission Control and App Exposé to three fingers or off, or use the knob below.")
+                                   $0 + " " + String(localized: "Set Mission Control and App Exposé to three fingers or off.")
                                }
                            }) { _ in
                     [
@@ -105,43 +105,12 @@ enum Presets {
                         },
                     ]
                 },
-                PresetItem(id: "volume", title: String(localized: "Turn two fingers on the right half: volume"),
-                           detail: String(localized: "Clockwise is louder, counterclockwise quieter, like a knob. Scrolling works as before."),
-                           defaultOn: { hardware in
-                               // The knob stands in when macOS keeps four-finger swipes.
-                               !SystemTrackpadGestures.conflicts(with: .gesture(.swipe(fingers: 4, .up)), enabled: hardware.systemGestures).isEmpty
-                           }) { _ in
-                    [
-                        gesture(.gesture(.rotate(.clockwise)), .media, name: String(localized: "Right half, turn clockwise: louder")) {
-                            $0.mediaKey = .volumeUp
-                            $0.zone = .right
-                        },
-                        gesture(.gesture(.rotate(.counterclockwise)), .media, name: String(localized: "Right half, turn counterclockwise: quieter")) {
-                            $0.mediaKey = .volumeDown
-                            $0.zone = .right
-                        },
-                    ]
-                },
                 PresetItem(id: "play", title: String(localized: "Four-finger tap: play or pause"),
                            detail: String(localized: "Music and videos, without looking for the key. macOS does not use this tap."),
                            unavailable: taken(.gesture(.tap(fingers: 4)))) { _ in
                     [gesture(.gesture(.tap(fingers: 4)), .media, name: String(localized: "Four-finger tap: play or pause")) {
                         $0.mediaKey = .playPause
                     }]
-                },
-                PresetItem(id: "brightness", title: String(localized: "Turn two fingers on the left half: brightness"),
-                           detail: String(localized: "Clockwise is brighter, counterclockwise darker. Brightness keys may not work with external displays."),
-                           defaultOn: { _ in false }) { _ in
-                    [
-                        gesture(.gesture(.rotate(.clockwise)), .media, name: String(localized: "Left half, turn clockwise: brighter")) {
-                            $0.mediaKey = .brightnessUp
-                            $0.zone = .left
-                        },
-                        gesture(.gesture(.rotate(.counterclockwise)), .media, name: String(localized: "Left half, turn counterclockwise: darker")) {
-                            $0.mediaKey = .brightnessDown
-                            $0.zone = .left
-                        },
-                    ]
                 },
             ]
         )
