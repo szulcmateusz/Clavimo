@@ -6941,6 +6941,22 @@
         }
       }
     },
+    "Paste either a whole configuration or rules, not both.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge entweder eine ganze Konfiguration oder Regeln ein, nicht beides."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklej albo całą konfigurację, albo reguły, nie jedno i drugie naraz."
+          }
+        }
+      }
+    },
     "Paste from Clipboard": {
       "localizations": {
         "de": {

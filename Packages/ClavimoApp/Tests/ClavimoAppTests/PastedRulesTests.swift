@@ -45,6 +45,23 @@ struct PastedRulesTests {
         #expect(try PastedRules.apply(wrapped, to: Self.base).get().rules.count == 2)
     }
 
+    @Test func separateRulesPastedOneAfterAnother() throws {
+        let one = #"{"trigger": {"kind": "key", "key": {"codeNamespace": "macVirtualKeyCode", "code": 105}}, "action": {"kind": "missionControl"}}"#
+        let two = #"{"trigger": {"kind": "key", "key": {"codeNamespace": "macVirtualKeyCode", "code": 107}}, "action": {"kind": "applicationWindows"}}"#
+        let text = "First rule:\n```json\n" + one + "\n```\nSecond rule:\n```json\n" + two + "\n```"
+        let document = try PastedRules.apply(text, to: Self.base).get()
+        #expect(document.rules.count == 2)
+        #expect(Set(document.rules.map(\.id)).count == 2)
+        #expect(try PastedRules.apply(one + "\n" + two, to: Self.base).get().rules.count == 2)
+        #expect(try PastedRules.apply(one + ",\n" + two + "\n[" + one + "]", to: Self.base).get().rules.count == 3)
+    }
+
+    @Test func wholeConfigurationMustBeAlone() throws {
+        let whole = String(decoding: try Self.base.encoded(), as: UTF8.self)
+        let rule = #"{"trigger": {"kind": "key", "key": {"codeNamespace": "macVirtualKeyCode", "code": 105}}, "action": {"kind": "missionControl"}}"#
+        #expect((try? PastedRules.apply(whole + rule, to: Self.base).get()) == nil)
+    }
+
     @Test func sameIDReplacesTheRule() throws {
         var current = Self.base
         let rule = #"{"id": "r1", "name": "A", "trigger": {"kind": "key", "key": {"codeNamespace": "macVirtualKeyCode", "code": 105}}, "action": {"kind": "missionControl"}}"#
