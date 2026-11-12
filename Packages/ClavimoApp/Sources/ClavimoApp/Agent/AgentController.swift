@@ -39,6 +39,8 @@ final class AgentController {
 
     @ObservationIgnored private let store: ConfigStore
     @ObservationIgnored private let executor = SystemShortcutExecutor()
+    /// Shows action compasses and runs what they pick.
+    @ObservationIgnored let compass = CompassController()
     @ObservationIgnored private var controller: EventTapController?
     @ObservationIgnored private var inputs = AgentInputs(
         userEnabled: false, sessionActive: true, permissionsGranted: false, rulesLoaded: false, safeMode: false
@@ -191,6 +193,18 @@ final class AgentController {
         capsLockStatus = capsLock.status
     }
 
+    /// Compasses that can be opened, for the menu bar.
+    var compassChoices: [(id: String, name: String)] {
+        (loaded?.compasses.values.map { ($0.id, $0.name) } ?? []).sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+    }
+
+    /// Opens a compass as a panel, from the menu bar (centred on the
+    /// screen) or from settings (at the pointer).
+    func openCompass(_ id: String, centred: Bool = false) {
+        guard controller != nil else { return }
+        compass.openPanel(id, centred: centred)
+    }
+
     func setInspectorEnabled(_ enabled: Bool) {
         controller?.setInspectorEnabled(enabled)
     }
@@ -236,7 +250,22 @@ final class AgentController {
             },
             onOverlayChange: { [weak self] overlay in
                 Task { @MainActor in self?.showOverlay(overlay) }
+            },
+            onCompass: { [weak self] signal in
+                // In order, on the main thread: open, release and pick
+                // must not overtake each other.
+                DispatchQueue.main.async {
+                    MainActor.assumeIsolated { self?.compass.handle(signal) }
+                }
             }
+        )
+        compass.compasses = loaded?.compasses ?? [:]
+        compass.environment = CompassController.Environment(
+            run: { action in
+                DispatchQueue.global(qos: .userInteractive).async { executor.run(action) }
+            },
+            close: { [weak tap] in tap?.closeCompass() },
+            begin: { [weak tap] id in tap?.beginCompass(id) }
         )
         do {
             try tap.start()
@@ -257,6 +286,7 @@ final class AgentController {
     private func stopTap() {
         controller?.stop()
         controller = nil
+        compass.reset()
         capsLock.stop()
         capsLockStatus = CapsLockMapping.Status()
         startSecureInputWatch(if: false)

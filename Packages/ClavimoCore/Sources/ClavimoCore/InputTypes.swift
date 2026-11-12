@@ -33,6 +33,9 @@ public struct KeyCode: Hashable, Sendable, CustomStringConvertible {
     public static let rightOption = KeyCode(0x3D)
     public static let rightControl = KeyCode(0x3E)
     public static let function = KeyCode(0x3F)
+    public static let keypadEnter = KeyCode(0x4C)
+    /// The number keys 1 to 8 of the main row, in order.
+    public static let digits: [KeyCode] = [0x12, 0x13, 0x14, 0x15, 0x17, 0x16, 0x1A, 0x1C].map { KeyCode($0) }
 
     /// The side-specific modifier this key produces, if it is one of the
     /// eight remappable modifier keys. Caps Lock and Fn are intentionally
@@ -220,6 +223,11 @@ public enum ActionCommand: Equatable, Sendable {
     case media(MediaKey)
     /// Turns Caps Lock on or off.
     case toggleCapsLock
+    /// Opens the action compass with this identifier.
+    case openCompass(String)
+    /// Chooses an item in the frontmost app's menus, by its titles from the
+    /// menu bar down, e.g. ["File", "New Tab"].
+    case menuItem([String])
 }
 
 /// Keys from the top row of Apple keyboards.

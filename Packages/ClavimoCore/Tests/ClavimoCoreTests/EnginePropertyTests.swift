@@ -16,7 +16,7 @@ struct EnginePropertyTests {
     static let keys: [KeyCode] = [
         .a, .c, .f, .escape, .leftArrow,
         .leftCommand, .leftOption, .rightCommand, .rightOption, .leftShift, .leftControl,
-        .capsLockProxy, .space, j, k, h, section,
+        .capsLockProxy, .space, j, k, h, section, KeyCode.digits[0], KeyCode.digits[2], .returnKey,
     ]
     static let j = KeyCode(0x26)
     static let k = KeyCode(0x28)
@@ -98,11 +98,19 @@ struct EnginePropertyTests {
             .tapHold(id: "space", key: .space, tap: .key(.space), hold: .modifiers(.leftShift),
                      settings: TapHoldSettings(interrupt: .permissive)),
         ],
+        [
+            .keyOutput(id: "h", key: h, output: .action(.openCompass("main"))),
+            .tapHold(id: "caps", key: .capsLock, tap: .key(forwardDelete), hold: .action(.openCompass("main"))),
+            .mouseChord(id: "b4", leader: .modifiers([]), button: .button4, action: .openCompass("main"), priority: 1),
+            .trackpad(id: "tap3", trigger: .gesture(.tap(fingers: 3)), action: .openCompass("main")),
+            .remap(from: .a, to: .g),
+            .swap(.leftCommand, .leftOption),
+        ],
     ]
 
     static let compiled: [CompiledRules] = ruleSets.map { try! CompiledRules.compile($0).get() }
 
-    @Test(arguments: 0..<7)
+    @Test(arguments: 0..<8)
     func randomSequencesStayBalanced(ruleSet: Int) {
         for seed in 0..<300 {
             var run = Run(seed: UInt64(ruleSet * 100_000 + seed), rules: ruleSet)
@@ -169,6 +177,11 @@ struct EnginePropertyTests {
                     reset()
                 }
                 if rng.next(2) == 0 { fireTimerIfDue() }
+                // The app runs or dismisses an open compass at some point.
+                if engine.openCompassID != nil, rng.next(4) == 0 {
+                    trace.append("close compass")
+                    engine.closeCompass()
+                }
             }
         }
 
@@ -176,6 +189,7 @@ struct EnginePropertyTests {
             for (key, device) in heldKeys { send(.key(key, isDown: false, isRepeat: false), key: key, device: device) }
             for button in heldButtons { send(.mouseButton(button, isDown: false), button: button) }
             heldButtons = []
+            engine.closeCompass()
             now += 5_000_000_000
             fireTimerIfDue()
         }

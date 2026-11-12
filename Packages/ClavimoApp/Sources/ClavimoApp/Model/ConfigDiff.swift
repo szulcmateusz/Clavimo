@@ -61,7 +61,7 @@ struct ConfigDiff: Equatable {
         let order: Int
     }
 
-    /// Rules and device settings keyed by ID, with their encoded content
+    /// Rules, device settings and compasses keyed by ID, with their encoded content
     /// so any change is detected.
     private static func items(_ document: ConfigDocument?) -> [String: Item] {
         guard let document else { return [:] }
@@ -75,6 +75,11 @@ struct ConfigDiff: Equatable {
             guard let id = setting["id"]?.string else { continue }
             result[id] = Item(name: setting["name"]?.string ?? id, content: (try? encoder.encode(setting)) ?? Data(),
                               order: document.rules.count + offset)
+        }
+        let start = document.rules.count + (document.deviceSettings?.count ?? 0)
+        for (offset, compass) in (document.compasses ?? []).enumerated() {
+            result["compass:" + compass.id] = Item(name: String(localized: "Compass: \(compass.name)"),
+                                                   content: (try? encoder.encode(compass)) ?? Data(), order: start + offset)
         }
         return result
     }

@@ -159,6 +159,52 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
         }
     }
 
+    /// An action compass as written in the file. Directions and actions
+    /// are checked when the configuration is interpreted, so one bad slot
+    /// is reported instead of making the whole file unreadable.
+    public struct Compass: Codable, Equatable, Sendable {
+        public struct Slot: Codable, Equatable, Sendable {
+            public var direction: String
+            public var name: String?
+            public var action: JSONValue
+
+            public init(direction: String, name: String? = nil, action: JSONValue) {
+                self.direction = direction
+                self.name = name
+                self.action = action
+            }
+        }
+
+        public struct AppPage: Codable, Equatable, Sendable {
+            public var bundleId: String
+            public var slots: [Slot]
+
+            public init(bundleId: String, slots: [Slot]) {
+                self.bundleId = bundleId
+                self.slots = slots
+            }
+        }
+
+        public var id: String
+        public var name: String
+        public var slots: [Slot]
+        public var apps: [AppPage]?
+        public var hintDelayMs: Int?
+        public var deadZone: Double?
+        public var returnPointer: Bool?
+
+        public init(id: String, name: String, slots: [Slot], apps: [AppPage]? = nil,
+                    hintDelayMs: Int? = nil, deadZone: Double? = nil, returnPointer: Bool? = nil) {
+            self.id = id
+            self.name = name
+            self.slots = slots
+            self.apps = apps
+            self.hintDelayMs = hintDelayMs
+            self.deadZone = deadZone
+            self.returnPointer = returnPointer
+        }
+    }
+
     public var schemaVersion: Int
     public var configId: String
     public var engine: Engine
@@ -167,6 +213,10 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
     public var rules: [Rule]
     public var macros: [JSONValue]
     public var deviceSettings: [JSONValue]?
+    public var compasses: [Compass]?
+    /// Top-level fields this version does not know, kept as they are so a
+    /// file written by a newer Clavimo loses nothing when saved here.
+    public var otherFields: [String: JSONValue] = [:]
 
     public static let supportedSchemaVersion = 1
 
@@ -177,7 +227,8 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
         profiles: [Profile] = [Profile(id: "default", name: "Default")],
         rules: [Rule] = [],
         macros: [JSONValue] = [],
-        deviceSettings: [JSONValue]? = nil
+        deviceSettings: [JSONValue]? = nil,
+        compasses: [Compass]? = nil
     ) {
         schemaVersion = Self.supportedSchemaVersion
         self.configId = configId
@@ -187,6 +238,51 @@ public struct ConfigDocument: Codable, Equatable, Sendable {
         self.rules = rules
         self.macros = macros
         self.deviceSettings = deviceSettings
+        self.compasses = compasses
+    }
+
+    private struct FieldKey: CodingKey {
+        let stringValue: String
+        var intValue: Int? { nil }
+        init(_ string: String) { stringValue = string }
+        init?(stringValue: String) { self.stringValue = stringValue }
+        init?(intValue: Int) { nil }
+    }
+
+    private static let knownFields: Set<String> = [
+        "schemaVersion", "configId", "engine", "activeProfileId", "profiles", "rules", "macros", "deviceSettings", "compasses",
+    ]
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: FieldKey.self)
+        schemaVersion = try container.decode(Int.self, forKey: FieldKey("schemaVersion"))
+        configId = try container.decode(String.self, forKey: FieldKey("configId"))
+        engine = try container.decode(Engine.self, forKey: FieldKey("engine"))
+        activeProfileId = try container.decode(String.self, forKey: FieldKey("activeProfileId"))
+        profiles = try container.decode([Profile].self, forKey: FieldKey("profiles"))
+        rules = try container.decode([Rule].self, forKey: FieldKey("rules"))
+        macros = try container.decode([JSONValue].self, forKey: FieldKey("macros"))
+        deviceSettings = try container.decodeIfPresent([JSONValue].self, forKey: FieldKey("deviceSettings"))
+        compasses = try container.decodeIfPresent([Compass].self, forKey: FieldKey("compasses"))
+        for key in container.allKeys where !Self.knownFields.contains(key.stringValue) {
+            otherFields[key.stringValue] = try container.decode(JSONValue.self, forKey: key)
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: FieldKey.self)
+        try container.encode(schemaVersion, forKey: FieldKey("schemaVersion"))
+        try container.encode(configId, forKey: FieldKey("configId"))
+        try container.encode(engine, forKey: FieldKey("engine"))
+        try container.encode(activeProfileId, forKey: FieldKey("activeProfileId"))
+        try container.encode(profiles, forKey: FieldKey("profiles"))
+        try container.encode(rules, forKey: FieldKey("rules"))
+        try container.encode(macros, forKey: FieldKey("macros"))
+        try container.encodeIfPresent(deviceSettings, forKey: FieldKey("deviceSettings"))
+        try container.encodeIfPresent(compasses, forKey: FieldKey("compasses"))
+        for (key, value) in otherFields where !Self.knownFields.contains(key) {
+            try container.encode(value, forKey: FieldKey(key))
+        }
     }
 
     /// Stable, human-diffable JSON.
@@ -241,6 +337,14 @@ public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
     case scrollValueOutOfRange(mode: String)
     case invalidTrackpadTrigger
     case invalidKeyBehavior(String)
+    /// A rule or slot opens a compass that does not exist.
+    case unknownCompass(String)
+    /// A compass slot with a direction that does not exist.
+    case invalidCompassDirection(String)
+    /// Two slots of one compass page share a direction.
+    case duplicateCompassDirection(String)
+    /// A compass without an id, or with two definitions of the same id.
+    case invalidCompass
 
     public var description: String {
         switch self {
@@ -267,6 +371,10 @@ public enum UnsupportedReason: Equatable, Sendable, CustomStringConvertible {
         case let .scrollValueOutOfRange(mode): "the \(mode) value is out of range"
         case .invalidTrackpadTrigger: "the trackpad gesture is incomplete or not supported"
         case let .invalidKeyBehavior(detail): "the keyboard rule is incomplete: \(detail)"
+        case let .unknownCompass(id): "there is no compass with the id \(id)"
+        case let .invalidCompassDirection(direction): "\(direction) is not a compass direction"
+        case let .duplicateCompassDirection(direction): "two slots use the direction \(direction)"
+        case .invalidCompass: "the compass needs a unique id"
         }
     }
 }
@@ -285,6 +393,9 @@ public struct InterpretedConfig: Equatable, Sendable {
     /// Enabled rules in the active profile that cannot run yet. They are
     /// reported, never applied partially.
     public var unsupported: [ConfigIssue]
+    /// Action compasses by id. A slot that cannot run is left out and
+    /// reported in `unsupported` with the compass's id and name.
+    public var compasses: [String: CompassDefinition] = [:]
 }
 
 extension ConfigDocument {
@@ -311,6 +422,7 @@ extension ConfigDocument {
     public func interpret() throws -> InterpretedConfig {
         let chain = try profileChain()
         var result = InterpretedConfig(definitions: [], unsupported: [])
+        let compassIDs = Set((compasses ?? []).map(\.id))
         var claimed: Set<String> = []
         // Nearest profile first, so its rules claim triggers before
         // inherited rules are considered.
@@ -319,7 +431,11 @@ extension ConfigDocument {
             for rule in rules where rule.enabled && rule.profileId == profileID {
                 switch Self.translate(rule) {
                 case let .success(definition):
-                    level.append(definition)
+                    if let missing = definition.openedCompasses.subtracting(compassIDs).sorted().first {
+                        result.unsupported.append(ConfigIssue(ruleID: rule.id, ruleName: rule.name, reason: .unknownCompass(missing)))
+                    } else {
+                        level.append(definition)
+                    }
                 case let .failure(reason):
                     result.unsupported.append(ConfigIssue(ruleID: rule.id, ruleName: rule.name, reason: reason.reason))
                 }
@@ -343,7 +459,73 @@ extension ConfigDocument {
             }
             claimed.formUnion(levelClaims)
         }
+        let (compiled, issues) = interpretCompasses()
+        result.compasses = compiled
+        result.unsupported += issues
         return result
+    }
+
+    /// Valid compasses by id, and what is wrong with the others.
+    public func interpretCompasses() -> (compasses: [String: CompassDefinition], issues: [ConfigIssue]) {
+        var result: [String: CompassDefinition] = [:]
+        var issues: [ConfigIssue] = []
+        let all = compasses ?? []
+        let ids = Set(all.map(\.id))
+        for compass in all {
+            let name = compass.name.isEmpty ? compass.id : compass.name
+            func report(_ reason: UnsupportedReason) {
+                issues.append(ConfigIssue(ruleID: compass.id, ruleName: name, reason: reason))
+            }
+            guard !compass.id.isEmpty, all.filter({ $0.id == compass.id }).count == 1 else {
+                report(.invalidCompass)
+                continue
+            }
+            func page(_ slots: [Compass.Slot]) -> [CompassDirection: CompassSlot] {
+                var page: [CompassDirection: CompassSlot] = [:]
+                for slot in slots {
+                    guard let direction = CompassDirection(rawValue: slot.direction) else {
+                        report(.invalidCompassDirection(slot.direction))
+                        continue
+                    }
+                    guard page[direction] == nil else {
+                        report(.duplicateCompassDirection(slot.direction))
+                        continue
+                    }
+                    do {
+                        let action: CompassAction
+                        if slot.action["kind"]?.string == "none" {
+                            action = .none
+                        } else {
+                            let command = try Self.action(slot.action)
+                            if case let .openCompass(target) = command, !ids.contains(target) {
+                                report(.unknownCompass(target))
+                                continue
+                            }
+                            action = .action(command)
+                        }
+                        page[direction] = CompassSlot(name: slot.name ?? "", action: action)
+                    } catch let error as Unsupported {
+                        report(error.reason)
+                    } catch {
+                        report(.invalidRule)
+                    }
+                }
+                return page
+            }
+            var apps: [String: [CompassDirection: CompassSlot]] = [:]
+            for app in compass.apps ?? [] where !app.bundleId.isEmpty {
+                apps[app.bundleId] = page(app.slots)
+            }
+            result[compass.id] = CompassDefinition(
+                id: compass.id, name: name, slots: page(compass.slots), apps: apps,
+                hintDelayMilliseconds: min(max(compass.hintDelayMs ?? CompassDefinition.defaultHintDelay,
+                                               CompassDefinition.hintDelayRange.lowerBound), CompassDefinition.hintDelayRange.upperBound),
+                deadZone: min(max(compass.deadZone ?? CompassDefinition.defaultDeadZone,
+                                  CompassDefinition.deadZoneRange.lowerBound), CompassDefinition.deadZoneRange.upperBound),
+                returnPointer: compass.returnPointer ?? true
+            )
+        }
+        return (result, issues)
     }
 
     /// Mouse wheel direction and scroll modes are supported. Pointer
@@ -571,6 +753,24 @@ extension ConfigDocument {
             }
             return .sequence(id: rule.id, keys: keys, output: try keyOutput(rule.action), conditions: conditions)
 
+        case ("mouseButton", _):
+            guard let number = rule.trigger["mouseButton"]?.int, let button = MouseButton(userFacingNumber: number) else {
+                throw Unsupported(.invalidMouseButton)
+            }
+            guard rule.trigger["phase"] == nil || rule.trigger["phase"]?.string == "down" else {
+                throw Unsupported(.chordBehavior)
+            }
+            try requireFireOnceOnDown(behavior)
+            return .mouseChord(
+                id: rule.id,
+                leader: .modifiers(try genericModifiers(rule.trigger["requiredModifiers"])),
+                button: button,
+                action: try action(rule.action),
+                priority: rule.priority,
+                allowProtectedButton: behavior.allowProtectedButton ?? false,
+                conditions: conditions
+            )
+
         case ("modifierChord", _):
             guard rule.trigger["key"] == nil, let number = rule.trigger["mouseButton"]?.int,
                   let button = MouseButton(userFacingNumber: number) else {
@@ -773,6 +973,13 @@ extension ConfigDocument {
             return .media(key)
         case "toggleCapsLock":
             return .toggleCapsLock
+        case "openCompass":
+            guard let id = value["compassId"]?.string, !id.isEmpty else { throw Unsupported(.unsupportedAction("openCompass")) }
+            return .openCompass(id)
+        case "menuItem":
+            let path = (value["path"]?.array ?? []).compactMap(\.string)
+            guard !path.isEmpty, !path.contains(where: \.isEmpty) else { throw Unsupported(.unsupportedAction("menuItem")) }
+            return .menuItem(path)
         case let kind:
             throw Unsupported(.unsupportedAction(kind ?? "unknown"))
         }

@@ -13,13 +13,16 @@ public struct EngineOutput: Equatable, Sendable {
     public var items: [Item] = []
     /// Side effects to run outside the event callback, in order.
     public var actions: [ActionCommand] = []
+    /// What happened to the action compass, in order.
+    public var compass: [CompassSignal] = []
     /// When non-nil, the adapter must call `handleDeadline(now:)` at or
     /// after this monotonic time (nanoseconds).
     public var nextDeadline: UInt64?
 
-    public init(items: [Item] = [], actions: [ActionCommand] = [], nextDeadline: UInt64? = nil) {
+    public init(items: [Item] = [], actions: [ActionCommand] = [], compass: [CompassSignal] = [], nextDeadline: UInt64? = nil) {
         self.items = items
         self.actions = actions
+        self.compass = compass
         self.nextDeadline = nextDeadline
     }
 
@@ -108,6 +111,25 @@ public struct InputEngine: Sendable {
         let name: String
     }
 
+    /// What opened an action compass.
+    private enum CompassTrigger: Hashable, Sendable {
+        case key(KeyCode)
+        case button(MouseButton)
+    }
+
+    /// An open action compass. While `held` is true its trigger is still
+    /// down; after that it stays open as a panel until the adapter closes
+    /// it, a key or click decides, or the deadline passes.
+    private struct CompassSession: Sendable {
+        let id: String
+        let trigger: CompassTrigger?
+        /// The key that opened it, also after a tap: pressing it again
+        /// closes the panel.
+        let key: KeyCode?
+        var held: Bool
+        var deadline: UInt64
+    }
+
     public private(set) var rules: CompiledRules
     /// Bundle ID of the frontmost app, updated by the adapter from
     /// workspace notifications (never looked up on the event path).
@@ -152,6 +174,15 @@ public struct InputEngine: Sendable {
     private var lastTap: (key: KeyCode, time: UInt64)?
     /// Set while held-back events are replayed after a combo did not form.
     private var suppressCombos = false
+    private var compass: CompassSession?
+    /// The key of the event being processed, if it is a key event.
+    private var currentKey: KeyCode?
+    /// The time of the latest event, deadline or gesture.
+    private var now: UInt64 = 0
+
+    /// A compass closes by itself after this long, should the adapter
+    /// never close it: a safety net, not a user-facing timeout.
+    public static let compassTimeoutMilliseconds = 30_000
 
     /// One-shot modifiers expire after this long without a key.
     public static let oneShotTimeoutMilliseconds = 3000
@@ -194,6 +225,25 @@ public struct InputEngine: Sendable {
             || !orphanedKeys.isEmpty || !heldNonConsumingLeaders.isEmpty
             || !held.isEmpty || layers.contains { $0.owner != nil } || !oneShot.isEmpty || !oneShotHolders.isEmpty
             || pendingTapHold != nil || pendingCombo != nil || pendingDoubleTap != nil || sequence != nil
+            || compass != nil
+    }
+
+    /// The compass that is open, if any.
+    public var openCompassID: String? { compass?.id }
+
+    /// Opens a compass as a panel without a trigger, e.g. a nested compass
+    /// picked from another one, or one opened from the menu bar.
+    public mutating func beginCompass(_ id: String, now time: UInt64) -> EngineOutput {
+        now = time
+        compass = CompassSession(id: id, trigger: nil, key: nil, held: false, deadline: compassDeadline)
+        var output = EngineOutput()
+        output.nextDeadline = pendingDeadline
+        return output
+    }
+
+    /// The adapter ran or dismissed the compass; keys work normally again.
+    public mutating func closeCompass() {
+        compass = nil
     }
 
     /// Active layers, a sequence in progress and pending one-shot modifiers.
@@ -217,6 +267,7 @@ public struct InputEngine: Sendable {
     public mutating func handle(_ event: InputEvent) -> EngineOutput {
         var output = EngineOutput()
         latestPhysical = event.modifiers
+        now = event.time
         expireDeadlines(now: event.time, into: &output)
         process(event, into: &output)
         output.nextDeadline = pendingDeadline
@@ -227,6 +278,7 @@ public struct InputEngine: Sendable {
     /// has passed: buffered leaders, tap-hold keys, combos and sequences.
     public mutating func handleDeadline(now: UInt64) -> EngineOutput {
         var output = EngineOutput()
+        self.now = now
         expireDeadlines(now: now, into: &output)
         output.nextDeadline = pendingDeadline
         return output
@@ -239,6 +291,10 @@ public struct InputEngine: Sendable {
     /// keys are dropped without being typed.
     public mutating func reset() -> EngineOutput {
         var output = EngineOutput()
+        if compass != nil {
+            compass = nil
+            output.compass.append(.cancel)
+        }
 
         // Held-back presses are dropped (their releases are swallowed
         // later), but held-back releases still release what they held.
@@ -301,6 +357,8 @@ public struct InputEngine: Sendable {
 
     /// Routes one event, after any pending decision had a chance to take it.
     private mutating func process(_ event: InputEvent, into output: inout EngineOutput) {
+        if case let .key(code, _, _) = event.kind { currentKey = code } else { currentKey = nil }
+        if compass != nil, takenByCompass(event, into: &output) { return }
         switch event.kind {
         case let .key(code, isDown, isRepeat):
             if isDown, !isRepeat, let pending = pendingDoubleTap, pending.key != code || !isDoubleTapPress(code) {
@@ -367,6 +425,7 @@ public struct InputEngine: Sendable {
                 }
             }
             output.actions += step.actions
+            output.compass += step.compass
         }
     }
 
@@ -397,6 +456,10 @@ public struct InputEngine: Sendable {
         if let pending = leader, !pending.chorded, let deadline = pending.deadline, now >= deadline {
             flushLeader(into: &output)
         }
+        if let session = compass, now >= session.deadline {
+            compass = nil
+            output.compass.append(.cancel)
+        }
     }
 
     private var pendingDeadline: UInt64? {
@@ -407,6 +470,7 @@ public struct InputEngine: Sendable {
         if let pending = pendingDoubleTap { deadlines.append(pending.deadline) }
         if let sequence { deadlines.append(sequence.deadline) }
         if let oneShotDeadline { deadlines.append(oneShotDeadline) }
+        if let compass { deadlines.append(compass.deadline) }
         return deadlines.min()
     }
 
@@ -886,7 +950,11 @@ public struct InputEngine: Sendable {
             sequence = SequenceState(path: [], deadline: time &+ UInt64(SequenceRule.timeoutMilliseconds) * 1_000_000)
         case let .action(action):
             held[owner] = .nothing
-            output.actions.append(action)
+            if case let .key(code) = owner {
+                run(action, trigger: .key(code), into: &output)
+            } else {
+                run(action, trigger: nil, into: &output)
+            }
         case .none:
             held[owner] = .nothing
         }
@@ -895,6 +963,7 @@ public struct InputEngine: Sendable {
     /// Ends what `owner` holds.
     private mutating func end(_ owner: Owner, into output: inout EngineOutput) {
         oneShotHolders[owner] = nil
+        if case let .key(code) = owner { releaseCompass(.key(code), into: &output) }
         guard let current = held.removeValue(forKey: owner) else { return }
         switch current {
         case let .key(code, extra):
@@ -997,6 +1066,8 @@ public struct InputEngine: Sendable {
         guard isDown else {
             if consumedButtons.remove(button) == nil {
                 output.items.append(.original(flags: overrideFlags(flags)))
+            } else {
+                releaseCompass(.button(button), into: &output)
             }
             return
         }
@@ -1011,7 +1082,7 @@ public struct InputEngine: Sendable {
 
         if button.isProtected, let touch, let rule = trackpadClickRule(for: touch, modifiers: chordModifiers) {
             consumedButtons.insert(button)
-            output.actions.append(rule.action)
+            run(rule.action, trigger: .button(button), into: &output)
             oneShot = []
             return
         }
@@ -1023,7 +1094,7 @@ public struct InputEngine: Sendable {
                 leader?.deadline = nil
             }
             consumedButtons.insert(button)
-            output.actions.append(chord.action)
+            run(chord.action, trigger: .button(button), into: &output)
             oneShot = []
             return
         }
@@ -1055,11 +1126,14 @@ public struct InputEngine: Sendable {
     /// Runs the action of the rule matching a recognized gesture under the
     /// currently held modifiers. Gestures never produce key events.
     /// `point` is where the gesture started, for rules limited to a zone.
-    public mutating func handleGesture(_ gesture: GestureEvent, at point: TrackpadPoint? = nil) -> EngineOutput {
+    /// `time` is when it was recognized, for deadlines it starts.
+    public mutating func handleGesture(_ gesture: GestureEvent, at point: TrackpadPoint? = nil, time: UInt64? = nil) -> EngineOutput {
         var output = EngineOutput()
+        if let time { now = time }
         let modifiers = physicalModifiers.union(heldModifiers).union(oneShot)
         if let rule = rules.trackpadRule(for: .gesture(gesture), modifiers: modifiers.generic, app: frontmostApp, at: point) {
-            output.actions.append(rule.action)
+            // A gesture is over once recognized, so a compass opens as a panel.
+            run(rule.action, trigger: nil, into: &output)
             oneShot = []
         }
         output.nextDeadline = pendingDeadline
@@ -1076,6 +1150,90 @@ public struct InputEngine: Sendable {
     }
 
     private var passThroughOriginal: EngineOutput.Item { .original(flags: nil) }
+
+    // MARK: - Action compass
+
+    private var compassDeadline: UInt64 {
+        now &+ UInt64(Self.compassTimeoutMilliseconds) * 1_000_000
+    }
+
+    /// Runs an action. Opening a compass starts a session instead; the
+    /// same trigger while one is open closes it.
+    private mutating func run(_ action: ActionCommand, trigger: CompassTrigger?, into output: inout EngineOutput) {
+        guard case let .openCompass(id) = action else {
+            output.actions.append(action)
+            return
+        }
+        if compass != nil {
+            compass = nil
+            output.compass.append(.cancel)
+            return
+        }
+        var key = currentKey
+        if case let .key(code)? = trigger { key = code }
+        compass = CompassSession(id: id, trigger: trigger, key: key, held: trigger != nil, deadline: compassDeadline)
+        output.compass.append(.open(id: id, held: trigger != nil))
+    }
+
+    /// The held trigger went up: the compass stays open as a panel.
+    private mutating func releaseCompass(_ trigger: CompassTrigger, into output: inout EngineOutput) {
+        guard var session = compass, session.held, session.trigger == trigger else { return }
+        session.held = false
+        session.deadline = compassDeadline
+        compass = session
+        output.compass.append(.release)
+    }
+
+    /// Number keys, Return, Space and Escape decide an open compass, and so
+    /// do primary and secondary clicks. Its own trigger pressed again
+    /// closes it. Any other key or button closes it and works as usual.
+    private mutating func takenByCompass(_ event: InputEvent, into output: inout EngineOutput) -> Bool {
+        guard let session = compass else { return false }
+        func decide(_ signal: CompassSignal) {
+            compass = nil
+            output.compass.append(signal)
+        }
+        switch event.kind {
+        case let .key(code, isDown, isRepeat):
+            guard isDown, !isRepeat, code.modifierKey == nil else { return false }
+            if session.key == code {
+                if session.held { return false } // still down; leave it to the key
+                held[.key(code)] = .nothing
+                decide(.cancel)
+                return true
+            }
+            let signal: CompassSignal
+            if let index = KeyCode.digits.firstIndex(of: code), let direction = CompassDirection(number: index + 1) {
+                signal = .pick(direction)
+            } else if code == .escape {
+                signal = .cancel
+            } else if code == .returnKey || code == .space || code == .keypadEnter {
+                signal = .confirm
+            } else {
+                decide(.cancel)
+                return false
+            }
+            // The key's own repeats and release are swallowed.
+            held[.key(code)] = .nothing
+            decide(signal)
+            return true
+        case let .mouseButton(button, isDown):
+            guard isDown else { return false }
+            if session.trigger == .button(button), session.held { return false }
+            let signal: CompassSignal
+            if session.trigger == .button(button) || button == .secondary {
+                signal = .cancel
+            } else if button == .primary {
+                signal = .confirm
+            } else {
+                decide(.cancel)
+                return false
+            }
+            consumedButtons.insert(button)
+            decide(signal)
+            return true
+        }
+    }
 
     /// Returns nil when the event's own flags are already correct.
     private func overrideFlags(_ logical: ModifierSet) -> ModifierSet? {

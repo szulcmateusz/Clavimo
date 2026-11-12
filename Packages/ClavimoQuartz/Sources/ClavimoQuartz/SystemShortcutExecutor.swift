@@ -30,6 +30,11 @@ public struct SystemShortcutExecutor: Sendable {
             NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
         case .toggleCapsLock:
             CapsLockState.toggle()
+        case let .menuItem(path):
+            MenuItems.press(path)
+        case .openCompass:
+            // The app's compass controller opens compasses; nothing to post.
+            break
         }
     }
 

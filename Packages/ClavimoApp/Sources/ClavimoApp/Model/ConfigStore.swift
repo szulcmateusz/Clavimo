@@ -9,6 +9,7 @@ struct ConfigStore {
         var document: ConfigDocument
         var rules: CompiledRules
         var unsupported: [ConfigIssue]
+        var compasses: [String: CompassDefinition] = [:]
     }
 
     enum LoadError: Error, CustomStringConvertible, LocalizedError {
@@ -58,7 +59,8 @@ struct ConfigStore {
         }
         switch CompiledRules.compile(interpreted.definitions) {
         case let .success(rules):
-            return .success(Loaded(document: document, rules: rules, unsupported: interpreted.unsupported))
+            return .success(Loaded(document: document, rules: rules, unsupported: interpreted.unsupported,
+                                   compasses: interpreted.compasses))
         case let .failure(failure):
             return .failure(.rejected(failure.errors))
         }

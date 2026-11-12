@@ -26,7 +26,7 @@ public enum KeyOutput: Hashable, Sendable {
     /// Outputs that last while their trigger is held.
     public var isHeld: Bool {
         switch self {
-        case .key, .modifiers, .layer: true
+        case .key, .modifiers, .layer, .action(.openCompass): true
         default: false
         }
     }

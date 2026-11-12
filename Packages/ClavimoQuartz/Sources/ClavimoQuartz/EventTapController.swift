@@ -65,10 +65,12 @@ public final class EventTapController: @unchecked Sendable {
     public static let baseEventMask: CGEventMask = mask(of: [.keyDown, .keyUp, .flagsChanged, .otherMouseDown, .otherMouseUp])
 
     /// The minimal mask for `rules`: primary and secondary clicks are added
-    /// only when a rule explicitly uses them.
+    /// only when a rule explicitly uses them, or when a rule opens an action
+    /// compass, which a click confirms or cancels. Pointer movement is never
+    /// part of the mask.
     public static func eventMask(for rules: CompiledRules) -> CGEventMask {
         var result = baseEventMask
-        if rules.observesProtectedButtons || rules.observesTrackpadClicks {
+        if rules.observesProtectedButtons || rules.observesTrackpadClicks || rules.usesCompass {
             result |= mask(of: [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp])
         }
         if rules.observesScrollWheel || rules.observesRotation {
@@ -85,6 +87,7 @@ public final class EventTapController: @unchecked Sendable {
     private let actionHandler: @Sendable (ActionCommand) -> Void
     private let onStop: @Sendable (StopReason) -> Void
     private let onOverlayChange: (@Sendable (KeyboardOverlay) -> Void)?
+    private let onCompass: (@Sendable (CompassSignal) -> Void)?
     /// Whether any rule can show something in the overlay (layers,
     /// sequences, one-shot modifiers); otherwise it is never computed.
     private let tracksOverlay: Bool
@@ -128,10 +131,12 @@ public final class EventTapController: @unchecked Sendable {
         flagRewrite: FlagRewriteMode = .inPlace,
         actionHandler: @escaping @Sendable (ActionCommand) -> Void,
         onStop: @escaping @Sendable (StopReason) -> Void = { _ in },
-        onOverlayChange: (@Sendable (KeyboardOverlay) -> Void)? = nil
+        onOverlayChange: (@Sendable (KeyboardOverlay) -> Void)? = nil,
+        onCompass: (@Sendable (CompassSignal) -> Void)? = nil
     ) {
         engine = InputEngine(rules: rules)
         self.onOverlayChange = onOverlayChange
+        self.onCompass = onCompass
         tracksOverlay = onOverlayChange != nil && (!rules.keyBindings.isEmpty || !rules.layerBindings.isEmpty || !rules.sequences.isEmpty)
         eventMask = Self.eventMask(for: rules)
         keysNeedingDevice = rules.keysNeedingDevice
@@ -187,6 +192,23 @@ public final class EventTapController: @unchecked Sendable {
     /// workspace notifications, never looked up on the event path.
     public func setFrontmostApp(_ bundleID: String?) {
         perform { [self] in engine.setFrontmostApp(bundleID) }
+    }
+
+    /// The open action compass was run or dismissed; keys and clicks work
+    /// normally again.
+    public func closeCompass() {
+        perform { [self] in engine.closeCompass() }
+    }
+
+    /// Opens a compass as a panel without a trigger: a nested compass, or
+    /// one opened from the menu bar.
+    public func beginCompass(_ id: String) {
+        perform { [self] in
+            guard tap != nil, !paused else { return }
+            let now = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
+            let output = engine.beginCompass(id, now: now)
+            scheduleDeadline(output.nextDeadline, now: now)
+        }
     }
 
     /// Updates the keyboard input source used by input source conditions.
@@ -281,8 +303,11 @@ public final class EventTapController: @unchecked Sendable {
     private func handleGesture(_ gesture: GestureEvent, at point: TrackpadPoint?) {
         guard tap != nil, !paused else { return }
         gesturesRecognized += 1
-        let output = engine.handleGesture(gesture, at: point)
+        let now = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
+        let output = engine.handleGesture(gesture, at: point, time: now)
         dispatchActions(output.actions)
+        dispatchCompass(output.compass)
+        scheduleDeadline(output.nextDeadline, now: now)
         if inspectorEnabled {
             var event = InspectedEvent(kind: .gesture, code: 0, isDown: true,
                                        outcome: output.actions.isEmpty ? .unchanged : .action, callbackNanoseconds: 0)
@@ -594,6 +619,7 @@ public final class EventTapController: @unchecked Sendable {
 
     private func apply(_ output: EngineOutput, to event: CGEvent, proxy: CGEventTapProxy) -> Unmanaged<CGEvent>? {
         dispatchActions(output.actions)
+        dispatchCompass(output.compass)
         let items = output.items
         if items.isEmpty { return nil }
 
@@ -650,10 +676,17 @@ public final class EventTapController: @unchecked Sendable {
     /// resets). These events re-enter the tap and pass by their tag.
     private func postOutsideCallback(_ output: EngineOutput) {
         dispatchActions(output.actions)
+        dispatchCompass(output.compass)
         let base = CGEventSource.flagsState(.combinedSessionState)
         for case let .key(code, isDown, isRepeat, flags) in output.items {
             makeKeyEvent(code, isDown: isDown, isRepeat: isRepeat, flags: flags, base: base)?.post(tap: .cgSessionEventTap)
         }
+    }
+
+    /// Compass signals go to the app at once; it shows the panel and picks.
+    private func dispatchCompass(_ signals: [CompassSignal]) {
+        guard let onCompass else { return }
+        for signal in signals { onCompass(signal) }
     }
 
     private func dispatchActions(_ actions: [ActionCommand]) {

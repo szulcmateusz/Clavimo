@@ -203,6 +203,24 @@ extension RuleDefinition {
     }
 }
 
+extension RuleDefinition {
+    /// The compasses this rule opens.
+    public var openedCompasses: Set<String> {
+        var actions: [ActionCommand] = []
+        var outputs: [KeyOutput] = []
+        switch self {
+        case let .mouseChord(_, _, _, action, _, _, _), let .trackpad(_, _, _, action, _, _, _): actions.append(action)
+        case let .keyOutput(_, _, output, _), let .layerKey(_, _, _, output, _), let .combo(_, _, output, _, _),
+             let .sequence(_, _, output, _):
+            outputs.append(output)
+        case let .tapHold(_, _, tap, hold, doubleTap, _, _): outputs += [tap, hold] + (doubleTap.map { [$0] } ?? [])
+        case .remap, .swap, .wheel, .trackpadScroll: break
+        }
+        for case let .action(action) in outputs { actions.append(action) }
+        return Set(actions.compactMap { if case let .openCompass(id) = $0 { id } else { nil } })
+    }
+}
+
 extension RuleConditions {
     var signature: String {
         [onlyApps.sorted().joined(separator: ","), exceptApps.sorted().joined(separator: ","),
@@ -425,6 +443,26 @@ public struct CompiledRules: Equatable, Sendable {
 
     public var observesScrollWheel: Bool { !wheelSettings.isEmpty || !trackpadScroll.isEmpty }
 
+    /// Every action compass a rule opens.
+    public var openedCompasses: Set<String> {
+        var actions: [ActionCommand] = chordsByButton.values.flatMap { $0.map(\.action) }
+            + trackpadRules.values.flatMap { $0.map(\.action) }
+        var outputs: [KeyOutput] = combos.map(\.output) + sequences.map(\.output)
+        for binding in keyBindings.values.flatMap({ $0 }) {
+            switch binding.behavior {
+            case let .output(_, output): outputs.append(output)
+            case let .tapHold(tapHold): outputs += [tapHold.tap, tapHold.hold] + (tapHold.doubleTap.map { [$0] } ?? [])
+            }
+        }
+        outputs += layerBindings.values.flatMap { $0.values.flatMap { $0.map(\.output) } }
+        for case let .action(action) in outputs { actions.append(action) }
+        return Set(actions.compactMap { if case let .openCompass(id) = $0 { id } else { nil } })
+    }
+
+    /// Whether any rule opens an action compass, which needs primary and
+    /// secondary clicks in the event tap mask to confirm or cancel it.
+    public var usesCompass: Bool { !openedCompasses.isEmpty }
+
     public func trackpadScrollSettings(app: String?) -> TrackpadScrollSettings? {
         trackpadScroll.first { $0.conditions.matches(app: app, device: nil) }?.settings
     }
@@ -637,7 +675,7 @@ public struct CompiledRules: Equatable, Sendable {
                     }
                 } else {
                     switch hold {
-                    case .modifiers, .layer, .key: break
+                    case .modifiers, .layer, .key, .action(.openCompass): break
                     default:
                         errors.append(.holdOutputNotHeld(id: id))
                         valid = false
@@ -700,7 +738,9 @@ public struct CompiledRules: Equatable, Sendable {
                 }
                 switch leader {
                 case let .modifiers(required):
-                    if required.isEmpty { errors.append(.emptyModifierLeader(id: id)) }
+                    // Buttons 3 and up can act alone; the primary and
+                    // secondary buttons always need a modifier.
+                    if required.isEmpty, button.isProtected { errors.append(.emptyModifierLeader(id: id)) }
                 case let .key(key, policy):
                     if key.modifierKey != nil || key == .capsLock || key == .function {
                         errors.append(.leaderIsModifierKey(key))

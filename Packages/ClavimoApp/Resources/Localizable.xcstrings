@@ -265,6 +265,22 @@
         }
       }
     },
+    "%@ is not a compass direction. Use up, upRight, right, downRight, down, downLeft, left or upLeft.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ist keine Kompassrichtung. Verwende up, upRight, right, downRight, down, downLeft, left oder upLeft."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ to nie jest kierunek kompasu. Użyj up, upRight, right, downRight, down, downLeft, left albo upLeft."
+          }
+        }
+      }
+    },
     "%@ is running": {
       "localizations": {
         "de": {
@@ -1089,6 +1105,22 @@
         }
       }
     },
+    "%lld pt": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pt"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld pt"
+          }
+        }
+      }
+    },
     "%lld px": {
       "localizations": {
         "de": {
@@ -1201,6 +1233,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "wyłączone: %lld"
+          }
+        }
+      }
+    },
+    "%lld: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld: %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld: %@"
           }
         }
       }
@@ -1413,6 +1467,22 @@
         }
       }
     },
+    "Action compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktionskompass"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas akcji"
+          }
+        }
+      }
+    },
     "Actions that use them will do nothing: %@.": {
       "localizations": {
         "de": {
@@ -1483,6 +1553,22 @@
         }
       }
     },
+    "Add App Page": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Seite hinzufügen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj stronę aplikacji"
+          }
+        }
+      }
+    },
     "Add Key": {
       "localizations": {
         "de": {
@@ -1543,6 +1629,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dodaj reguły"
+          }
+        }
+      }
+    },
+    "Add action": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktion hinzufügen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj akcję"
           }
         }
       }
@@ -1703,6 +1805,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Używane jest inne konto macOS. Działanie wznowi się, gdy wrócisz."
+          }
+        }
+      }
+    },
+    "Any key, mouse button or trackpad gesture can open the compass. Keys and buttons work best: hold, move, let go.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Taste, Maustaste oder Trackpad-Geste kann den Kompass öffnen. Am besten funktionieren Tasten und Maustasten: halten, bewegen, loslassen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas może otwierać dowolny klawisz, przycisk myszy albo gest gładzika. Najlepiej działają klawisze i przyciski: przytrzymaj, przesuń, puść."
           }
         }
       }
@@ -1931,6 +2049,22 @@
         }
       }
     },
+    "Behavior": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verhalten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działanie"
+          }
+        }
+      }
+    },
     "Both actions happen, even while a key is held. Turn the macOS gesture off in Trackpad settings, or change the rule.": {
       "localizations": {
         "de": {
@@ -2091,6 +2225,22 @@
         }
       }
     },
+    "Browsers": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Browser"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przeglądarki"
+          }
+        }
+      }
+    },
     "Built-in": {
       "localizations": {
         "de": {
@@ -2199,6 +2349,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "O piksele"
+          }
+        }
+      }
+    },
+    "Camera on or off": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kamera ein oder aus"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz lub wyłącz kamerę"
           }
         }
       }
@@ -2427,6 +2593,38 @@
         }
       }
     },
+    "Choose": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswählen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz"
+          }
+        }
+      }
+    },
+    "Choose a compass. Add one in the Compass pane first.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle einen Kompass. Leg zuerst einen im Bereich „Kompass“ an."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz kompas. Najpierw dodaj go w panelu Kompas."
+          }
+        }
+      }
+    },
     "Choose a key that is not a modifier. To add a tap to a modifier key, use Tap or hold a key.": {
       "localizations": {
         "de": {
@@ -2439,6 +2637,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wybierz klawisz, który nie jest modyfikatorem. Aby dodać stuknięcie do modyfikatora, wybierz Stuknij lub przytrzymaj klawisz."
+          }
+        }
+      }
+    },
+    "Choose a menu item": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menüeintrag auswählen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz pozycję menu"
+          }
+        }
+      }
+    },
+    "Choose an app": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App auswählen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz aplikację"
+          }
+        }
+      }
+    },
+    "Choose an app menu item": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menüeintrag einer App"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pozycja z menu aplikacji"
           }
         }
       }
@@ -2507,6 +2753,22 @@
         }
       }
     },
+    "Choose the menu item.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle den Menüeintrag."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz pozycję menu."
+          }
+        }
+      }
+    },
     "Choose two different keys.": {
       "localizations": {
         "de": {
@@ -2555,6 +2817,22 @@
         }
       }
     },
+    "Choose…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswählen …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz…"
+          }
+        }
+      }
+    },
     "Clavimo": {
       "localizations": {
         "de": {
@@ -2567,6 +2845,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clavimo"
+          }
+        }
+      }
+    },
+    "Clavimo could not read this app's menus. Check that Clavimo has Accessibility permission and that the app is still open.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clavimo kann die Menüs dieser App nicht lesen. Prüfe, ob Clavimo die Berechtigung „Bedienungshilfen“ hat und die App noch geöffnet ist."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clavimo nie może odczytać menu tej aplikacji. Sprawdź, czy Clavimo ma uprawnienie Dostępność i czy aplikacja jest nadal otwarta."
           }
         }
       }
@@ -2631,6 +2925,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kliknięcie"
+          }
+        }
+      }
+    },
+    "Click a direction to choose its action. Drag one direction onto another to swap them.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klicke auf eine Richtung, um ihre Aktion zu wählen. Zieh eine Richtung auf eine andere, um sie zu tauschen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknij kierunek, żeby wybrać jego akcję. Przeciągnij jeden kierunek na drugi, żeby je zamienić."
           }
         }
       }
@@ -2715,6 +3025,22 @@
         }
       }
     },
+    "Click, number or Esc": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klick, Zahl oder Esc"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik, cyfra albo Esc"
+          }
+        }
+      }
+    },
     "Clicking and scrolling work as usual": {
       "localizations": {
         "de": {
@@ -2743,6 +3069,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "W prawo"
+          }
+        }
+      }
+    },
+    "Close tab": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tab schließen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamknij kartę"
           }
         }
       }
@@ -2795,6 +3137,38 @@
         }
       }
     },
+    "Command palette": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Befehlspalette"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paleta poleceń"
+          }
+        }
+      }
+    },
+    "Command palette, quick open, terminal, sidebar and navigation.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Befehlspalette, Schnellöffnen, Terminal, Seitenleiste und Navigation."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paleta poleceń, szybkie otwieranie, terminal, pasek boczny i nawigacja."
+          }
+        }
+      }
+    },
     "Common": {
       "localizations": {
         "de": {
@@ -2807,6 +3181,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Popularne"
+          }
+        }
+      }
+    },
+    "Compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas"
+          }
+        }
+      }
+    },
+    "Compass %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass %lld"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas %lld"
+          }
+        }
+      }
+    },
+    "Compass %lld cannot be read. Ask the assistant to follow the Clavimo configuration format.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass %lld kann nicht gelesen werden. Bitte den Assistenten, sich an das Konfigurationsformat von Clavimo zu halten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie można odczytać kompasu %lld. Poproś asystenta, żeby trzymał się formatu konfiguracji Clavimo."
+          }
+        }
+      }
+    },
+    "Compass %lld has no slots.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass %lld hat keine slots."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas %lld nie ma pól slots."
+          }
+        }
+      }
+    },
+    "Compass: %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass: %@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas: %@"
           }
         }
       }
@@ -3019,6 +3473,38 @@
         }
       }
     },
+    "Create Compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass erstellen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utwórz kompas"
+          }
+        }
+      }
+    },
+    "Create Empty Compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leeren Kompass erstellen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utwórz pusty kompas"
+          }
+        }
+      }
+    },
     "Create a Rule for This Keyboard": {
       "localizations": {
         "de": {
@@ -3063,6 +3549,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Własne"
+          }
+        }
+      }
+    },
+    "Custom action (%@)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigene Aktion (%@)"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akcja niestandardowa (%@)"
           }
         }
       }
@@ -3131,7 +3633,39 @@
         }
       }
     },
+    "Delete this compass?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diesen Kompass löschen?"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usunąć ten kompas?"
+          }
+        }
+      }
+    },
     "Delete...": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löschen …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń…"
+          }
+        }
+      }
+    },
+    "Delete…": {
       "localizations": {
         "de": {
           "stringUnit": {
@@ -3243,6 +3777,22 @@
         }
       }
     },
+    "Dimmed actions come from the page used everywhere. Click to change them in this app only, or hide them here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgeblendete Aktionen kommen von der Seite für überall. Klicke, um sie nur in dieser App zu ändern, oder blende sie hier aus."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przygaszone akcje pochodzą ze strony używanej wszędzie. Kliknij, żeby zmienić je tylko w tej aplikacji, albo ukryj je tutaj."
+          }
+        }
+      }
+    },
     "Direction": {
       "localizations": {
         "de": {
@@ -3255,6 +3805,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kierunek"
+          }
+        }
+      }
+    },
+    "Direction %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Richtung %lld"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kierunek %lld"
           }
         }
       }
@@ -3435,6 +4001,22 @@
         }
       }
     },
+    "Each app can have its own actions; the others stay the same everywhere.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede App kann eigene Aktionen haben; die übrigen bleiben überall gleich."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każda aplikacja może mieć własne akcje; pozostałe są wszędzie takie same."
+          }
+        }
+      }
+    },
     "Each macOS account grants permissions separately. Clavimo never records typed text and makes no network connections.": {
       "localizations": {
         "de": {
@@ -3479,6 +4061,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Każdy profil używa własnych reguł oraz reguł profilu Domyślny. Reguła w profilu zastępuje regułę z profilu Domyślny o tym samym wyzwalaczu."
+          }
+        }
+      }
+    },
+    "Edit": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edytuj"
           }
         }
       }
@@ -3643,6 +4241,22 @@
         }
       }
     },
+    "Everywhere": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Überall"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszędzie"
+          }
+        }
+      }
+    },
     "Existing": {
       "localizations": {
         "de": {
@@ -3655,6 +4269,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Istniejące"
+          }
+        }
+      }
+    },
+    "Experienced hands pick before the actions appear. A shorter distance is faster, a longer one avoids picking by accident.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geübte Hände wählen, bevor die Aktionen erscheinen. Eine kürzere Strecke ist schneller, eine längere verhindert versehentliches Wählen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wprawne ręce wybierają, zanim akcje się pojawią. Krótszy dystans jest szybszy, dłuższy chroni przed przypadkowym wyborem."
           }
         }
       }
@@ -3735,6 +4365,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plik"
+          }
+        }
+      }
+    },
+    "Fill the page used everywhere, or add pages for apps. You can change everything afterwards.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füll die Seite für überall oder füge Seiten für Apps hinzu. Du kannst danach alles ändern."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wypełnij stronę używaną wszędzie albo dodaj strony dla aplikacji. Wszystko możesz potem zmienić."
           }
         }
       }
@@ -4011,6 +4657,22 @@
         }
       }
     },
+    "Format document": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dokument formatieren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Formatuj dokument"
+          }
+        }
+      }
+    },
     "Forward": {
       "localizations": {
         "de": {
@@ -4171,6 +4833,38 @@
         }
       }
     },
+    "Go back": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wstecz"
+          }
+        }
+      }
+    },
+    "Go forward": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorwärts"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalej"
+          }
+        }
+      }
+    },
     "Grant Accessibility and Input Monitoring in General to start.": {
       "localizations": {
         "de": {
@@ -4263,6 +4957,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Help"
+          }
+        }
+      }
+    },
+    "Hidden here": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hier ausgeblendet"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ukryta tutaj"
+          }
+        }
+      }
+    },
+    "Hide in This App": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In dieser App ausblenden"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ukryj w tej aplikacji"
+          }
+        }
+      }
+    },
+    "Hide this direction in this app": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Richtung in dieser App ausblenden"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ukryj ten kierunek w tej aplikacji"
           }
         }
       }
@@ -4391,6 +5133,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przytrzymaj Tab: U I O, J K L oraz M , . wpisują cyfry od 7 do 1 jak klawiatura numeryczna, N wpisuje 0. Tab stuknięty działa jak zwykle."
+          }
+        }
+      }
+    },
+    "Hold a Key…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taste halten …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymanie klawisza…"
           }
         }
       }
@@ -4813,6 +5571,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przerwy wymuszone przez macOS"
+          }
+        }
+      }
+    },
+    "Its actions and the rules that open it are removed too. A backup of the previous file is kept.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seine Aktionen und die Regeln, die ihn öffnen, werden ebenfalls entfernt. Eine Sicherung der vorherigen Datei bleibt erhalten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jego akcje i reguły, które go otwierają, też zostaną usunięte. Kopia poprzedniego pliku zostaje zachowana."
           }
         }
       }
@@ -5255,6 +6029,22 @@
         }
       }
     },
+    "Leave meeting": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meeting verlassen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opuść spotkanie"
+          }
+        }
+      }
+    },
     "Left": {
       "localizations": {
         "de": {
@@ -5511,6 +6301,22 @@
         }
       }
     },
+    "Main": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haupt"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Główny"
+          }
+        }
+      }
+    },
     "Make Active": {
       "localizations": {
         "de": {
@@ -5603,6 +6409,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Klawisz multimedialny"
+          }
+        }
+      }
+    },
+    "Menu item": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menüeintrag"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pozycja menu"
+          }
+        }
+      }
+    },
+    "Menu titles are saved in the app's language. If you change the language of macOS or the app, choose the item again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menütitel werden in der Sprache der App gespeichert. Wenn du die Sprache von macOS oder der App änderst, wähle den Eintrag erneut."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwy z menu są zapisywane w języku aplikacji. Jeśli zmienisz język macOS albo aplikacji, wybierz pozycję jeszcze raz."
+          }
+        }
+      }
+    },
+    "Microphone on or off": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon ein oder aus"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz lub wyłącz mikrofon"
+          }
+        }
+      }
+    },
+    "Microphone, camera, screen sharing and leaving the meeting.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon, Kamera, Bildschirmfreigabe und Meeting verlassen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon, kamera, udostępnianie ekranu i wyjście ze spotkania."
           }
         }
       }
@@ -5735,6 +6605,22 @@
         }
       }
     },
+    "Mission Control, Spaces, app windows, a screenshot and the Finder.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control, Spaces, App-Fenster, ein Bildschirmfoto und der Finder."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mission Control, biurka, okna aplikacji, zrzut ekranu i Finder."
+          }
+        }
+      }
+    },
     "Modifier + key shortcuts are not supported yet; use a mouse button.": {
       "localizations": {
         "de": {
@@ -5747,22 +6633,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Skróty modyfikator + klawisz nie są jeszcze obsługiwane; użyj przycisku myszy."
-          }
-        }
-      }
-    },
-    "Modifier + mouse button": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sondertaste + Maustaste"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Modyfikator + przycisk myszy"
           }
         }
       }
@@ -5895,6 +6765,22 @@
         }
       }
     },
+    "Mouse Button…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maustaste …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przycisk myszy…"
+          }
+        }
+      }
+    },
     "Mouse button": {
       "localizations": {
         "de": {
@@ -5907,6 +6793,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przycisk myszy"
+          }
+        }
+      }
+    },
+    "Mouse button, alone or with modifiers": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maustaste, allein oder mit Sondertasten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przycisk myszy, sam lub z modyfikatorami"
           }
         }
       }
@@ -6007,6 +6909,22 @@
         }
       }
     },
+    "Move at least": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mindestens bewegen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesuń co najmniej"
+          }
+        }
+      }
+    },
     "Move left a space": {
       "localizations": {
         "de": {
@@ -6039,6 +6957,22 @@
         }
       }
     },
+    "Music and volume": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Musik und Lautstärke"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muzyka i głośność"
+          }
+        }
+      }
+    },
     "Mute": {
       "localizations": {
         "de": {
@@ -6067,6 +7001,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nazwa"
+          }
+        }
+      }
+    },
+    "Name the compass.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib dem Kompass einen Namen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwij kompas."
           }
         }
       }
@@ -6135,6 +7085,22 @@
         }
       }
     },
+    "New Compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuer Kompass"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nowy kompas"
+          }
+        }
+      }
+    },
     "New Rule": {
       "localizations": {
         "de": {
@@ -6183,6 +7149,22 @@
         }
       }
     },
+    "New tab": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuer Tab"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nowa karta"
+          }
+        }
+      }
+    },
     "Next Space": {
       "localizations": {
         "de": {
@@ -6199,6 +7181,22 @@
         }
       }
     },
+    "Next tab": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächster Tab"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Następna karta"
+          }
+        }
+      }
+    },
     "Next track": {
       "localizations": {
         "de": {
@@ -6211,6 +7209,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Następny utwór"
+          }
+        }
+      }
+    },
+    "No actions yet. Add them in Settings > Compass.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Aktionen. Füge sie unter Einstellungen > Kompass hinzu."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak akcji. Dodaj je w Ustawienia > Kompas."
+          }
+        }
+      }
+    },
+    "No compass yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch kein Kompass"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie ma jeszcze kompasu"
+          }
+        }
+      }
+    },
+    "No compass yet. Add one in the Compass pane.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch kein Kompass. Leg einen im Bereich „Kompass“ an."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie ma jeszcze kompasu. Dodaj go w panelu Kompas."
           }
         }
       }
@@ -6327,6 +7373,22 @@
         }
       }
     },
+    "None": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keiner"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brak"
+          }
+        }
+      }
+    },
     "None yet. Start with a template below.": {
       "localizations": {
         "de": {
@@ -6435,6 +7497,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nic się nie zmienia."
+          }
+        }
+      }
+    },
+    "Nothing opens this compass yet. Choose one of these:": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch öffnet nichts diesen Kompass. Wähle eines davon:"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na razie nic nie otwiera tego kompasu. Wybierz jedno z poniższych:"
           }
         }
       }
@@ -6583,6 +7661,22 @@
         }
       }
     },
+    "Open Compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass öffnen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz kompas"
+          }
+        }
+      }
+    },
     "Open Keyboard Settings": {
       "localizations": {
         "de": {
@@ -6679,6 +7773,22 @@
         }
       }
     },
+    "Open a compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einen Kompass öffnen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz kompas"
+          }
+        }
+      }
+    },
     "Open an app": {
       "localizations": {
         "de": {
@@ -6727,6 +7837,22 @@
         }
       }
     },
+    "Open compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass öffnen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz kompas"
+          }
+        }
+      }
+    },
     "Open source under the MIT License. Clavimo processes input on your Mac only: it never records typed text and makes no network connections.": {
       "localizations": {
         "de": {
@@ -6743,6 +7869,22 @@
         }
       }
     },
+    "Open with": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnen mit"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwieraj przez"
+          }
+        }
+      }
+    },
     "Opens %@": {
       "localizations": {
         "de": {
@@ -6755,6 +7897,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Otwiera: %@"
+          }
+        }
+      }
+    },
+    "Opens the compass at the pointer. Move towards an action and click, or press Esc.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Kompass am Zeiger. Beweg dich zu einer Aktion und klicke, oder drück Esc."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwiera kompas przy wskaźniku. Przesuń w stronę akcji i kliknij albo naciśnij Esc."
           }
         }
       }
@@ -6808,6 +7966,22 @@
       }
     },
     "Other App...": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andere App …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inna aplikacja…"
+          }
+        }
+      }
+    },
+    "Other App…": {
       "localizations": {
         "de": {
           "stringUnit": {
@@ -6889,6 +8063,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przegląd"
+          }
+        }
+      }
+    },
+    "Page": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seite"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strona"
           }
         }
       }
@@ -7411,6 +8601,22 @@
         }
       }
     },
+    "Previous tab": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorheriger Tab"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Poprzednia karta"
+          }
+        }
+      }
+    },
     "Previous track": {
       "localizations": {
         "de": {
@@ -7571,6 +8777,22 @@
         }
       }
     },
+    "Put the pointer back after an action": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeiger nach einer Aktion zurücksetzen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przywróć wskaźnik po akcji"
+          }
+        }
+      }
+    },
     "Put your fingers on the trackpad. Recognized gestures appear below, with the rule they run.": {
       "localizations": {
         "de": {
@@ -7599,6 +8821,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Szybkie akcje"
+          }
+        }
+      }
+    },
+    "Quick open": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schnell öffnen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybkie otwieranie"
           }
         }
       }
@@ -7811,6 +9049,22 @@
         }
       }
     },
+    "Remove Page": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seite entfernen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usuń stronę"
+          }
+        }
+      }
+    },
     "Remove key": {
       "localizations": {
         "de": {
@@ -7859,6 +9113,38 @@
         }
       }
     },
+    "Rename": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umbenennen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień nazwę"
+          }
+        }
+      }
+    },
+    "Rename compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompass umbenennen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień nazwę kompasu"
+          }
+        }
+      }
+    },
     "Rename...": {
       "localizations": {
         "de": {
@@ -7871,6 +9157,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zmień nazwę…"
+          }
+        }
+      }
+    },
+    "Rename…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umbenennen …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień nazwę…"
+          }
+        }
+      }
+    },
+    "Reopen closed tab": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschlossenen Tab wieder öffnen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwórz zamkniętą kartę"
+          }
+        }
+      }
+    },
+    "Replace": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersetzen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zastąp"
           }
         }
       }
@@ -8425,6 +9759,22 @@
         }
       }
     },
+    "Screenshot of an area": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirmfoto eines Bereichs"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zrzut fragmentu ekranu"
+          }
+        }
+      }
+    },
     "Scroll here after applying to feel the result.": {
       "localizations": {
         "de": {
@@ -8501,6 +9851,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ustawienia przewijania można ograniczyć tylko do jednej aplikacji."
+          }
+        }
+      }
+    },
+    "Search": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suchen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukaj"
+          }
+        }
+      }
+    },
+    "Search in files": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Dateien suchen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szukaj w plikach"
           }
         }
       }
@@ -8649,6 +10031,22 @@
         }
       }
     },
+    "Share screen": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirm freigeben"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Udostępnij ekran"
+          }
+        }
+      }
+    },
     "Shift": {
       "localizations": {
         "de": {
@@ -8729,6 +10127,22 @@
         }
       }
     },
+    "Show actions after": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktionen zeigen nach"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż akcje po"
+          }
+        }
+      }
+    },
     "Show in Finder": {
       "localizations": {
         "de": {
@@ -8773,6 +10187,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pokazuje ostatnie klawisze i przyciski oraz to, co Clavimo z nimi zrobiło. Tylko w pamięci, czyszczone po opuszczeniu tej strony."
+          }
+        }
+      }
+    },
+    "Sidebar": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seitenleiste"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasek boczny"
           }
         }
       }
@@ -8949,6 +10379,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rozpocznij sekwencję klawiszy"
+          }
+        }
+      }
+    },
+    "Start with a ready-made one and change it as you like.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beginne mit einem fertigen Kompass und ändere ihn nach Belieben."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zacznij od gotowego i zmień go, jak chcesz."
           }
         }
       }
@@ -9333,6 +10779,22 @@
         }
       }
     },
+    "Tabs, back and forward in Safari, Chrome, Firefox, Edge, Arc and Brave.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tabs, Zurück und Vorwärts in Safari, Chrome, Firefox, Edge, Arc und Brave."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Karty, wstecz i dalej w Safari, Chrome, Firefoksie, Edge, Arc i Brave."
+          }
+        }
+      }
+    },
     "Tap": {
       "localizations": {
         "de": {
@@ -9483,6 +10945,22 @@
         }
       }
     },
+    "Tap the key instead of holding it to keep the compass open, then click, press 1 to 8 or Esc.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe die Taste, statt sie zu halten, dann bleibt der Kompass offen; klicke danach, drück 1 bis 8 oder Esc."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknij klawisz zamiast go trzymać, a kompas zostanie otwarty; potem kliknij, naciśnij 1–8 albo Esc."
+          }
+        }
+      }
+    },
     "Tap with %lld fingers": {
       "localizations": {
         "de": {
@@ -9611,6 +11089,22 @@
         }
       }
     },
+    "Terminal": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminal"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminal"
+          }
+        }
+      }
+    },
     "The %@ condition has no value.": {
       "localizations": {
         "de": {
@@ -9623,6 +11117,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warunek %@ nie ma wartości."
+          }
+        }
+      }
+    },
+    "The %@ runs %@ instead of its usual function.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%1$@“ führt %2$@ statt der üblichen Funktion aus."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "The %1$@ runs %2$@ instead of its usual function."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ uruchamia %2$@ zamiast swojej zwykłej funkcji."
           }
         }
       }
@@ -9703,6 +11219,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Samo kliknięcie nie trafia do aplikacji."
+          }
+        }
+      }
+    },
+    "The compass needs its own id.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Kompass braucht eine eigene ID."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas potrzebuje własnego identyfikatora."
           }
         }
       }
@@ -9931,6 +11463,22 @@
         }
       }
     },
+    "The left and right buttons need at least one modifier. Other buttons can work alone.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die linke und rechte Taste brauchen mindestens eine Sondertaste. Andere Maustasten funktionieren auch allein."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewy i prawy przycisk potrzebują co najmniej jednego modyfikatora. Pozostałe przyciski mogą działać same."
+          }
+        }
+      }
+    },
     "The macOS acceleration curve, faster or slower.": {
       "localizations": {
         "de": {
@@ -9975,6 +11523,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "To ustawienie kółka myszy niczego nie zmienia."
+          }
+        }
+      }
+    },
+    "The name is shown on the compass. Leave it empty to show what the action does.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Name erscheint auf dem Kompass. Lass ihn leer, um anzuzeigen, was die Aktion tut."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nazwa jest widoczna na kompasie. Zostaw puste, żeby pokazać, co robi akcja."
           }
         }
       }
@@ -10203,6 +11767,22 @@
         }
       }
     },
+    "There is no compass with the id %@. Add it in the Compass pane or choose another one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keinen Kompass mit der ID %@. Leg ihn im Bereich „Kompass“ an oder wähle einen anderen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie ma kompasu o identyfikatorze %@. Dodaj go w panelu Kompas albo wybierz inny."
+          }
+        }
+      }
+    },
     "There is no previous version yet. One is kept every time you change a rule.": {
       "localizations": {
         "de": {
@@ -10215,6 +11795,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nie ma jeszcze poprzedniej wersji. Zachowuje się ją przy każdej zmianie reguły."
+          }
+        }
+      }
+    },
+    "This action was written by hand (%@). Choose another one to replace it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Aktion wurde von Hand geschrieben (%@). Wähle eine andere, um sie zu ersetzen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ta akcja została wpisana ręcznie (%@). Wybierz inną, żeby ją zastąpić."
           }
         }
       }
@@ -10513,6 +12109,22 @@
         }
       }
     },
+    "Trackpad Gesture…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trackpad-Geste …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gest gładzika…"
+          }
+        }
+      }
+    },
     "Trackpad click": {
       "localizations": {
         "de": {
@@ -10663,6 +12275,22 @@
         }
       }
     },
+    "Try It": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausprobieren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wypróbuj"
+          }
+        }
+      }
+    },
     "Try it": {
       "localizations": {
         "de": {
@@ -10723,6 +12351,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Włącz lub wyłącz warstwę"
+          }
+        }
+      }
+    },
+    "Turn on Clavimo first.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schalte Clavimo zuerst ein."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Najpierw włącz Clavimo."
           }
         }
       }
@@ -10867,6 +12511,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kręć dwoma palcami jak pokrętłem: co 15 stopni akcja wykonuje się jeszcze raz, więc świetnie nadaje się do głośności albo jasności. Żeby nie zadziałała przypadkiem, wybierz róg gładzika albo klawisz do przytrzymania, np. fn."
+          }
+        }
+      }
+    },
+    "Two actions use the direction %@. Keep one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwei Aktionen nutzen die Richtung %@. Behalte eine."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dwie akcje używają kierunku %@. Zostaw jedną."
           }
         }
       }
@@ -11079,6 +12739,22 @@
         }
       }
     },
+    "Up to eight actions around the pointer. Hold a key or a mouse button, move towards an action and let go: it runs at once, without looking.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bis zu acht Aktionen rund um den Zeiger. Halte eine Taste oder Maustaste, beweg dich zu einer Aktion und lass los: Sie läuft sofort, ohne hinzusehen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do ośmiu akcji wokół wskaźnika. Przytrzymaj klawisz albo przycisk myszy, przesuń w stronę akcji i puść: wykona się od razu, bez patrzenia."
+          }
+        }
+      }
+    },
     "Use \"Modifier + mouse button\" for modifier keys.": {
       "localizations": {
         "de": {
@@ -11191,6 +12867,22 @@
         }
       }
     },
+    "Visual Studio Code and Cursor": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visual Studio Code und Cursor"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visual Studio Code i Cursor"
+          }
+        }
+      }
+    },
     "Volume down": {
       "localizations": {
         "de": {
@@ -11219,6 +12911,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Głośniej"
+          }
+        }
+      }
+    },
+    "Volume, tracks and brightness, without the function keys.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lautstärke, Titel und Helligkeit ohne Funktionstasten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Głośność, utwory i jasność bez klawiszy funkcyjnych."
+          }
+        }
+      }
+    },
+    "Wait a moment and the compass shows its actions; the highlighted one runs when you let go.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warte kurz, dann zeigt der Kompass seine Aktionen; die hervorgehobene läuft beim Loslassen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaczekaj chwilę, a kompas pokaże akcje; podświetlona wykona się, gdy puścisz."
           }
         }
       }
@@ -11545,6 +13269,22 @@
         }
       }
     },
+    "With no modifier, the button itself runs the action. Hold it and move to choose in a compass.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne Sondertaste führt die Maustaste selbst die Aktion aus. Halte sie und beweg dich, um in einem Kompass zu wählen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bez modyfikatora akcję uruchamia sam przycisk. Przytrzymaj go i przesuń, żeby wybrać w kompasie."
+          }
+        }
+      }
+    },
     "With no modifiers selected, the gesture works only while no modifier is held. Choose a half or a corner of the trackpad to give the same gesture different jobs.": {
       "localizations": {
         "de": {
@@ -11653,6 +13393,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Twoje reguły gładzika"
+          }
+        }
+      }
+    },
+    "Zoom meetings": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom-Meetings"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotkania w Zoom"
           }
         }
       }

@@ -78,6 +78,22 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             menu.addItem(.separator())
         }
 
+        let compasses = agent.compassChoices
+        if agent.isTapRunning, !compasses.isEmpty {
+            if compasses.count == 1, let only = compasses.first {
+                menu.addItem(item(String(localized: "Open Compass")) { [agent] in agent.openCompass(only.id, centred: true) })
+            } else {
+                let parent = NSMenuItem(title: String(localized: "Open Compass"), action: nil, keyEquivalent: "")
+                let submenu = NSMenu()
+                for choice in compasses {
+                    submenu.addItem(item(choice.name) { [agent] in agent.openCompass(choice.id, centred: true) })
+                }
+                parent.submenu = submenu
+                menu.addItem(parent)
+            }
+            menu.addItem(.separator())
+        }
+
         if !agent.unsupported.isEmpty {
             let parent = NSMenuItem(title: String(localized: "Unsupported Rules (\(agent.unsupported.count))"), action: nil, keyEquivalent: "")
             let submenu = NSMenu()

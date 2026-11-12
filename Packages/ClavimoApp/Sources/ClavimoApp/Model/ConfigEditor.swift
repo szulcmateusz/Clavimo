@@ -136,6 +136,69 @@ final class ConfigEditor {
         return commit(updated)
     }
 
+    // MARK: Compasses
+
+    var compasses: [CompassDraft] { (document?.compasses ?? []).map(CompassDraft.init) }
+
+    /// Inserts or replaces a compass, keeping its place in the list.
+    @discardableResult
+    func upsertCompass(_ draft: CompassDraft) -> String? {
+        guard var updated = document else { return lastError ?? "Configuration is not loaded." }
+        if let message = draft.validationMessage { return message }
+        var list = updated.compasses ?? []
+        if let index = list.firstIndex(where: { $0.id == draft.id }) {
+            list[index] = draft.document
+        } else {
+            list.append(draft.document)
+        }
+        updated.compasses = list
+        return commit(updated)
+    }
+
+    /// Removes a compass, the rules that open it and the slots of other
+    /// compasses that lead to it, so nothing points to a missing compass.
+    @discardableResult
+    func deleteCompass(id: String) -> String? {
+        guard var updated = document else { return nil }
+        updated.compasses?.removeAll { $0.id == id }
+        if updated.compasses?.isEmpty == true { updated.compasses = nil }
+        updated.rules.removeAll { Self.opens(id, $0) }
+        for index in (updated.compasses ?? []).indices {
+            func keep(_ slot: ConfigDocument.Compass.Slot) -> Bool {
+                !(slot.action["kind"]?.string == "openCompass" && slot.action["compassId"]?.string == id)
+            }
+            updated.compasses![index].slots.removeAll { !keep($0) }
+            for page in (updated.compasses![index].apps ?? []).indices {
+                updated.compasses![index].apps![page].slots.removeAll { !keep($0) }
+            }
+        }
+        return commit(updated)
+    }
+
+    /// Rules whose trigger opens the compass `id`.
+    func rulesOpening(_ id: String) -> [ConfigDocument.Rule] {
+        (document?.rules ?? []).filter { Self.opens(id, $0) }
+    }
+
+    /// A new compass id that is not used yet.
+    func newCompassID(from name: String) -> String {
+        let base = name.lowercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }.map(String.init).joined()
+        let stem = base.isEmpty ? "compass" : String(base.prefix(24))
+        let used = Set((document?.compasses ?? []).map(\.id))
+        var candidate = stem
+        var number = 2
+        while used.contains(candidate) {
+            candidate = "\(stem)\(number)"
+            number += 1
+        }
+        return candidate
+    }
+
+    nonisolated static func opens(_ id: String, _ rule: ConfigDocument.Rule) -> Bool {
+        let values = [rule.action, rule.action["tap"], rule.action["hold"], rule.action["doubleTap"]].compactMap { $0 }
+        return values.contains { $0["kind"]?.string == "openCompass" && $0["compassId"]?.string == id }
+    }
+
     @discardableResult
     func setEnabledOnLaunch(_ enabled: Bool) -> String? {
         guard var updated = document else { return nil }

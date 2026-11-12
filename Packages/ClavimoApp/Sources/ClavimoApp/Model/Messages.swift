@@ -57,6 +57,14 @@ enum Messages {
             String(localized: "The trackpad gesture is incomplete or not supported.")
         case .invalidKeyBehavior:
             String(localized: "The keyboard rule is incomplete. Edit it in the Keyboard pane or delete it.")
+        case let .unknownCompass(id):
+            String(localized: "There is no compass with the id \(id). Add it in the Compass pane or choose another one.")
+        case let .invalidCompassDirection(direction):
+            String(localized: "\(direction) is not a compass direction. Use up, upRight, right, downRight, down, downLeft, left or upLeft.")
+        case let .duplicateCompassDirection(direction):
+            String(localized: "Two actions use the direction \(direction). Keep one.")
+        case .invalidCompass:
+            String(localized: "The compass needs its own id.")
         }
     }
 

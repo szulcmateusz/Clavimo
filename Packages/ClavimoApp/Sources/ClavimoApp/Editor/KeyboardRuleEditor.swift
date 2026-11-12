@@ -101,7 +101,7 @@ struct KeyboardRuleEditor: View {
             OutputSection(title: String(localized: "When tapped"), output: $draft.output, model: model, layers: layers, allowed: tapKinds)
             if KeyCode(draft.key).modifierKey == nil {
                 OutputSection(title: String(localized: "When held"), output: $draft.hold, model: model, layers: layers,
-                              allowed: [.modifiers, .holdLayer, .key, .shortcut])
+                              allowed: [.modifiers, .holdLayer, .key, .shortcut, .compass])
                 Section {
                     Toggle(String(localized: "Double tap does something else"), isOn: $draft.doubleTapEnabled)
                     if draft.doubleTapEnabled {
@@ -126,7 +126,7 @@ struct KeyboardRuleEditor: View {
     }
 
     private var tapKinds: [OutputDraft.Kind] {
-        [.key, .shortcut, .action, .oneShot, .toggleLayer, .startSequence, .capsLock, .none]
+        [.key, .shortcut, .action, .compass, .oneShot, .toggleLayer, .startSequence, .capsLock, .none]
     }
 
     private var ownModifierHold: OutputDraft {
@@ -241,6 +241,8 @@ struct OutputFields: View {
             LayerField(name: $output.layer, layers: layers)
         case .action:
             ActionFields(draft: Binding(get: { output.action.ruleDraft }, set: { output.action = ActionChoice($0) }), model: model)
+        case .compass:
+            CompassPicker(compassID: $output.action.compassID, model: model)
         case .startSequence, .capsLock, .none:
             EmptyView()
         }

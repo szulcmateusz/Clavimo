@@ -46,6 +46,15 @@ enum ScreenshotRenderer {
                     try render(sheet, size: NSSize(width: 600, height: 700), appearance: appearance,
                                to: outputDirectory.appendingPathComponent("editor-keyboard-\(suffix).png"))
                 }
+                if let main = agent.loaded?.compasses["main"] {
+                    let controller = CompassController()
+                    controller.compasses = agent.loaded?.compasses ?? [:]
+                    let model = CompassView.Model(title: main.name, appName: nil,
+                                                  tiles: main.slots(forApp: nil).mapValues { controller.tile(for: $0) },
+                                                  highlighted: .right, held: true)
+                    try render(CompassView(model: model).padding(10), size: NSSize(width: 480, height: 480), appearance: appearance,
+                               to: outputDirectory.appendingPathComponent("compass-panel-\(suffix).png"))
+                }
                 if let draft = editor.rows.first(where: { $0.draft?.kind == .trackpadGesture && $0.draft?.gesture == .swipe })?.draft {
                     let sheet = RuleEditorView(model: agent, draft: draft, isNew: false) { _ in nil }
                     try render(sheet, size: NSSize(width: 600, height: 680), appearance: appearance,
@@ -151,8 +160,19 @@ enum ScreenshotRenderer {
         for (index, draft) in (KeyboardTemplates.navigation.drafts + KeyboardTemplates.escapeCombo.drafts).enumerated() {
             rules.append(draft.makeRule(id: "sample-keyboard-\(index)", order: rules.count))
         }
+        var compass = CompassDraft(id: "main", name: String(localized: "Main"))
+        CompassTemplates.everyday.apply(to: &compass)
+        CompassTemplates.browser.apply(to: &compass)
+        var compassButton = RuleDraft()
+        compassButton.kind = .modifierClick
+        compassButton.modifiers = []
+        compassButton.button = 5
+        compassButton.action = .openCompass
+        compassButton.compassID = compass.id
+        rules.append(compassButton.makeRule(id: "sample-compass", order: rules.count))
         return ConfigDocument(engine: .init(enabledOnLaunch: true), rules: rules,
                               deviceSettings: [wheel.makeDeviceSetting(id: "sample-wheel"),
-                                               trackpadScroll.makeDeviceSetting(id: "sample-trackpad")])
+                                               trackpadScroll.makeDeviceSetting(id: "sample-trackpad")],
+                              compasses: [compass.document])
     }
 }

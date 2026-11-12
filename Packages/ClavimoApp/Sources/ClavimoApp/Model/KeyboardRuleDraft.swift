@@ -9,6 +9,8 @@ struct ActionChoice: Equatable {
     var shortcutModifiers: Set<RuleDraft.Modifier> = [.command]
     var appBundleID = ""
     var mediaKey: MediaKey = .playPause
+    var compassID = ""
+    var menuPath: [String] = []
 
     init() {}
 
@@ -18,6 +20,8 @@ struct ActionChoice: Equatable {
         shortcutModifiers = draft.shortcutModifiers
         appBundleID = draft.appBundleID
         mediaKey = draft.mediaKey
+        compassID = draft.compassID
+        menuPath = draft.menuPath
     }
 
     /// A rule draft carrying this action, for the shared action editor
@@ -29,6 +33,8 @@ struct ActionChoice: Equatable {
         draft.shortcutModifiers = shortcutModifiers
         draft.appBundleID = appBundleID
         draft.mediaKey = mediaKey
+        draft.compassID = compassID
+        draft.menuPath = menuPath
         return draft
     }
 }
@@ -36,7 +42,7 @@ struct ActionChoice: Equatable {
 /// What a keyboard rule produces, as the editor shows it.
 struct OutputDraft: Equatable {
     enum Kind: String, CaseIterable, Identifiable {
-        case key, shortcut, modifiers, holdLayer, toggleLayer, oneShot, startSequence, capsLock, action, none
+        case key, shortcut, modifiers, holdLayer, toggleLayer, oneShot, startSequence, capsLock, compass, action, none
         var id: String { rawValue }
 
         var title: String {
@@ -49,13 +55,14 @@ struct OutputDraft: Equatable {
             case .oneShot: String(localized: "Modifiers for the next key")
             case .startSequence: String(localized: "Start a key sequence")
             case .capsLock: String(localized: "Caps Lock")
+            case .compass: String(localized: "Open a compass")
             case .action: String(localized: "Action")
             case .none: String(localized: "Nothing")
             }
         }
 
         /// Outputs that last while their key is held.
-        var isHeld: Bool { [.key, .shortcut, .modifiers, .holdLayer].contains(self) }
+        var isHeld: Bool { [.key, .shortcut, .modifiers, .holdLayer, .compass].contains(self) }
     }
 
     var kind: Kind = .key
@@ -111,6 +118,8 @@ struct OutputDraft: Equatable {
             return .object(["kind": .string("startSequence")])
         case .capsLock:
             return .object(["kind": .string("toggleCapsLock")])
+        case .compass:
+            return .object(["kind": .string("openCompass"), "compassId": .string(action.compassID)])
         case .action:
             return action.ruleDraft.actionJSON
         case .none:
@@ -164,6 +173,10 @@ struct OutputDraft: Equatable {
             kind = .startSequence
         case "toggleCapsLock":
             kind = .capsLock
+        case "openCompass":
+            guard let id = value["compassId"]?.string, !id.isEmpty else { return nil }
+            kind = .compass
+            action.compassID = id
         case "none", "disableInput":
             kind = .none
         default:
@@ -185,6 +198,7 @@ struct OutputDraft: Equatable {
         case .toggleLayer: String(localized: "Switch layer \(layer)")
         case .startSequence: String(localized: "Key sequence")
         case .capsLock: String(localized: "Caps Lock")
+        case .compass: String(localized: "Compass")
         case .action: action.ruleDraft.actionTitle
         case .none: String(localized: "Nothing")
         }
@@ -205,7 +219,9 @@ struct OutputDraft: Equatable {
                 return String(localized: "Caps Lock and Fn cannot be typed by a rule. Use the Caps Lock output instead.")
             }
         case .action:
-            if action.action == .launchApp, action.appBundleID.isEmpty { return String(localized: "Choose the app to open.") }
+            if let message = action.ruleDraft.actionValidationMessage { return message }
+        case .compass:
+            if action.compassID.isEmpty { return String(localized: "Choose a compass. Add one in the Compass pane first.") }
         default:
             break
         }

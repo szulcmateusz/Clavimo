@@ -139,11 +139,14 @@ struct CompilerTests {
         #expect(result.contains(.duplicateChord(button: .button4, ids: ["x", "x"])))
     }
 
-    @Test func rejectsEmptyModifierLeader() {
-        let result = errors([
+    @Test func emptyModifierLeaderOnlyForButtonsThreeAndUp() {
+        #expect(errors([
             .mouseChord(id: "x", leader: .modifiers([]), button: .button4, action: .nextWorkspace, priority: 1),
-        ])
-        #expect(result == [.emptyModifierLeader(id: "x")])
+        ]).isEmpty, "a side button can act alone")
+        #expect(errors([
+            .mouseChord(id: "x", leader: .modifiers([]), button: .secondary, action: .nextWorkspace, priority: 1,
+                        allowProtectedButton: true),
+        ]) == [.emptyModifierLeader(id: "x")])
     }
 
     @Test func mouseButtonUserFacingNumbersMatchRawIndices() {

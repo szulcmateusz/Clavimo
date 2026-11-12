@@ -59,7 +59,7 @@ struct RuleDraft: Equatable {
             switch self {
             case .swapKeys: String(localized: "Swap two keys")
             case .remapKey: String(localized: "Remap a key")
-            case .modifierClick: String(localized: "Modifier + mouse button")
+            case .modifierClick: String(localized: "Mouse button, alone or with modifiers")
             case .keyClick: String(localized: "Key + mouse button")
             case .trackpadGesture: String(localized: "Trackpad gesture")
             case .trackpadClick: String(localized: "Trackpad click")
@@ -124,6 +124,7 @@ struct RuleDraft: Equatable {
     enum Action: String, CaseIterable, Identifiable {
         case nextWorkspace, previousWorkspace, missionControl, applicationWindows
         case middleClick, backClick, forwardClick, shortcut, launchApp, media
+        case openCompass, menuItem
         var id: String { rawValue }
         var title: String {
             switch self {
@@ -137,6 +138,8 @@ struct RuleDraft: Equatable {
             case .shortcut: String(localized: "Keyboard shortcut")
             case .launchApp: String(localized: "Open an app")
             case .media: String(localized: "Media key")
+            case .openCompass: String(localized: "Open a compass")
+            case .menuItem: String(localized: "Choose an app menu item")
             }
         }
 
@@ -177,6 +180,9 @@ struct RuleDraft: Equatable {
     var shortcutModifiers: Set<Modifier> = [.command]
     var appBundleID = ""
     var mediaKey: MediaKey = .playPause
+    var compassID = ""
+    /// Menu titles from the menu bar down, e.g. ["File", "New Tab"].
+    var menuPath: [String] = []
     var gesture: Gesture = .tap
     var fingers = 3
     var direction: GestureEvent.Direction = .left
@@ -209,7 +215,9 @@ struct RuleDraft: Equatable {
         case .remapKey:
             String(localized: "\(KeyNames.name(for: firstKey)) to \(KeyNames.name(for: secondKey))")
         case .modifierClick:
-            String(localized: "\(modifierText) + \(KeyNames.buttonName(button)): \(actionTitle)")
+            modifiers.isEmpty
+                ? String(localized: "\(KeyNames.buttonName(button)): \(actionTitle)")
+                : String(localized: "\(modifierText) + \(KeyNames.buttonName(button)): \(actionTitle)")
         case .keyClick:
             String(localized: "\(KeyNames.name(for: firstKey)) + \(KeyNames.buttonName(button)): \(actionTitle)")
         case .trackpadGesture, .trackpadClick:
@@ -254,6 +262,8 @@ struct RuleDraft: Equatable {
         case .shortcut: .shortcut(KeyCode(shortcutKey), Modifier.generic(shortcutModifiers))
         case .launchApp: .launchApp(appBundleID)
         case .media: .media(mediaKey)
+        case .openCompass: .openCompass(compassID)
+        case .menuItem: .menuItem(menuPath)
         }
     }
 
@@ -267,6 +277,10 @@ struct RuleDraft: Equatable {
             appBundleID.isEmpty ? action.title : String(localized: "Open \(AppNames.name(appBundleID))")
         case .media:
             mediaKey.localizedTitle
+        case .openCompass:
+            String(localized: "Compass")
+        case .menuItem:
+            menuPath.isEmpty ? action.title : menuPath.joined(separator: " › ")
         default:
             action.localizedTitle
         }
@@ -290,7 +304,9 @@ struct RuleDraft: Equatable {
                 return String(localized: "Caps Lock can be remapped to another key, but no key can type Caps Lock. Use the Keyboard pane to make Caps Lock toggle on a tap or double tap.")
             }
         case .modifierClick:
-            if modifiers.isEmpty { return String(localized: "Choose at least one modifier.") }
+            if modifiers.isEmpty, button <= 2 {
+                return String(localized: "The left and right buttons need at least one modifier. Other buttons can work alone.")
+            }
         case .keyClick:
             if KeyCode(firstKey).modifierKey != nil || firstKey == KeyCode.capsLock.rawValue || firstKey == KeyCode.function.rawValue {
                 return String(localized: "Use \"Modifier + mouse button\" for modifier keys.")
@@ -312,7 +328,18 @@ struct RuleDraft: Equatable {
         if kind.hasAction, action == .launchApp, appBundleID.isEmpty {
             return String(localized: "Choose the app to open.")
         }
+        if kind.hasAction, let message = actionValidationMessage { return message }
         return nil
+    }
+
+    /// Problems with the action alone, shared with keyboard rules and compass slots.
+    var actionValidationMessage: String? {
+        switch action {
+        case .launchApp where appBundleID.isEmpty: String(localized: "Choose the app to open.")
+        case .openCompass where compassID.isEmpty: String(localized: "Choose a compass. Add one in the Compass pane first.")
+        case .menuItem where menuPath.isEmpty: String(localized: "Choose the menu item.")
+        default: nil
+        }
     }
 }
 
@@ -379,6 +406,9 @@ extension RuleDraft {
             trigger = .object(["kind": .string("key"), "key": Self.key(firstKey)])
             actionValue = .object(["kind": .string("sendKey"), "key": Self.key(secondKey)])
             behavior.repeat = "onAutorepeat"
+        case .modifierClick where modifiers.isEmpty:
+            trigger = .object(["kind": .string("mouseButton"), "mouseButton": .number(Double(button))])
+            actionValue = actionJSON
         case .modifierClick:
             trigger = .object(["kind": .string("modifierChord"), "requiredModifiers": Self.modifierNames(modifiers),
                                "mouseButton": .number(Double(button))])
@@ -447,6 +477,8 @@ extension RuleDraft {
             .object(["kind": .string("sendShortcut"), "key": Self.key(shortcutKey), "modifiers": Self.modifierNames(shortcutModifiers)])
         case .launchApp: .object(["kind": .string("launchApp"), "bundleId": .string(appBundleID)])
         case .media: .object(["kind": .string("mediaKey"), "key": .string(mediaKey.rawValue)])
+        case .openCompass: .object(["kind": .string("openCompass"), "compassId": .string(compassID)])
+        case .menuItem: .object(["kind": .string("menuItem"), "path": .array(menuPath.map { .string($0) })])
         }
     }
 
@@ -478,6 +510,15 @@ extension RuleDraft {
             guard let key = value["key"]?.string.flatMap(MediaKey.init(rawValue:)) else { return false }
             action = .media
             mediaKey = key
+        case "openCompass":
+            guard let id = value["compassId"]?.string, !id.isEmpty else { return false }
+            action = .openCompass
+            compassID = id
+        case "menuItem":
+            let path = (value["path"]?.array ?? []).compactMap(\.string)
+            guard !path.isEmpty else { return false }
+            action = .menuItem
+            menuPath = path
         default:
             return false
         }
@@ -543,6 +584,11 @@ extension RuleDraft {
         case ("key", "sendKey"):
             guard let from = Self.code(trigger["key"]), let to = Self.code(rule.action["key"]) else { return nil }
             kind = .remapKey; firstKey = from; secondKey = to
+        case ("mouseButton", _):
+            guard let number = trigger["mouseButton"]?.int, number >= 3, readAction(rule.action),
+                  trigger["phase"] == nil || trigger["phase"]?.string == "down",
+                  let set = Self.modifierSet(trigger["requiredModifiers"]) else { return nil }
+            kind = .modifierClick; modifiers = set; button = number
         case ("modifierChord", _):
             guard trigger["key"] == nil, let number = trigger["mouseButton"]?.int, readAction(rule.action),
                   let set = Self.modifierSet(trigger["requiredModifiers"]) else { return nil }

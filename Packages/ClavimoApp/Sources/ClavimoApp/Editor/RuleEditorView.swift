@@ -112,6 +112,8 @@ struct RuleEditorView: View {
             } footer: {
                 if draft.button <= 2 {
                     Text("Ordinary clicks are never affected: only clicks made while exactly these modifiers are held are replaced by the action.").formFooterStyle()
+                } else if draft.modifiers.isEmpty {
+                    Text("With no modifier, the button itself runs the action. Hold it and move to choose in a compass.").formFooterStyle()
                 } else {
                     Text("The exact set of held modifiers must match.").formFooterStyle()
                 }
@@ -286,6 +288,8 @@ private struct ActionSection: View {
 struct ActionFields: View {
     @Binding var draft: RuleDraft
     let model: AgentController
+    /// A compass a slot of that compass should not open again.
+    var excludedCompass: String?
 
     var body: some View {
         Group {
@@ -297,7 +301,7 @@ struct ActionFields: View {
                     ForEach([RuleDraft.Action.middleClick, .backClick, .forwardClick]) { Text($0.title).tag($0) }
                 }
                 Section(String(localized: "Other")) {
-                    ForEach([RuleDraft.Action.shortcut, .launchApp, .media]) { Text($0.title).tag($0) }
+                    ForEach([RuleDraft.Action.shortcut, .launchApp, .media, .menuItem, .openCompass]) { Text($0.title).tag($0) }
                 }
             }
             switch draft.action {
@@ -310,6 +314,10 @@ struct ActionFields: View {
                 Picker(String(localized: "Key"), selection: $draft.mediaKey) {
                     ForEach(MediaKey.allCases, id: \.self) { Text($0.localizedTitle).tag($0) }
                 }
+            case .openCompass:
+                CompassPicker(compassID: $draft.compassID, model: model, excluding: excludedCompass)
+            case .menuItem:
+                MenuItemField(path: $draft.menuPath)
             default:
                 EmptyView()
             }

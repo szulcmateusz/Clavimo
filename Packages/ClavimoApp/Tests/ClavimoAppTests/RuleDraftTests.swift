@@ -175,7 +175,9 @@ struct RuleDraftTests {
         var noModifier = RuleDraft()
         noModifier.kind = .modifierClick
         noModifier.modifiers = []
-        #expect(noModifier.validationMessage != nil)
+        #expect(noModifier.validationMessage == nil, "a side button can act alone")
+        noModifier.button = 2
+        #expect(noModifier.validationMessage != nil, "the right button needs a modifier")
 
         var letterOnLeftClick = RuleDraft()
         letterOnLeftClick.kind = .keyClick

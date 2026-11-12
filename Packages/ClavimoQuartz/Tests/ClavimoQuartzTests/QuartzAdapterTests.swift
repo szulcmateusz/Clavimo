@@ -77,6 +77,25 @@ struct QuartzFlagsTests {
             #expect(mask & (CGEventMask(1) << CGEventMask(type.rawValue)) != 0)
         }
     }
+
+    @Test func aCompassAddsClicksButNeverPointerMovement() throws {
+        let rules = try CompiledRules.compile([
+            .keyOutput(id: "k", key: KeyCode(0x6D), output: .action(.openCompass("main"))),
+        ]).get()
+        let mask = EventTapController.eventMask(for: rules)
+        for type: CGEventType in [.leftMouseDown, .leftMouseUp, .rightMouseDown, .rightMouseUp] {
+            #expect(mask & (CGEventMask(1) << CGEventMask(type.rawValue)) != 0, "\(type.rawValue) confirms or cancels")
+        }
+        for type: CGEventType in [.mouseMoved, .leftMouseDragged, .rightMouseDragged, .otherMouseDragged, .scrollWheel] {
+            #expect(mask & (CGEventMask(1) << CGEventMask(type.rawValue)) == 0, "\(type.rawValue) must not be observed")
+        }
+    }
+
+    @Test func menuTitlesMatchWithoutCaseOrEllipsis() {
+        #expect(MenuItems.normalized("Save As…") == "save as")
+        #expect(MenuItems.normalized("Export...") == "export")
+        #expect(MenuItems.normalized(" New Tab ") == "new tab")
+    }
 }
 
 @Suite("Latency recorder")

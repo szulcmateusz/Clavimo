@@ -136,6 +136,35 @@ extension ActionCommand {
         case let .launchApp(bundleID): String(localized: "Open \(AppNames.name(bundleID))")
         case let .media(key): key.localizedTitle
         case .toggleCapsLock: String(localized: "Caps Lock")
+        case .openCompass: String(localized: "Open compass")
+        case let .menuItem(path): path.joined(separator: " › ")
+        }
+    }
+
+    /// An SF Symbol for the action, used on compass tiles.
+    var symbol: String {
+        switch self {
+        case .nextWorkspace: "arrow.right.square"
+        case .previousWorkspace: "arrow.left.square"
+        case .missionControl: "rectangle.3.group"
+        case .applicationWindows: "macwindow.on.rectangle"
+        case .shortcut: "command"
+        case .click: "computermouse"
+        case .launchApp: "app"
+        case let .media(key):
+            switch key {
+            case .playPause: "playpause"
+            case .nextTrack: "forward"
+            case .previousTrack: "backward"
+            case .volumeUp: "speaker.wave.3"
+            case .volumeDown: "speaker.wave.1"
+            case .mute: "speaker.slash"
+            case .brightnessUp: "sun.max"
+            case .brightnessDown: "sun.min"
+            }
+        case .toggleCapsLock: "capslock"
+        case .openCompass: "safari"
+        case .menuItem: "filemenu.and.selection"
         }
     }
 }

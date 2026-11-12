@@ -3,8 +3,9 @@ import Foundation
 
 /// Reads rules pasted as text, typically an AI assistant's answer: a whole
 /// configuration, a list of rules or one rule, with or without a Markdown
-/// code block around it. Missing bookkeeping fields are filled in, so only
-/// the trigger and the action really matter.
+/// code block around it, and action compasses alone or next to rules.
+/// Missing bookkeeping fields are filled in, so only the trigger and the
+/// action (or a compass's slots) really matter.
 enum PastedRules {
     struct Failure: Error, Equatable {
         let message: String
@@ -24,7 +25,8 @@ enum PastedRules {
         var sources: [String] = []
         for piece in pieces {
             guard let value = try? JSONDecoder().decode(JSONValue.self, from: Data(piece.utf8)),
-                  value.array != nil || value["trigger"] != nil || value["rules"] != nil || value["schemaVersion"] != nil else { continue }
+                  value.array != nil || value["trigger"] != nil || value["rules"] != nil || value["schemaVersion"] != nil
+                  || value["compasses"] != nil || value["slots"] != nil else { continue }
             values.append(value)
             sources.append(piece)
         }
@@ -46,22 +48,50 @@ enum PastedRules {
         }
 
         var ruleValues: [JSONValue] = []
+        var compassValues: [JSONValue] = []
+        func sort(_ value: JSONValue) {
+            if value["slots"] != nil { compassValues.append(value) } else { ruleValues.append(value) }
+        }
         for value in values {
-            if let rules = value["rules"]?.array {
-                ruleValues += rules
+            if value["rules"] != nil || value["compasses"] != nil {
+                ruleValues += value["rules"]?.array ?? []
+                compassValues += value["compasses"]?.array ?? []
             } else if let array = value.array {
-                ruleValues += array
-            } else if value["trigger"] != nil {
-                ruleValues.append(value)
+                array.forEach(sort)
+            } else if value["trigger"] != nil || value["slots"] != nil {
+                sort(value)
             } else {
                 return .failure(Failure(message: String(localized: "No rules found. A rule needs a trigger and an action.")))
             }
         }
-        guard !ruleValues.isEmpty else {
+        guard !ruleValues.isEmpty || !compassValues.isEmpty else {
             return .failure(Failure(message: String(localized: "No rules found. A rule needs a trigger and an action.")))
         }
 
         var updated = current
+        for (index, value) in compassValues.enumerated() {
+            guard case var .object(object) = value, object["slots"]?.array != nil else {
+                return .failure(Failure(message: String(localized: "Compass \(index + 1) has no slots.")))
+            }
+            let name = object["name"]?.string.flatMap { $0.isEmpty ? nil : $0 } ?? String(localized: "Compass")
+            object["name"] = .string(name)
+            if object["id"]?.string?.isEmpty != false {
+                object["id"] = .string(freeCompassID(name, in: updated))
+            }
+            do {
+                let data = try JSONEncoder().encode(JSONValue.object(object))
+                let compass = try JSONDecoder().decode(ConfigDocument.Compass.self, from: data)
+                var list = updated.compasses ?? []
+                if let existing = list.firstIndex(where: { $0.id == compass.id }) {
+                    list[existing] = compass
+                } else {
+                    list.append(compass)
+                }
+                updated.compasses = list
+            } catch {
+                return .failure(Failure(message: String(localized: "Compass \(index + 1) cannot be read. Ask the assistant to follow the Clavimo configuration format.")))
+            }
+        }
         for (index, ruleValue) in ruleValues.enumerated() {
             guard case var .object(object) = ruleValue, object["trigger"] != nil, object["action"] != nil else {
                 return .failure(Failure(message: String(localized: "Rule \(index + 1) has no trigger or action.")))
@@ -80,6 +110,20 @@ enum PastedRules {
             }
         }
         return .success(updated)
+    }
+
+    /// An id made from the compass name that no compass uses yet.
+    private static func freeCompassID(_ name: String, in document: ConfigDocument) -> String {
+        let letters = name.lowercased().unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) && $0.isASCII }
+        let stem = letters.isEmpty ? "compass" : String(String.UnicodeScalarView(letters).prefix(24))
+        let used = Set((document.compasses ?? []).map(\.id))
+        var candidate = stem
+        var number = 2
+        while used.contains(candidate) {
+            candidate = "\(stem)\(number)"
+            number += 1
+        }
+        return candidate
     }
 
     /// Fills the fields a rule must have but an assistant may leave out.

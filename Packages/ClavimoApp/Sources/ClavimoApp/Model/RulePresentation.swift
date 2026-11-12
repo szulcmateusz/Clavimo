@@ -77,6 +77,8 @@ extension RuleDraft.Action {
         case .shortcut: "command"
         case .launchApp: "app"
         case .media: "playpause"
+        case .openCompass: "safari"
+        case .menuItem: "filemenu.and.selection"
         }
     }
 
@@ -92,6 +94,8 @@ extension RuleDraft.Action {
         case .shortcut: String(localized: "Shortcut")
         case .launchApp: String(localized: "Open app")
         case .media: String(localized: "Media key")
+        case .openCompass: String(localized: "Compass")
+        case .menuItem: String(localized: "Menu item")
         }
     }
 }
@@ -139,6 +143,8 @@ extension RuleDraft {
             [key(firstKey), .symbol("arrow.left.arrow.right"), key(secondKey)]
         case .remapKey:
             [key(firstKey), .symbol("arrow.right"), key(secondKey)]
+        case .modifierClick where modifiers.isEmpty:
+            [.mouse(KeyNames.shortButtonName(button)), .symbol("arrow.right"), actionToken]
         case .modifierClick:
             modifierTokens + [.text("+"), .mouse(KeyNames.shortButtonName(button)), .symbol("arrow.right"), actionToken]
         case .keyClick:
@@ -189,6 +195,8 @@ extension RuleDraft {
             text = String(localized: "\(first) acts as \(second), and \(second) acts as \(first).")
         case .remapKey:
             text = String(localized: "Pressing \(first) sends \(second).")
+        case .modifierClick where modifiers.isEmpty:
+            text = String(localized: "The \(button) runs \(actionTitle) instead of its usual function.")
         case .modifierClick:
             let held = Modifier.allCases.filter { modifiers.contains($0) }.map(\.localizedName).formatted(.list(type: .and))
             text = String(localized: "While you hold \(held), the \(button) runs \(actionTitle). Other clicks work as usual.")
