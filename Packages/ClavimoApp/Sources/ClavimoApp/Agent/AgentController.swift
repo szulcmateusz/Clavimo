@@ -400,18 +400,20 @@ final class AgentController {
     }
 
     static func otherRemapperName() -> String? {
-        let known = [
-            "org.pqrs.Karabiner": "Karabiner-Elements",
-            "com.logi.optionsplus": "Logi Options+",
-            "com.pilotmoon.scroll-reverser": "Scroll Reverser",
-            "com.hegenberg.BetterTouchTool": "BetterTouchTool",
-            "com.lujjjh.LinearMouse": "LinearMouse",
+        runningRemappers().first
+    }
+
+    /// Every other input app that is running, by name, in a stable order.
+    static func runningRemappers() -> [String] {
+        let known: [(prefix: String, name: String)] = [
+            ("org.pqrs.Karabiner", "Karabiner-Elements"),
+            ("com.logi.optionsplus", "Logi Options+"),
+            ("com.pilotmoon.scroll-reverser", "Scroll Reverser"),
+            ("com.hegenberg.BetterTouchTool", "BetterTouchTool"),
+            ("com.lujjjh.LinearMouse", "LinearMouse"),
         ]
-        for app in NSWorkspace.shared.runningApplications {
-            guard let id = app.bundleIdentifier else { continue }
-            if let match = known.first(where: { id.hasPrefix($0.key) }) { return match.value }
-        }
-        return nil
+        let running = NSWorkspace.shared.runningApplications.compactMap(\.bundleIdentifier)
+        return known.filter { entry in running.contains { $0.hasPrefix(entry.prefix) } }.map(\.name)
     }
 }
 

@@ -22,6 +22,9 @@ struct GeneralPane: View {
                 LabeledContent(String(localized: "Startup status"), value: model.loginItemDescription)
                 if let loginError { Text(loginError).foregroundStyle(.red) }
                 Button(String(localized: "Open Login Items Settings")) { SystemSettingsLink.open(.loginItems) }
+                Button(String(localized: "Show the Welcome Guide Again")) {
+                    NotificationCenter.default.post(name: .showWelcomeGuide, object: nil)
+                }
             } header: {
                 Text(String(localized: "Startup"))
             } footer: {
@@ -109,4 +112,9 @@ struct AboutPane: View {
         .padding(Spacing.xl)
         .navigationTitle(String(localized: "About"))
     }
+}
+
+extension Notification.Name {
+    /// Asks the app to open the first-run guide again.
+    static let showWelcomeGuide = Notification.Name("dev.clavimo.showWelcomeGuide")
 }

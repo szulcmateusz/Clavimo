@@ -52,6 +52,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // First launch with no rules: guide the user. People who already
         // have rules (for example from an earlier version) skip the guide.
+        NotificationCenter.default.addObserver(forName: .showWelcomeGuide, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.windows.showOnboarding { [weak self] in self?.windows.showSettings() }
+            }
+        }
+
         let key = "didCompleteOnboarding"
         let document = agent.loaded?.document
         let hasRules = !(document?.rules.isEmpty ?? true) || !(document?.deviceSettings ?? []).isEmpty

@@ -58,9 +58,9 @@ enum RuleTemplates {
     }
 
     /// Ready-made trackpad rules.
-    static var trackpad: [RuleTemplate] {
-        func gesture(_ trigger: TrackpadTrigger, _ action: RuleDraft.Action, modifiers: Set<RuleDraft.Modifier> = [],
-                     configure: (inout RuleDraft) -> Void = { _ in }) -> RuleDraft {
+    /// A trackpad rule for `trigger` running `action`.
+    static func gesture(_ trigger: TrackpadTrigger, _ action: RuleDraft.Action, modifiers: Set<RuleDraft.Modifier> = [],
+                        configure: (inout RuleDraft) -> Void = { _ in }) -> RuleDraft {
             var draft = RuleDraft()
             draft.trackpadModifiers = modifiers
             draft.action = action
@@ -75,7 +75,9 @@ enum RuleTemplates {
             }
             configure(&draft)
             return draft
-        }
+    }
+
+    static var trackpad: [RuleTemplate] {
         return [
             RuleTemplate(id: "rotate-volume-up", title: String(localized: "Turn two fingers clockwise: volume up"),
                          draft: gesture(.gesture(.rotate(.clockwise)), .media) { $0.mediaKey = .volumeUp }),

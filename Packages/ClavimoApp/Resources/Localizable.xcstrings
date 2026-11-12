@@ -1259,6 +1259,22 @@
         }
       }
     },
+    "A double tap still turns Caps Lock on. Shortcuts with Hyper (⌃⌥⇧⌘) never clash with apps.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doppeltes Tippen schaltet die Feststelltaste weiterhin ein. Kurzbefehle mit Hyper (⌃⌥⇧⌘) kollidieren nie mit Apps."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podwójne stuknięcie nadal włącza Caps Lock. Skróty z Hyperem (⌃⌥⇧⌘) nigdy nie kolidują z aplikacjami."
+          }
+        }
+      }
+    },
     "A key can do one thing when tapped and another when held, switch on a layer of other keys, fire with another key pressed at the same moment, or start a short sequence. Keys you do not change keep working exactly as before.": {
       "localizations": {
         "de": {
@@ -1483,6 +1499,22 @@
         }
       }
     },
+    "Action compass under ⌘ + back button": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktionskompass auf ⌘ + Zurück-Taste"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kompas akcji pod ⌘ + przyciskiem Wstecz"
+          }
+        }
+      }
+    },
     "Actions that use them will do nothing: %@.": {
       "localizations": {
         "de": {
@@ -1617,18 +1649,18 @@
         }
       }
     },
-    "Add Rules": {
+    "Add Selected": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Regeln hinzufügen"
+            "value": "Auswahl hinzufügen"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dodaj reguły"
+            "value": "Dodaj zaznaczone"
           }
         }
       }
@@ -1681,6 +1713,22 @@
         }
       }
     },
+    "Adjust…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anpassen …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dostosuj…"
+          }
+        }
+      }
+    },
     "Advanced rule. Edit it in the configuration file.": {
       "localizations": {
         "de": {
@@ -1729,6 +1777,22 @@
         }
       }
     },
+    "All Setups": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Vorlagen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystkie zestawy"
+          }
+        }
+      }
+    },
     "All set.": {
       "localizations": {
         "de": {
@@ -1757,6 +1821,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pozwól Clavimo odczytywać i zmieniać wejście"
+          }
+        }
+      }
+    },
+    "Already on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereits an."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Już włączone."
+          }
+        }
+      }
+    },
+    "Also running: %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Außerdem läuft: %@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa też: %@."
+          }
+        }
+      }
+    },
+    "Alt and Windows keys swapped on a PC keyboard": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alt- und Windows-Taste auf einer PC-Tastatur tauschen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamiana klawiszy Alt i Windows na klawiaturze PC"
           }
         }
       }
@@ -1933,6 +2045,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zastosuj"
+          }
+        }
+      }
+    },
+    "Arrows under the right hand": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pfeile unter der rechten Hand"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Strzałki pod prawą ręką"
           }
         }
       }
@@ -2481,6 +2609,22 @@
         }
       }
     },
+    "Caps Lock is already set in the Keyboard pane.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Feststelltaste ist im Bereich „Tastatur“ bereits eingerichtet."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock jest już ustawiony w panelu Klawiatura."
+          }
+        }
+      }
+    },
     "Caps Lock is changed in System Settings": {
       "localizations": {
         "de": {
@@ -2525,6 +2669,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Caps Lock: %@"
+          }
+        }
+      }
+    },
+    "Caps Lock: Escape when tapped, Hyper when held": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feststelltaste: Tippen ist Escape, Halten ist Hyper"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps Lock: stuknięcie to Escape, przytrzymanie to Hyper"
           }
         }
       }
@@ -3073,6 +3233,38 @@
         }
       }
     },
+    "Clockwise is brighter, counterclockwise darker. Brightness keys may not work with external displays.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Uhrzeigersinn heller, dagegen dunkler. Helligkeitstasten funktionieren mit externen Displays eventuell nicht."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W prawo jaśniej, w lewo ciemniej. Klawisze jasności mogą nie działać z zewnętrznymi monitorami."
+          }
+        }
+      }
+    },
+    "Clockwise is louder, counterclockwise quieter, like a knob. Scrolling works as before.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Uhrzeigersinn lauter, dagegen leiser, wie ein Drehregler. Scrollen funktioniert wie bisher."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W prawo głośniej, w lewo ciszej, jak pokrętłem. Przewijanie działa jak dawniej."
+          }
+        }
+      }
+    },
     "Close tab": {
       "localizations": {
         "de": {
@@ -3329,6 +3521,22 @@
         }
       }
     },
+    "Connect a PC keyboard to use this.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schließ eine PC-Tastatur an, um das zu nutzen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podłącz klawiaturę PC, żeby z tego skorzystać."
+          }
+        }
+      }
+    },
     "Connected devices": {
       "localizations": {
         "de": {
@@ -3341,6 +3549,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podłączone urządzenia"
+          }
+        }
+      }
+    },
+    "Connected: %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angeschlossen: %@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podłączone: %@."
           }
         }
       }
@@ -3677,6 +3901,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Usuń…"
+          }
+        }
+      }
+    },
+    "Details…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szczegóły…"
           }
         }
       }
@@ -4145,6 +4385,22 @@
         }
       }
     },
+    "End: end of the line": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ende: Zeilenende"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End: koniec linii"
+          }
+        }
+      }
+    },
     "Esc cancels": {
       "localizations": {
         "de": {
@@ -4221,6 +4477,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Obsłużone zdarzenia"
+          }
+        }
+      }
+    },
+    "Every open window at a glance.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle offenen Fenster auf einen Blick."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wszystkie otwarte okna w jednym widoku."
           }
         }
       }
@@ -4353,6 +4625,22 @@
         }
       }
     },
+    "Faster keyboard work in code editors and the terminal.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schneller mit der Tastatur in Code-Editoren und im Terminal."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Szybsza praca na klawiaturze w edytorach kodu i terminalu."
+          }
+        }
+      }
+    },
     "File": {
       "localizations": {
         "de": {
@@ -4429,6 +4717,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pierwszy klawisz"
+          }
+        }
+      }
+    },
+    "Fits your hardware": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt zu deiner Hardware"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pasuje do Twojego sprzętu"
           }
         }
       }
@@ -4641,6 +4945,54 @@
         }
       }
     },
+    "For Vim users.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für Vim-Nutzer."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dla użytkowników Vima."
+          }
+        }
+      }
+    },
+    "For any mouse with back and forward buttons, Logitech mice included.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für jede Maus mit Zurück- und Vorwärts-Taste, auch von Logitech."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do każdej myszy z przyciskami Wstecz i Dalej, także Logitecha."
+          }
+        }
+      }
+    },
+    "For anyone with a MacBook or a Magic Trackpad.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für alle mit MacBook oder Magic Trackpad."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dla każdego, kto ma MacBooka albo Magic Trackpad."
+          }
+        }
+      }
+    },
     "For letter keys, use \"once that key is released\", a key of the same hand means tap, and tap at once while typing: fast typing then never triggers a modifier. For Caps Lock or Space, \"means hold\" feels the most direct.": {
       "localizations": {
         "de": {
@@ -4653,6 +5005,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dla liter wybierz „gdy ten klawisz zostanie puszczony”, klawisz tej samej ręki oznacza stuknięcie i od razu stuknięcie podczas pisania: szybkie pisanie nigdy wtedy nie włączy modyfikatora. Dla Caps Lock lub spacji najbardziej bezpośrednie jest „oznacza przytrzymanie”."
+          }
+        }
+      }
+    },
+    "For programmers": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für Programmierer"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dla programistów"
           }
         }
       }
@@ -5073,6 +5441,22 @@
         }
       }
     },
+    "Hold Space and use H J K L as arrows. It takes a day to get used to.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halte die Leertaste und nutze H J K L als Pfeile. Man gewöhnt sich in einem Tag daran."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj Spację i używaj H J K L jako strzałek. Przyzwyczajenie zajmuje dzień."
+          }
+        }
+      }
+    },
     "Hold Space for arrows": {
       "localizations": {
         "de": {
@@ -5201,6 +5585,22 @@
         }
       }
     },
+    "Hold ⌘ and the back button, move towards an action and let go: Spaces, windows, a screenshot, and pages for browsers, code editors and Zoom.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halte ⌘ und die Zurück-Taste, beweg dich zu einer Aktion und lass los: Spaces, Fenster, ein Bildschirmfoto und Seiten für Browser, Code-Editoren und Zoom."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj ⌘ i przycisk Wstecz, przesuń w stronę akcji i puść: biurka, okna, zrzut ekranu oraz strony dla przeglądarek, edytorów kodu i Zoom."
+          }
+        }
+      }
+    },
     "Home": {
       "localizations": {
         "de": {
@@ -5213,6 +5613,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Home"
+          }
+        }
+      }
+    },
+    "Home and End go to the start and end of the line": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pos1 und Ende springen an Zeilenanfang und -ende"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home i End przechodzą na początek i koniec linii"
           }
         }
       }
@@ -5251,6 +5667,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Środkowy rząd: %@ / %@"
+          }
+        }
+      }
+    },
+    "Home: start of the line": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pos1: Zeilenanfang"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home: początek linii"
           }
         }
       }
@@ -5575,6 +6007,22 @@
         }
       }
     },
+    "It cannot run here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das kann hier nicht laufen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie może tu działać."
+          }
+        }
+      }
+    },
     "Its actions and the rules that open it are removed too. A backup of the previous file is kept.": {
       "localizations": {
         "de": {
@@ -5619,6 +6067,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "J i K razem wysyłają Escape"
+          }
+        }
+      }
+    },
+    "J and K together: Escape": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "J und K zusammen: Escape"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "J i K razem: Escape"
           }
         }
       }
@@ -5911,6 +6375,22 @@
         }
       }
     },
+    "Keys and scrolling the way a PC works, best with a PC keyboard.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasten und Scrollen wie am PC, am besten mit einer PC-Tastatur."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klawisze i przewijanie jak na PC, najlepiej z klawiaturą PC."
+          }
+        }
+      }
+    },
     "Keys pressed together": {
       "localizations": {
         "de": {
@@ -6173,6 +6653,38 @@
         }
       }
     },
+    "Left half, turn clockwise: brighter": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linke Hälfte, im Uhrzeigersinn: heller"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewa połowa, obrót w prawo: jaśniej"
+          }
+        }
+      }
+    },
+    "Left half, turn counterclockwise: darker": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linke Hälfte, gegen den Uhrzeigersinn: dunkler"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lewa połowa, obrót w lewo: ciemniej"
+          }
+        }
+      }
+    },
     "Left of the resting finger": {
       "localizations": {
         "de": {
@@ -6185,6 +6697,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Po lewej od opartego palca"
+          }
+        }
+      }
+    },
+    "Left out: %@. %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgelassen: %1$@. %2$@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Left out: %1$@. %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pominięte: %1$@. %2$@"
           }
         }
       }
@@ -6285,6 +6819,22 @@
         }
       }
     },
+    "Logi Options+ is running: keep the side buttons on their default actions there, and set the wheel in one app only.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logi Options+ läuft: Lass die Seitentasten dort auf ihren Standardaktionen und stell das Mausrad nur in einer App ein."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Działa Logi Options+: zostaw tam przyciski boczne na domyślnych akcjach, a kółko ustawiaj tylko w jednej aplikacji."
+          }
+        }
+      }
+    },
     "Look up with three fingers": {
       "localizations": {
         "de": {
@@ -6297,6 +6847,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wyszukiwanie po stuknięciu trzema palcami"
+          }
+        }
+      }
+    },
+    "MacBook trackpad, every day": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MacBook-Trackpad für jeden Tag"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gładzik MacBooka na co dzień"
           }
         }
       }
@@ -6893,6 +7459,22 @@
         }
       }
     },
+    "Mouse wheel like on Windows": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mausrad wie unter Windows"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kółko myszy jak w Windowsie"
+          }
+        }
+      }
+    },
     "Mouse wheels scroll like this: %@. Trackpads keep their own setting.": {
       "localizations": {
         "de": {
@@ -6905,6 +7487,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kółka myszy przewijają tak: %@. Gładziki mają własne ustawienie."
+          }
+        }
+      }
+    },
+    "Mouse with side buttons": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maus mit Seitentasten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mysz z przyciskami bocznymi"
           }
         }
       }
@@ -6969,6 +7567,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przesuń w stronę akcji"
+          }
+        }
+      }
+    },
+    "Music and videos, without looking for the key.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Musik und Videos, ohne die Taste zu suchen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muzyka i filmy bez szukania klawisza."
           }
         }
       }
@@ -7549,6 +8163,22 @@
         }
       }
     },
+    "Nothing was switched on. %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts wurde eingeschaltet. %@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nic nie zostało włączone. %@"
+          }
+        }
+      }
+    },
     "Off": {
       "localizations": {
         "de": {
@@ -7593,6 +8223,44 @@
           "stringUnit": {
             "state": "translated",
             "value": "Na klawiaturze %@ Caps Lock jest ustawiony jako inny klawisz w Ustawieniach systemowych > Klawiatura > Skróty klawiszowe > Klawisze modyfikujące. Przywróć tam Caps Lock, aby używać reguł Caps Lock na tej klawiaturze."
+          }
+        }
+      }
+    },
+    "On PC keyboards Print Screen arrives as F13; it then works as ⇧⌘4.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf PC-Tastaturen kommt Druck als F13 an; die Taste wirkt dann wie ⇧⌘4."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Na klawiaturach PC Print Screen przychodzi jako F13; działa wtedy jak ⇧⌘4."
+          }
+        }
+      }
+    },
+    "On: %lld of %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An: %1$lld von %2$lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "On: %1$lld of %2$lld"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączone: %1$lld z %2$lld"
           }
         }
       }
@@ -7917,6 +8585,22 @@
         }
       }
     },
+    "Opens a link in a new tab, or closes a tab when you tap its title.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet einen Link in einem neuen Tab oder schließt einen Tab, wenn du auf seinen Titel tippst."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otwiera link w nowej karcie albo zamyka kartę, gdy stukniesz w jej tytuł."
+          }
+        }
+      }
+    },
     "Opens the compass at the pointer. Move towards an action and click, or press Esc.": {
       "localizations": {
         "de": {
@@ -8131,6 +8815,22 @@
         }
       }
     },
+    "Parentheses on the Shift keys": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klammern auf den Umschalttasten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nawiasy na klawiszach Shift"
+          }
+        }
+      }
+    },
     "Paste Rules...": {
       "localizations": {
         "de": {
@@ -8323,22 +9023,6 @@
         }
       }
     },
-    "Pick a few rules to start": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wähle ein paar Regeln zum Start"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wybierz kilka reguł na start"
-          }
-        }
-      }
-    },
     "Pick one and adjust it, or create a rule from scratch.": {
       "localizations": {
         "de": {
@@ -8367,6 +9051,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wybierz szablon, żeby otworzyć go w edytorze; nic się nie zmieni, dopóki go nie dodasz."
+          }
+        }
+      }
+    },
+    "Picked for what is connected. Switch one on, try it, and switch it off if it is not for you.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passend zu dem, was angeschlossen ist. Schalt eine ein, probier sie aus und schalt sie wieder aus, wenn sie nichts für dich ist."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dobrane do podłączonego sprzętu. Włącz, wypróbuj i wyłącz, jeśli Ci nie pasuje."
           }
         }
       }
@@ -8649,6 +9349,38 @@
         }
       }
     },
+    "Print Screen takes a screenshot of an area": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Druck macht ein Bildschirmfoto eines Bereichs"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Print Screen robi zrzut fragmentu ekranu"
+          }
+        }
+      }
+    },
+    "Print Screen: screenshot of an area": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Druck: Bildschirmfoto eines Bereichs"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Print Screen: zrzut fragmentu ekranu"
+          }
+        }
+      }
+    },
     "Priority decides between mouse chords with the same trigger. Key rules for the same key need different conditions; the most specific one wins.": {
       "localizations": {
         "de": {
@@ -8825,22 +9557,6 @@
         }
       }
     },
-    "Quick actions": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schnellaktionen"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Szybkie akcje"
-          }
-        }
-      }
-    },
     "Quick open": {
       "localizations": {
         "de": {
@@ -8901,6 +9617,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wszystko gotowe"
+          }
+        }
+      }
+    },
+    "Ready-made setups": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fertige Vorlagen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gotowe ustawienia"
           }
         }
       }
@@ -9561,6 +10293,38 @@
         }
       }
     },
+    "Right half, turn clockwise: louder": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechte Hälfte, im Uhrzeigersinn: lauter"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawa połowa, obrót w prawo: głośniej"
+          }
+        }
+      }
+    },
+    "Right half, turn counterclockwise: quieter": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechte Hälfte, gegen den Uhrzeigersinn: leiser"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prawa połowa, obrót w lewo: ciszej"
+          }
+        }
+      }
+    },
     "Right of the resting finger": {
       "localizations": {
         "de": {
@@ -10175,6 +10939,22 @@
         }
       }
     },
+    "Show the Welcome Guide Again": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einführung erneut zeigen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż przewodnik ponownie"
+          }
+        }
+      }
+    },
     "Show the active layer and the next keys of a sequence on screen": {
       "localizations": {
         "de": {
@@ -10411,6 +11191,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zacznij od gotowego i zmień go, jak chcesz."
+          }
+        }
+      }
+    },
+    "Start with a ready-made setup": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beginne mit einer fertigen Vorlage"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zacznij od gotowych ustawień"
           }
         }
       }
@@ -10747,6 +11543,38 @@
         }
       }
     },
+    "Switch Off": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausschalten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłącz"
+          }
+        }
+      }
+    },
+    "Switch On": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einschalten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz"
+          }
+        }
+      }
+    },
     "Switch layer %@": {
       "localizations": {
         "de": {
@@ -10759,6 +11587,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przełącz warstwę %@"
+          }
+        }
+      }
+    },
+    "Switch on what suits you. Every change can be adjusted later, and a whole setup switches off in one click.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schalte ein, was zu dir passt. Jede Änderung lässt sich später anpassen, und eine ganze Vorlage schaltest du mit einem Klick wieder aus."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włącz to, co Ci pasuje. Każdą zmianę możesz potem dostosować, a cały zestaw wyłączysz jednym kliknięciem."
+          }
+        }
+      }
+    },
+    "Switched off.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausgeschaltet."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wyłączono."
+          }
+        }
+      }
+    },
+    "Switched on: %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingeschaltet: %@."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Włączono: %@."
+          }
+        }
+      }
+    },
+    "Switching from Windows": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umstieg von Windows"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przesiadka z Windowsa"
           }
         }
       }
@@ -10941,6 +11833,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Od razu stuknięcie podczas pisania"
+          }
+        }
+      }
+    },
+    "Tap left Shift for ( and right Shift for ). Held, Shift works as usual.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe die linke Umschalttaste für ( und die rechte für ). Gehalten wirkt Umschalt wie gewohnt."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie lewego Shifta daje (, prawego ). Przytrzymany Shift działa jak zwykle."
           }
         }
       }
@@ -11271,6 +12179,22 @@
         }
       }
     },
+    "The configuration cannot be read.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Konfiguration kann nicht gelesen werden."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie można odczytać konfiguracji."
+          }
+        }
+      }
+    },
     "The configuration file cannot be read: %@": {
       "localizations": {
         "de": {
@@ -11559,6 +12483,22 @@
         }
       }
     },
+    "The ones that fit what is connected are already chosen. You can switch each one off later in Ready-made setups.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Vorlagen, die zu deiner Hardware passen, sind schon ausgewählt. Du kannst jede später unter „Fertige Vorlagen“ ausschalten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zestawy pasujące do podłączonego sprzętu są już zaznaczone. Każdy możesz później wyłączyć w Gotowych ustawieniach."
+          }
+        }
+      }
+    },
     "The profile %@ inherits from itself through other profiles.": {
       "localizations": {
         "de": {
@@ -11827,6 +12767,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ta akcja została wpisana ręcznie (%@). Wybierz inną, żeby ją zastąpić."
+          }
+        }
+      }
+    },
+    "This key is already set up.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Taste ist bereits belegt."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten klawisz jest już ustawiony."
           }
         }
       }
@@ -12531,6 +13487,54 @@
         }
       }
     },
+    "Turn two fingers on the left half: brightness": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwei Finger in der linken Hälfte drehen: Helligkeit"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót dwoma palcami w lewej połowie: jasność"
+          }
+        }
+      }
+    },
+    "Turn two fingers on the right half: volume": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwei Finger in der rechten Hälfte drehen: Lautstärke"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obrót dwoma palcami w prawej połowie: głośność"
+          }
+        }
+      }
+    },
+    "Turning the wheel down scrolls the page down. The trackpad keeps natural scrolling.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dreht man das Rad nach unten, scrollt die Seite nach unten. Das Trackpad behält das natürliche Scrollen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kręcenie kółkiem w dół przewija stronę w dół. Gładzik zostaje z naturalnym przewijaniem."
+          }
+        }
+      }
+    },
     "Two actions use the direction %@. Keep one.": {
       "localizations": {
         "de": {
@@ -12687,6 +13691,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bez zmian"
+          }
+        }
+      }
+    },
+    "Undo": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widerrufen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cofnij"
           }
         }
       }
@@ -13285,6 +14305,22 @@
         }
       }
     },
+    "With Shift they select. Mac keyboards have no Home or End, so nothing changes there.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Umschalt markieren sie. Mac-Tastaturen haben kein Pos1 oder Ende, dort ändert sich also nichts."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Z Shiftem zaznaczają. Klawiatury Maca nie mają Home ani End, więc tam nic się nie zmienia."
+          }
+        }
+      }
+    },
     "With no modifier, the button itself runs the action. Hold it and move to choose in a compass.": {
       "localizations": {
         "de": {
@@ -13333,18 +14369,34 @@
         }
       }
     },
-    "You can change or remove them at any time in Rules.": {
+    "You already have a compass that opens with a trigger.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Du kannst sie jederzeit unter „Regeln“ ändern oder entfernen."
+            "value": "Du hast bereits einen Kompass mit eigenem Auslöser."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Możesz je w każdej chwili zmienić lub usunąć w zakładce Reguły."
+            "value": "Masz już kompas z własnym wyzwalaczem."
+          }
+        }
+      }
+    },
+    "You already have a rule for the same keys or buttons.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast bereits eine Regel für dieselben Tasten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masz już regułę dla tych samych klawiszy albo przycisków."
           }
         }
       }
@@ -13425,6 +14477,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spotkania w Zoom"
+          }
+        }
+      }
+    },
+    "a Logitech mouse": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "eine Logitech-Maus"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mysz Logitech"
+          }
+        }
+      }
+    },
+    "a PC keyboard": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "eine PC-Tastatur"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "klawiatura PC"
+          }
+        }
+      }
+    },
+    "a mouse": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "eine Maus"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mysz"
+          }
+        }
+      }
+    },
+    "a trackpad": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ein Trackpad"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gładzik"
           }
         }
       }
@@ -13997,6 +15113,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "µs"
+          }
+        }
+      }
+    },
+    "⌘ + back button: compass": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌘ + Zurück-Taste: Kompass"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌘ + przycisk Wstecz: kompas"
+          }
+        }
+      }
+    },
+    "⌘ sits next to the space bar, where Alt was, so ⌘C and ⌘V feel like Ctrl+C and Ctrl+V. Only on PC keyboards; the Mac keyboard stays as it is. Leave it off if your keyboard has a Mac mode.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌘ liegt neben der Leertaste, wo Alt war, sodass sich ⌘C und ⌘V wie Strg+C und Strg+V anfühlen. Nur auf PC-Tastaturen; die Mac-Tastatur bleibt, wie sie ist. Lass es aus, wenn deine Tastatur einen Mac-Modus hat."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌘ trafia obok spacji, tam gdzie był Alt, więc ⌘C i ⌘V są pod palcami jak Ctrl+C i Ctrl+V. Tylko na klawiaturach PC; klawiatura Maca zostaje bez zmian. Zostaw wyłączone, jeśli Twoja klawiatura ma tryb Mac."
+          }
+        }
+      }
+    },
+    "⌥ + back goes to the previous Space, ⌥ + forward to the next one.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌥ + Zurück wechselt zum vorherigen Space, ⌥ + Vorwärts zum nächsten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌥ + Wstecz przechodzi na poprzednie biurko, ⌥ + Dalej na następne."
+          }
+        }
+      }
+    },
+    "⌥ + side buttons: switch Spaces": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌥ + Seitentasten: Spaces wechseln"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⌥ + przyciski boczne: przełączanie biurek"
           }
         }
       }

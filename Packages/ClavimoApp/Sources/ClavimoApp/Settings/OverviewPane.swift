@@ -9,6 +9,10 @@ struct OverviewPane: View {
     @State private var devices: [HIDDeviceInfo] = []
     @State private var disabledShortcuts: [SystemChecks.Shortcut] = []
     @State private var accelerationEnabled = false
+    @State private var hardware = Hardware()
+
+    /// Two setups that suit what is connected, or the first two otherwise.
+    private var recommended: [Preset] { Array(Presets.ordered(for: hardware).prefix(2)) }
 
     var body: some View {
         ScrollView {
@@ -23,16 +27,19 @@ struct OverviewPane: View {
                     StatCard(title: String(localized: "Mouse wheel"), value: wheelValue,
                              detail: wheelDetail, symbol: "computermouse") { navigation.pane = .mouse }
                 }
-                Card {
-                    VStack(alignment: .leading, spacing: Spacing.m) {
-                        SectionHeader(title: String(localized: "Quick actions"))
-                        HStack(spacing: Spacing.s) {
-                            Button { navigation.createRule() } label: { Label(String(localized: "New Rule"), systemImage: "plus") }
-                                .buttonStyle(.borderedProminent)
-                            Button { navigation.pane = .mouse } label: { Label(String(localized: "Mouse & Scrolling"), systemImage: "computermouse") }
-                            Button { navigation.pane = .general } label: { Label(String(localized: "Permissions"), systemImage: "lock.shield") }
-                        }
-                    }
+                HStack(alignment: .firstTextBaseline) {
+                    SectionHeader(title: String(localized: "Start with a ready-made setup"),
+                                  subtitle: String(localized: "Picked for what is connected. Switch one on, try it, and switch it off if it is not for you."))
+                    Spacer()
+                    Button(String(localized: "All Setups")) { navigation.pane = .presets }
+                }
+                ForEach(recommended) { preset in
+                    PresetCard(preset: preset, editor: editor, hardware: hardware,
+                               open: { navigation.pane = $0 }, compact: true)
+                }
+                HStack(spacing: Spacing.s) {
+                    Button { navigation.createRule() } label: { Label(String(localized: "New Rule"), systemImage: "plus") }
+                    Button { navigation.pane = .general } label: { Label(String(localized: "Permissions"), systemImage: "lock.shield") }
                 }
             }
             .padding(Spacing.xl)
@@ -42,6 +49,7 @@ struct OverviewPane: View {
     }
 
     private func refresh() {
+        hardware = Hardware.current()
         devices = HIDDeviceCatalog.connectedDevices()
         for device in devices { DeviceNames.cache[device.id.description] = device.name }
         disabledShortcuts = SystemChecks.disabledShortcuts()

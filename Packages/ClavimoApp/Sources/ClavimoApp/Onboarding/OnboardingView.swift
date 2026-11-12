@@ -1,14 +1,15 @@
 import AppKit
+import ClavimoCore
 import ClavimoQuartz
 import Combine
 import SwiftUI
 
 /// The first-run guide: what Clavimo does, the permissions it needs and
-/// why, the connected devices, a first rule, and a quick check that
-/// typing, the mouse and the pause control work.
+/// why, the connected devices, ready-made setups to start with, and a quick
+/// check that typing, the mouse and the pause control work.
 struct OnboardingView: View {
     enum Step: Int, CaseIterable {
-        case welcome, permissions, devices, firstRule, ready
+        case welcome, permissions, devices, setups, ready
     }
 
     @Bindable var agent: AgentController
@@ -17,7 +18,9 @@ struct OnboardingView: View {
 
     @State var step: Step = .welcome
     @State private var devices: [HIDDeviceInfo] = []
-    @State private var chosenTemplates: Set<String> = []
+    @State private var hardware = Hardware()
+    /// Setups to switch on; the ones that fit the hardware start chosen.
+    @State private var chosenPresets: Set<String>?
     @State private var launchAtLogin = false
     @State private var checks: Set<String> = []
     @State private var errorMessage: String?
@@ -31,7 +34,7 @@ struct OnboardingView: View {
                     case .welcome: welcome
                     case .permissions: permissions
                     case .devices: deviceList
-                    case .firstRule: firstRule
+                    case .setups: setups
                     case .ready: ready
                     }
                 }
@@ -56,6 +59,7 @@ struct OnboardingView: View {
         .tint(Brand.violet)
         .onReceive(timer) { _ in agent.refreshSystemState() }
         .onAppear {
+            hardware = Hardware.current()
             devices = HIDDeviceCatalog.connectedDevices()
             for device in devices { DeviceNames.cache[device.id.description] = device.name }
         }
@@ -65,7 +69,7 @@ struct OnboardingView: View {
         switch step {
         case .welcome: String(localized: "Get Started")
         case .permissions: permissionsGranted ? String(localized: "Continue") : String(localized: "Skip for Now")
-        case .firstRule: chosenTemplates.isEmpty ? String(localized: "Skip") : String(localized: "Add Rules")
+        case .setups: chosenSetups.isEmpty ? String(localized: "Skip") : String(localized: "Switch On")
         case .ready: String(localized: "Start Clavimo")
         default: String(localized: "Continue")
         }
@@ -82,9 +86,15 @@ struct OnboardingView: View {
 
     private func advance() {
         switch step {
-        case .firstRule:
-            for template in RuleTemplates.all where chosenTemplates.contains(template.id) {
-                if let error = editor.upsert(template.draft, id: nil) {
+        case .setups:
+            // All chosen setups are saved together, so nothing is half done.
+            if let current = editor.document, !chosenSetups.isEmpty {
+                var document = current
+                for preset in Presets.all where chosenSetups.contains(preset.id) {
+                    document = PresetEngine.apply(preset, items: defaultItems(preset, in: document), to: document,
+                                                  hardware: hardware).document
+                }
+                if document != current, let error = editor.replace(with: document) {
                     errorMessage = error
                     return
                 }
@@ -170,20 +180,37 @@ struct OnboardingView: View {
         }
     }
 
-    private var firstRule: some View {
+    private var chosenSetups: Set<String> {
+        chosenPresets ?? Set(Presets.all.filter { $0.fits(hardware) }.map(\.id))
+    }
+
+    private func defaultItems(_ preset: Preset, in document: ConfigDocument) -> Set<String> {
+        Set(preset.items.filter { $0.defaultOn(hardware) && $0.unavailable(hardware, document) == nil }.map(\.id))
+    }
+
+    private var setups: some View {
         VStack(alignment: .leading, spacing: Spacing.l) {
-            Text(String(localized: "Pick a few rules to start")).font(.title.bold())
-            Text(String(localized: "You can change or remove them at any time in Rules.")).foregroundStyle(.secondary)
-            ForEach(RuleTemplates.all) { template in
+            Text(String(localized: "Start with a ready-made setup")).font(.title.bold())
+            Text(String(localized: "The ones that fit what is connected are already chosen. You can switch each one off later in Ready-made setups."))
+                .foregroundStyle(.secondary)
+            ForEach(Presets.ordered(for: hardware)) { preset in
                 Toggle(isOn: Binding(
-                    get: { chosenTemplates.contains(template.id) },
+                    get: { chosenSetups.contains(preset.id) },
                     set: { on in
-                        if on { chosenTemplates.insert(template.id) } else { chosenTemplates.remove(template.id) }
+                        var updated = chosenSetups
+                        if on { updated.insert(preset.id) } else { updated.remove(preset.id) }
+                        chosenPresets = updated
                     }
                 )) {
                     VStack(alignment: .leading, spacing: Spacing.xs) {
-                        Text(template.title).font(.headline)
-                        RuleTokensView(tokens: template.draft.tokens)
+                        HStack(spacing: Spacing.s) {
+                            Image(systemName: preset.symbol).foregroundStyle(Brand.violet)
+                            Text(preset.title).font(.headline)
+                        }
+                        Text(preset.items.filter { $0.defaultOn(hardware) }.map(\.title).joined(separator: " · "))
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.leading, Spacing.s)
                 }

@@ -9,12 +9,13 @@ import SwiftUI
 @Observable
 final class SettingsNavigation {
     enum Pane: String, CaseIterable, Identifiable {
-        case overview, rules, keyboard, mouse, trackpad, compass, devices, diagnostics, general, about
+        case overview, presets, rules, keyboard, mouse, trackpad, compass, devices, diagnostics, general, about
         var id: String { rawValue }
 
         var title: String {
             switch self {
             case .overview: String(localized: "Overview")
+            case .presets: String(localized: "Ready-made setups")
             case .rules: String(localized: "Rules")
             case .keyboard: String(localized: "Keyboard")
             case .mouse: String(localized: "Mouse & Scrolling")
@@ -30,6 +31,7 @@ final class SettingsNavigation {
         var symbol: String {
             switch self {
             case .overview: "gauge.with.dots.needle.33percent"
+            case .presets: "wand.and.stars"
             case .rules: "list.bullet.rectangle.portrait"
             case .keyboard: "keyboard.badge.ellipsis"
             case .mouse: "computermouse"
@@ -70,7 +72,7 @@ struct SettingsView: View {
         NavigationSplitView {
             List(selection: $navigation.pane) {
                 Section {
-                    ForEach([SettingsNavigation.Pane.overview, .rules, .keyboard, .mouse, .trackpad, .compass, .devices]) { pane in
+                    ForEach([SettingsNavigation.Pane.overview, .presets, .rules, .keyboard, .mouse, .trackpad, .compass, .devices]) { pane in
                         Label(pane.title, systemImage: pane.symbol).tag(pane)
                     }
                 }
@@ -84,6 +86,7 @@ struct SettingsView: View {
         } detail: {
             switch navigation.pane ?? .overview {
             case .overview: OverviewPane(model: model, editor: editor, navigation: navigation)
+            case .presets: PresetsPane(model: model, editor: editor, navigation: navigation)
             case .rules: RulesPane(model: model, editor: editor, navigation: navigation)
             case .keyboard: KeyboardPane(model: model, editor: editor)
             case .mouse: MousePane(editor: editor)

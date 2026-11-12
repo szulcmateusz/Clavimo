@@ -37,6 +37,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Side mouse buttons (3 and up) running an action on their own | Experimental | Without modifiers the button no longer does its usual job. |
 | Rules limited to apps or excluded from apps | Experimental | |
 | Rules limited to one keyboard or mouse | Experimental | Works without a driver by asking devices which one is pressing the key; if that is ambiguous, the rule does not apply. Identical devices cannot be told apart. |
+| Ready-made setups for a MacBook trackpad, a mouse with side buttons, switching from Windows and programming, recommended for the connected hardware, switched on and off in one click | Experimental | Changes that would clash with your own rules are left out, with the reason. |
 | Visual rule editor with key recording, rule templates and a live preview in words | Experimental | |
 | Profiles that inherit the Default rules, switched from the menu bar | Experimental | |
 | Export, import with a preview of the changes, and restoring the previous configuration | Experimental | |
