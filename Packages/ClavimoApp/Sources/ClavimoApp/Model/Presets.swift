@@ -70,6 +70,14 @@ enum Presets {
             draft.name = name
             return .rule(draft)
         }
+        /// A gesture macOS already uses would do both things at once.
+        func taken(_ trigger: TrackpadTrigger) -> (Hardware, ConfigDocument) -> String? {
+            { hardware, _ in
+                SystemTrackpadGestures.conflicts(with: trigger, enabled: hardware.systemGestures).first.map {
+                    String(localized: "macOS already uses this gesture: \($0.title). Turn it off in System Settings > Trackpad first.")
+                }
+            }
+        }
         return Preset(
             id: "trackpad",
             title: String(localized: "MacBook trackpad, every day"),
@@ -78,12 +86,9 @@ enum Presets {
             need: .trackpad,
             items: [
                 PresetItem(id: "middle", title: String(localized: "Three-finger tap: middle click"),
-                           detail: String(localized: "Opens a link in a new tab, or closes a tab when you tap its title.")) { _ in
+                           detail: String(localized: "Opens a link in a new tab, or closes a tab when you tap its title."),
+                           unavailable: taken(.gesture(.tap(fingers: 3)))) { _ in
                     [gesture(.gesture(.tap(fingers: 3)), .middleClick, name: String(localized: "Three-finger tap: middle click"))]
-                },
-                PresetItem(id: "mission", title: String(localized: "Four-finger tap: Mission Control"),
-                           detail: String(localized: "Every open window at a glance.")) { _ in
-                    [gesture(.gesture(.tap(fingers: 4)), .missionControl, name: String(localized: "Four-finger tap: Mission Control"))]
                 },
                 PresetItem(id: "volume", title: String(localized: "Turn two fingers on the right half: volume"),
                            detail: String(localized: "Clockwise is louder, counterclockwise quieter, like a knob. Scrolling works as before.")) { _ in
@@ -98,6 +103,13 @@ enum Presets {
                         },
                     ]
                 },
+                PresetItem(id: "play", title: String(localized: "Four-finger tap: play or pause"),
+                           detail: String(localized: "Music and videos, without looking for the key. macOS does not use this tap."),
+                           unavailable: taken(.gesture(.tap(fingers: 4)))) { _ in
+                    [gesture(.gesture(.tap(fingers: 4)), .media, name: String(localized: "Four-finger tap: play or pause")) {
+                        $0.mediaKey = .playPause
+                    }]
+                },
                 PresetItem(id: "brightness", title: String(localized: "Turn two fingers on the left half: brightness"),
                            detail: String(localized: "Clockwise is brighter, counterclockwise darker. Brightness keys may not work with external displays."),
                            defaultOn: { _ in false }) { _ in
@@ -111,13 +123,6 @@ enum Presets {
                             $0.zone = .left
                         },
                     ]
-                },
-                PresetItem(id: "play", title: String(localized: "Five-finger tap: play or pause"),
-                           detail: String(localized: "Music and videos, without looking for the key."),
-                           defaultOn: { _ in false }) { _ in
-                    [gesture(.gesture(.tap(fingers: 5)), .media, name: String(localized: "Five-finger tap: play or pause")) {
-                        $0.mediaKey = .playPause
-                    }]
                 },
             ]
         )

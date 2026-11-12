@@ -26,13 +26,16 @@ struct Hardware: Equatable {
     var hasLogitech = false
     /// Other input apps that are running, by name.
     var otherApps: [String] = []
+    /// macOS trackpad gestures that are turned on.
+    var systemGestures: Set<SystemTrackpadGestures.Gesture> = []
 
     var usesLogiOptions: Bool { otherApps.contains("Logi Options+") }
 
     init() {}
 
-    init(devices: [Device], otherApps: [String] = []) {
+    init(devices: [Device], otherApps: [String] = [], systemGestures: Set<SystemTrackpadGestures.Gesture> = []) {
         self.otherApps = otherApps
+        self.systemGestures = systemGestures
         for device in devices {
             let name = device.name.lowercased()
             let transport = device.transport?.lowercased() ?? ""
@@ -60,6 +63,7 @@ struct Hardware: Equatable {
         let devices = HIDDeviceCatalog.connectedDevices().map {
             Device(id: $0.id, name: $0.name, transport: $0.transport, isKeyboard: $0.isKeyboard, isPointer: $0.isPointer)
         }
-        return Hardware(devices: devices, otherApps: AgentController.runningRemappers())
+        return Hardware(devices: devices, otherApps: AgentController.runningRemappers(),
+                        systemGestures: SystemTrackpadGestures.enabled())
     }
 }

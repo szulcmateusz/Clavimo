@@ -75,6 +75,14 @@ struct PresetTests {
         #expect(document.deviceSettings?.count == 1)
     }
 
+    @Test func gesturesMacOSUsesAreLeftOut() {
+        var hardware = Self.everything
+        hardware.systemGestures = [.lookUp]
+        let outcome = PresetEngine.apply(Presets.trackpad, items: ["middle", "play"], to: Self.empty, hardware: hardware)
+        #expect(outcome.skipped.map(\.item) == ["middle"], "Look Up takes the three-finger tap")
+        #expect(outcome.applied == ["play"])
+    }
+
     @Test func applyingTwiceAddsNothing() {
         let preset = Presets.trackpad
         let first = PresetEngine.apply(preset, items: ["middle", "volume"], to: Self.empty, hardware: Self.everything)

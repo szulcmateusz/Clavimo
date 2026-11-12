@@ -4481,22 +4481,6 @@
         }
       }
     },
-    "Every open window at a glance.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle offenen Fenster auf einen Blick."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wszystkie otwarte okna w jednym widoku."
-          }
-        }
-      }
-    },
     "Everything happens on your Mac. Clavimo never records what you type and makes no network connections.": {
       "localizations": {
         "de": {
@@ -5101,6 +5085,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stuknięcie czterema palcami: Mission Control"
+          }
+        }
+      }
+    },
+    "Four-finger tap: play or pause": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit vier Fingern tippen: Wiedergabe oder Pause"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuknięcie 4 palcami: odtwórz lub pauza"
           }
         }
       }
@@ -7571,18 +7571,18 @@
         }
       }
     },
-    "Music and videos, without looking for the key.": {
+    "Music and videos, without looking for the key. macOS does not use this tap.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Musik und Videos, ohne die Taste zu suchen."
+            "value": "Musik und Videos, ohne die Taste zu suchen. macOS nutzt dieses Tippen nicht."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Muzyka i filmy bez szukania klawisza."
+            "value": "Muzyka i filmy bez szukania klawisza. macOS nie używa tego stuknięcia."
           }
         }
       }
@@ -14793,6 +14793,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "lewy"
+          }
+        }
+      }
+    },
+    "macOS already uses this gesture: %@. Turn it off in System Settings > Trackpad first.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS nutzt diese Geste bereits: %@. Schalte sie zuerst in den Systemeinstellungen > Trackpad aus."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS używa już tego gestu: %@. Najpierw wyłącz go w Ustawieniach systemowych > Gładzik."
           }
         }
       }
