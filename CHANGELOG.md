@@ -8,7 +8,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Added
 
-- Ready-made setups: four tested sets of changes that switch on in one click and off again in one click. MacBook trackpad every day (a middle click and play or pause by tapping, volume by turning two fingers; gestures macOS already uses are left out), Mouse with side buttons (an action compass and Space switching), Switching from Windows (Alt and Windows keys on a PC keyboard, Home and End, Print Screen, the mouse wheel) and For programmers (Caps Lock as Escape and Hyper, arrows under the right hand). Each change has its own switch and explanation; Clavimo checks what is connected and recommends the setups that fit, leaves out any change that would clash with your own rules and says why, and offers Undo right after.
+- Ready-made setups: two tested sets that switch on in one click and off again in one click. MacBook trackpad every day (a middle click and play or pause by tapping, volume with four fingers up or down, or by turning two fingers when macOS keeps four-finger swipes) and Mouse with side buttons (an action compass, Space switching and the wheel direction). Each change has its own switch and explanation; Clavimo checks what is connected and which gestures macOS uses, recommends the setups that fit, leaves out any change that would clash with your own rules or a macOS gesture and says why, and offers Undo right after.
 - The welcome guide offers the setups that fit your hardware instead of single rules, and can be shown again from General.
 - The Overview recommends two setups for what is connected.
 

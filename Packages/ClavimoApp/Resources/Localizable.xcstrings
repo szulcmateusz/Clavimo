@@ -1259,22 +1259,6 @@
         }
       }
     },
-    "A double tap still turns Caps Lock on. Shortcuts with Hyper (⌃⌥⇧⌘) never clash with apps.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Doppeltes Tippen schaltet die Feststelltaste weiterhin ein. Kurzbefehle mit Hyper (⌃⌥⇧⌘) kollidieren nie mit Apps."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Podwójne stuknięcie nadal włącza Caps Lock. Skróty z Hyperem (⌃⌥⇧⌘) nigdy nie kolidują z aplikacjami."
-          }
-        }
-      }
-    },
     "A key can do one thing when tapped and another when held, switch on a layer of other keys, fire with another key pressed at the same moment, or start a short sequence. Keys you do not change keep working exactly as before.": {
       "localizations": {
         "de": {
@@ -1857,22 +1841,6 @@
         }
       }
     },
-    "Alt and Windows keys swapped on a PC keyboard": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alt- und Windows-Taste auf einer PC-Tastatur tauschen"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zamiana klawiszy Alt i Windows na klawiaturze PC"
-          }
-        }
-      }
-    },
     "An app asked macOS to hide keystrokes (for example in a password field), so keyboard rules wait until it ends. Mouse and trackpad rules keep working.": {
       "localizations": {
         "de": {
@@ -2045,22 +2013,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zastosuj"
-          }
-        }
-      }
-    },
-    "Arrows under the right hand": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pfeile unter der rechten Hand"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Strzałki pod prawą ręką"
           }
         }
       }
@@ -2609,22 +2561,6 @@
         }
       }
     },
-    "Caps Lock is already set in the Keyboard pane.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Feststelltaste ist im Bereich „Tastatur“ bereits eingerichtet."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Caps Lock jest już ustawiony w panelu Klawiatura."
-          }
-        }
-      }
-    },
     "Caps Lock is changed in System Settings": {
       "localizations": {
         "de": {
@@ -2669,22 +2605,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Caps Lock: %@"
-          }
-        }
-      }
-    },
-    "Caps Lock: Escape when tapped, Hyper when held": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feststelltaste: Tippen ist Escape, Halten ist Hyper"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Caps Lock: stuknięcie to Escape, przytrzymanie to Hyper"
           }
         }
       }
@@ -3521,22 +3441,6 @@
         }
       }
     },
-    "Connect a PC keyboard to use this.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schließ eine PC-Tastatur an, um das zu nutzen."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Podłącz klawiaturę PC, żeby z tego skorzystać."
-          }
-        }
-      }
-    },
     "Connected devices": {
       "localizations": {
         "de": {
@@ -4305,6 +4209,22 @@
         }
       }
     },
+    "Each swipe changes the volume by one step.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jedes Wischen ändert die Lautstärke um eine Stufe."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Każde przesunięcie zmienia głośność o jeden stopień."
+          }
+        }
+      }
+    },
     "Edit": {
       "localizations": {
         "de": {
@@ -4381,22 +4301,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "End"
-          }
-        }
-      }
-    },
-    "End: end of the line": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ende: Zeilenende"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "End: koniec linii"
           }
         }
       }
@@ -4605,22 +4509,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wyeksportowano do %@."
-          }
-        }
-      }
-    },
-    "Faster keyboard work in code editors and the terminal.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Schneller mit der Tastatur in Code-Editoren und im Terminal."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Szybsza praca na klawiaturze w edytorach kodu i terminalu."
           }
         }
       }
@@ -4929,22 +4817,6 @@
         }
       }
     },
-    "For Vim users.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Für Vim-Nutzer."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dla użytkowników Vima."
-          }
-        }
-      }
-    },
     "For any mouse with back and forward buttons, Logitech mice included.": {
       "localizations": {
         "de": {
@@ -4989,22 +4861,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dla liter wybierz „gdy ten klawisz zostanie puszczony”, klawisz tej samej ręki oznacza stuknięcie i od razu stuknięcie podczas pisania: szybkie pisanie nigdy wtedy nie włączy modyfikatora. Dla Caps Lock lub spacji najbardziej bezpośrednie jest „oznacza przytrzymanie”."
-          }
-        }
-      }
-    },
-    "For programmers": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Für Programmierer"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dla programistów"
           }
         }
       }
@@ -5069,6 +4925,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Forward Delete"
+          }
+        }
+      }
+    },
+    "Four fingers down: quieter": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vier Finger nach unten: leiser"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 palce w dół: ciszej"
+          }
+        }
+      }
+    },
+    "Four fingers up or down: volume": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vier Finger nach oben oder unten: Lautstärke"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 palce w górę lub w dół: głośność"
+          }
+        }
+      }
+    },
+    "Four fingers up: louder": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vier Finger nach oben: lauter"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 palce w górę: głośniej"
           }
         }
       }
@@ -5441,22 +5345,6 @@
         }
       }
     },
-    "Hold Space and use H J K L as arrows. It takes a day to get used to.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Halte die Leertaste und nutze H J K L als Pfeile. Man gewöhnt sich in einem Tag daran."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przytrzymaj Spację i używaj H J K L jako strzałek. Przyzwyczajenie zajmuje dzień."
-          }
-        }
-      }
-    },
     "Hold Space for arrows": {
       "localizations": {
         "de": {
@@ -5617,22 +5505,6 @@
         }
       }
     },
-    "Home and End go to the start and end of the line": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pos1 und Ende springen an Zeilenanfang und -ende"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Home i End przechodzą na początek i koniec linii"
-          }
-        }
-      }
-    },
     "Home row modifiers": {
       "localizations": {
         "de": {
@@ -5667,22 +5539,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Środkowy rząd: %@ / %@"
-          }
-        }
-      }
-    },
-    "Home: start of the line": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pos1: Zeilenanfang"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Home: początek linii"
           }
         }
       }
@@ -6071,22 +5927,6 @@
         }
       }
     },
-    "J and K together: Escape": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "J und K zusammen: Escape"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "J i K razem: Escape"
-          }
-        }
-      }
-    },
     "Japanese keyboard": {
       "localizations": {
         "de": {
@@ -6371,22 +6211,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Przecinek klawiatury numerycznej (JIS)"
-          }
-        }
-      }
-    },
-    "Keys and scrolling the way a PC works, best with a PC keyboard.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tasten und Scrollen wie am PC, am besten mit einer PC-Tastatur."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klawisze i przewijanie jak na PC, najlepiej z klawiaturą PC."
           }
         }
       }
@@ -8227,22 +8051,6 @@
         }
       }
     },
-    "On PC keyboards Print Screen arrives as F13; it then works as ⇧⌘4.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auf PC-Tastaturen kommt Druck als F13 an; die Taste wirkt dann wie ⇧⌘4."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Na klawiaturach PC Print Screen przychodzi jako F13; działa wtedy jak ⇧⌘4."
-          }
-        }
-      }
-    },
     "On: %lld of %lld": {
       "localizations": {
         "de": {
@@ -8815,22 +8623,6 @@
         }
       }
     },
-    "Parentheses on the Shift keys": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klammern auf den Umschalttasten"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nawiasy na klawiszach Shift"
-          }
-        }
-      }
-    },
     "Paste Rules...": {
       "localizations": {
         "de": {
@@ -9345,38 +9137,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Poprzedni utwór"
-          }
-        }
-      }
-    },
-    "Print Screen takes a screenshot of an area": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Druck macht ein Bildschirmfoto eines Bereichs"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Print Screen robi zrzut fragmentu ekranu"
-          }
-        }
-      }
-    },
-    "Print Screen: screenshot of an area": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Druck: Bildschirmfoto eines Bereichs"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Print Screen: zrzut fragmentu ekranu"
           }
         }
       }
@@ -10779,6 +10539,22 @@
         }
       }
     },
+    "Set Mission Control and App Exposé to three fingers or off, or use the knob below.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stell Mission Control und App Exposé auf drei Finger oder aus, oder nutze den Drehregler darunter."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustaw Mission Control i App Exposé na trzy palce albo je wyłącz, albo użyj pokrętła poniżej."
+          }
+        }
+      }
+    },
     "Settings per display are not supported.": {
       "localizations": {
         "de": {
@@ -11639,22 +11415,6 @@
         }
       }
     },
-    "Switching from Windows": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Umstieg von Windows"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Przesiadka z Windowsa"
-          }
-        }
-      }
-    },
     "System": {
       "localizations": {
         "de": {
@@ -11833,22 +11593,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Od razu stuknięcie podczas pisania"
-          }
-        }
-      }
-    },
-    "Tap left Shift for ( and right Shift for ). Held, Shift works as usual.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tippe die linke Umschalttaste für ( und die rechte für ). Gehalten wirkt Umschalt wie gewohnt."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stuknięcie lewego Shifta daje (, prawego ). Przytrzymany Shift działa jak zwykle."
           }
         }
       }
@@ -14305,22 +14049,6 @@
         }
       }
     },
-    "With Shift they select. Mac keyboards have no Home or End, so nothing changes there.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mit Umschalt markieren sie. Mac-Tastaturen haben kein Pos1 oder Ende, dort ändert sich also nichts."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Z Shiftem zaznaczają. Klawiatury Maca nie mają Home ani End, więc tam nic się nie zmienia."
-          }
-        }
-      }
-    },
     "With no modifier, the button itself runs the action. Hold it and move to choose in a compass.": {
       "localizations": {
         "de": {
@@ -14493,22 +14221,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "mysz Logitech"
-          }
-        }
-      }
-    },
-    "a PC keyboard": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "eine PC-Tastatur"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "klawiatura PC"
           }
         }
       }
@@ -15145,22 +14857,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "⌘ + przycisk Wstecz: kompas"
-          }
-        }
-      }
-    },
-    "⌘ sits next to the space bar, where Alt was, so ⌘C and ⌘V feel like Ctrl+C and Ctrl+V. Only on PC keyboards; the Mac keyboard stays as it is. Leave it off if your keyboard has a Mac mode.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "⌘ liegt neben der Leertaste, wo Alt war, sodass sich ⌘C und ⌘V wie Strg+C und Strg+V anfühlen. Nur auf PC-Tastaturen; die Mac-Tastatur bleibt, wie sie ist. Lass es aus, wenn deine Tastatur einen Mac-Modus hat."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "⌘ trafia obok spacji, tam gdzie był Alt, więc ⌘C i ⌘V są pod palcami jak Ctrl+C i Ctrl+V. Tylko na klawiaturach PC; klawiatura Maca zostaje bez zmian. Zostaw wyłączone, jeśli Twoja klawiatura ma tryb Mac."
           }
         }
       }

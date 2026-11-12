@@ -5,7 +5,7 @@ import Foundation
 /// device, switched on and off as a whole.
 struct Preset: Identifiable {
     enum Need: Equatable {
-        case trackpad, mouse, pcKeyboard
+        case trackpad, mouse
     }
 
     let id: String
@@ -22,7 +22,6 @@ struct Preset: Identifiable {
         switch need {
         case .trackpad: hardware.hasTrackpad
         case .mouse: hardware.hasMouse
-        case .pcKeyboard: !hardware.pcKeyboards.isEmpty
         case nil: false
         }
     }
@@ -53,7 +52,7 @@ enum PresetChange {
 }
 
 enum Presets {
-    static var all: [Preset] { [trackpad, mouse, windows, developer] }
+    static var all: [Preset] { [trackpad, mouse] }
 
     /// The presets that suit this hardware first, then the others.
     static func ordered(for hardware: Hardware) -> [Preset] {
@@ -90,8 +89,28 @@ enum Presets {
                            unavailable: taken(.gesture(.tap(fingers: 3)))) { _ in
                     [gesture(.gesture(.tap(fingers: 3)), .middleClick, name: String(localized: "Three-finger tap: middle click"))]
                 },
+                PresetItem(id: "swipeVolume", title: String(localized: "Four fingers up or down: volume"),
+                           detail: String(localized: "Each swipe changes the volume by one step."),
+                           unavailable: { hardware, document in
+                               taken(.gesture(.swipe(fingers: 4, .up)))(hardware, document).map {
+                                   $0 + " " + String(localized: "Set Mission Control and App Exposé to three fingers or off, or use the knob below.")
+                               }
+                           }) { _ in
+                    [
+                        gesture(.gesture(.swipe(fingers: 4, .up)), .media, name: String(localized: "Four fingers up: louder")) {
+                            $0.mediaKey = .volumeUp
+                        },
+                        gesture(.gesture(.swipe(fingers: 4, .down)), .media, name: String(localized: "Four fingers down: quieter")) {
+                            $0.mediaKey = .volumeDown
+                        },
+                    ]
+                },
                 PresetItem(id: "volume", title: String(localized: "Turn two fingers on the right half: volume"),
-                           detail: String(localized: "Clockwise is louder, counterclockwise quieter, like a knob. Scrolling works as before.")) { _ in
+                           detail: String(localized: "Clockwise is louder, counterclockwise quieter, like a knob. Scrolling works as before."),
+                           defaultOn: { hardware in
+                               // The knob stands in when macOS keeps four-finger swipes.
+                               !SystemTrackpadGestures.conflicts(with: .gesture(.swipe(fingers: 4, .up)), enabled: hardware.systemGestures).isEmpty
+                           }) { _ in
                     [
                         gesture(.gesture(.rotate(.clockwise)), .media, name: String(localized: "Right half, turn clockwise: louder")) {
                             $0.mediaKey = .volumeUp
@@ -198,117 +217,5 @@ enum Presets {
             draft.name = String(localized: "Mouse wheel like on Windows")
             return [.setting(draft)]
         }
-    }
-
-    // MARK: - Windows
-
-    static var windows: Preset {
-        func shortcut(_ key: KeyCode, to target: KeyCode, _ modifiers: Set<RuleDraft.Modifier>, name: String, profileID: String) -> PresetChange {
-            var draft = KeyboardRuleDraft(kind: .keyOutput)
-            draft.key = key.rawValue
-            draft.output = OutputDraft.of(.shortcut)
-            draft.output.key = target.rawValue
-            draft.output.modifiers = modifiers
-            draft.profileID = profileID
-            draft.name = name
-            return .keyboard(draft, id: nil)
-        }
-        return Preset(
-            id: "windows",
-            title: String(localized: "Switching from Windows"),
-            audience: String(localized: "Keys and scrolling the way a PC works, best with a PC keyboard."),
-            symbol: "pc",
-            need: .pcKeyboard,
-            items: [
-                PresetItem(
-                    id: "swap", title: String(localized: "Alt and Windows keys swapped on a PC keyboard"),
-                    detail: String(localized: "⌘ sits next to the space bar, where Alt was, so ⌘C and ⌘V feel like Ctrl+C and Ctrl+V. Only on PC keyboards; the Mac keyboard stays as it is. Leave it off if your keyboard has a Mac mode."),
-                    defaultOn: { _ in false },
-                    unavailable: { hardware, _ in
-                        hardware.pcKeyboards.isEmpty ? String(localized: "Connect a PC keyboard to use this.") : nil
-                    }
-                ) { context in
-                    let devices = context.hardware.pcKeyboards.map(\.id.description)
-                    return [(KeyCode.leftOption, KeyCode.leftCommand), (.rightOption, .rightCommand)].map { first, second in
-                        var draft = RuleDraft()
-                        draft.kind = .swapKeys
-                        draft.firstKey = first.rawValue
-                        draft.secondKey = second.rawValue
-                        draft.devices = devices
-                        draft.profileID = context.profileID
-                        draft.name = draft.suggestedName
-                        return .rule(draft)
-                    }
-                },
-                PresetItem(id: "homeEnd", title: String(localized: "Home and End go to the start and end of the line"),
-                           detail: String(localized: "With Shift they select. Mac keyboards have no Home or End, so nothing changes there.")) { context in
-                    [
-                        shortcut(KeyCode(0x73), to: .leftArrow, [.command], name: String(localized: "Home: start of the line"), profileID: context.profileID),
-                        shortcut(KeyCode(0x77), to: .rightArrow, [.command], name: String(localized: "End: end of the line"), profileID: context.profileID),
-                    ]
-                },
-                PresetItem(id: "printScreen", title: String(localized: "Print Screen takes a screenshot of an area"),
-                           detail: String(localized: "On PC keyboards Print Screen arrives as F13; it then works as ⇧⌘4.")) { context in
-                    [shortcut(KeyCode(0x69), to: KeyCode(0x15), [.shift, .command],
-                              name: String(localized: "Print Screen: screenshot of an area"), profileID: context.profileID)]
-                },
-                wheelItem(defaultOn: { _ in true }),
-            ]
-        )
-    }
-
-    // MARK: - Developer
-
-    static var developer: Preset {
-        func template(_ template: KeyboardTemplates.Template, profileID: String) -> [PresetChange] {
-            template.drafts.map { draft in
-                var draft = draft
-                draft.profileID = profileID
-                return .keyboard(draft, id: nil)
-            }
-        }
-        return Preset(
-            id: "developer",
-            title: String(localized: "For programmers"),
-            audience: String(localized: "Faster keyboard work in code editors and the terminal."),
-            symbol: "chevron.left.forwardslash.chevron.right",
-            need: nil,
-            items: [
-                PresetItem(
-                    id: "caps", title: String(localized: "Caps Lock: Escape when tapped, Hyper when held"),
-                    detail: String(localized: "A double tap still turns Caps Lock on. Shortcuts with Hyper (⌃⌥⇧⌘) never clash with apps."),
-                    unavailable: { _, document in
-                        document.rules.contains { $0.id == KeyboardPane.capsLockRuleID }
-                            ? String(localized: "Caps Lock is already set in the Keyboard pane.") : nil
-                    }
-                ) { context in
-                    var draft = KeyboardRuleDraft()
-                    draft.kind = .tapHold
-                    draft.key = KeyCode.capsLock.rawValue
-                    draft.output = .key(KeyCode.escape.rawValue)
-                    draft.hold = .modifiers(OutputDraft.hyper)
-                    draft.doubleTapEnabled = true
-                    draft.doubleTap = .of(.capsLock)
-                    draft.profileID = context.profileID
-                    draft.name = String(localized: "Caps Lock: \(KeyboardPane.CapsPreset.hyperEscape.title)")
-                    return [.keyboard(draft, id: KeyboardPane.capsLockRuleID)]
-                },
-                PresetItem(id: "arrows", title: String(localized: "Arrows under the right hand"),
-                           detail: String(localized: "Hold Space and use H J K L as arrows. It takes a day to get used to."),
-                           defaultOn: { _ in false }) { context in
-                    template(KeyboardTemplates.navigation, profileID: context.profileID)
-                },
-                PresetItem(id: "parentheses", title: String(localized: "Parentheses on the Shift keys"),
-                           detail: String(localized: "Tap left Shift for ( and right Shift for ). Held, Shift works as usual."),
-                           defaultOn: { _ in false }) { context in
-                    template(KeyboardTemplates.parentheses, profileID: context.profileID)
-                },
-                PresetItem(id: "escapeCombo", title: String(localized: "J and K together: Escape"),
-                           detail: String(localized: "For Vim users."),
-                           defaultOn: { _ in false }) { context in
-                    template(KeyboardTemplates.escapeCombo, profileID: context.profileID)
-                },
-            ]
-        )
     }
 }

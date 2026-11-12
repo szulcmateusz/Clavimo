@@ -3,8 +3,8 @@ import ClavimoCore
 import ClavimoQuartz
 
 /// What is connected, as far as ready-made setups need to know: a
-/// trackpad, a separate mouse, keyboards with a PC layout, and other input
-/// apps that may handle the same buttons.
+/// trackpad, a separate mouse, and other input apps that may handle the
+/// same buttons.
 struct Hardware: Equatable {
     struct Device: Equatable {
         var id: DeviceID
@@ -19,10 +19,6 @@ struct Hardware: Equatable {
 
     var hasTrackpad = false
     var hasMouse = false
-    /// Keyboards that are not made by Apple or Logitech and are not built
-    /// in, usually with Alt and Windows keys where a Mac has Option and
-    /// Command.
-    var pcKeyboards: [Device] = []
     var hasLogitech = false
     /// Other input apps that are running, by name.
     var otherApps: [String] = []
@@ -43,16 +39,11 @@ struct Hardware: Equatable {
             let isTrackpad = (builtIn && device.isPointer) || name.contains("trackpad")
             if isTrackpad { hasTrackpad = true }
             if device.id.vendorID == Self.logitechVendor { hasLogitech = true }
-            guard !builtIn, !isTrackpad else { continue }
-            if device.isPointer {
-                // Mice often expose a keyboard interface too; a Logitech
-                // receiver looks like both.
-                if name.contains("mouse") || !device.isKeyboard || device.id.vendorID == Self.logitechVendor {
-                    hasMouse = true
-                }
-            } else if device.isKeyboard, device.id.vendorID != Self.appleVendor, device.id.vendorID != Self.logitechVendor {
-                // Logitech keyboards switch to a Mac layout by themselves.
-                pcKeyboards.append(device)
+            guard !builtIn, !isTrackpad, device.isPointer else { continue }
+            // Mice often expose a keyboard interface too; a Logitech
+            // receiver looks like both.
+            if name.contains("mouse") || !device.isKeyboard || device.id.vendorID == Self.logitechVendor {
+                hasMouse = true
             }
         }
     }

@@ -211,7 +211,6 @@ struct PresetCard: View {
         switch preset.id {
         case "trackpad": .trackpad
         case "mouse": applied.contains("compass") ? .compass : .rules
-        case "developer": .keyboard
         default: .rules
         }
     }
@@ -261,7 +260,6 @@ extension Hardware {
         var parts: [String] = []
         if hasTrackpad { parts.append(String(localized: "a trackpad")) }
         if hasMouse { parts.append(hasLogitech ? String(localized: "a Logitech mouse") : String(localized: "a mouse")) }
-        if !pcKeyboards.isEmpty { parts.append(String(localized: "a PC keyboard")) }
         guard !parts.isEmpty else { return nil }
         var text = String(localized: "Connected: \(parts.formatted(.list(type: .and))).")
         if !otherApps.isEmpty {
