@@ -187,6 +187,32 @@ struct CompassEngineTests {
         #expect(h.up(.capsLockProxy).items == [keyDown(.escape), keyUp(.escape)])
     }
 
+    @Test func aGestureCompassDoesNotTakeTheLastTypedKey() throws {
+        var h = try EngineHarness(Self.rules)
+        h.down(.a)
+        h.up(.a)
+        #expect(h.engine.handleGesture(.tap(fingers: 4), time: h.now).compass == [.open(id: "main", held: false)])
+        let a = h.down(.a)
+        #expect(a.compass == [.cancel], "a letter closes the panel")
+        #expect(a.items == [passThrough], "and still types")
+    }
+
+    @Test func aTappedCompassClosesWithItsOwnKey() throws {
+        let f12 = KeyCode(0x6F)
+        var h = try EngineHarness([
+            .tapHold(id: "t", key: f12, tap: .action(.openCompass("main")), hold: .modifiers(.hyper),
+                     settings: TapHoldSettings(holdAfterMilliseconds: 200)),
+        ])
+        h.down(f12)
+        h.advance(ms: 50)
+        #expect(h.up(f12).compass == [.open(id: "main", held: false)], "a tap opens the panel")
+        let again = h.down(f12)
+        #expect(again.compass == [.cancel], "the same key closes it")
+        #expect(again.items.isEmpty)
+        #expect(h.up(f12).items.isEmpty)
+        #expect(!h.engine.hasTransientState)
+    }
+
     @Test func theCompassClosesItselfAfterItsTimeout() throws {
         var h = try EngineHarness(Self.rules)
         h.down(Self.hyperKey)

@@ -175,8 +175,8 @@ public struct InputEngine: Sendable {
     /// Set while held-back events are replayed after a combo did not form.
     private var suppressCombos = false
     private var compass: CompassSession?
-    /// The key of the event being processed, if it is a key event.
-    private var currentKey: KeyCode?
+    /// The physical key whose tap output is being produced, if any.
+    private var tappingKey: KeyCode?
     /// The time of the latest event, deadline or gesture.
     private var now: UInt64 = 0
 
@@ -357,13 +357,12 @@ public struct InputEngine: Sendable {
 
     /// Routes one event, after any pending decision had a chance to take it.
     private mutating func process(_ event: InputEvent, into output: inout EngineOutput) {
-        if case let .key(code, _, _) = event.kind { currentKey = code } else { currentKey = nil }
         if compass != nil, takenByCompass(event, into: &output) { return }
         switch event.kind {
         case let .key(code, isDown, isRepeat):
             if isDown, !isRepeat, let pending = pendingDoubleTap, pending.key != code || !isDoubleTapPress(code) {
                 pendingDoubleTap = nil
-                tapOnce(pending.binding.tap, time: event.time, into: &output)
+                tapOnce(pending.binding.tap, key: pending.key, time: event.time, into: &output)
             }
             // A decision that replays held-back keys can start a new one;
             // the event must then be offered to that one as well.
@@ -441,7 +440,7 @@ public struct InputEngine: Sendable {
                 replay(pending.buffered, into: &output)
             } else if let pending = pendingDoubleTap, now >= pending.deadline {
                 pendingDoubleTap = nil
-                tapOnce(pending.binding.tap, time: now, into: &output)
+                tapOnce(pending.binding.tap, key: pending.key, time: now, into: &output)
             } else {
                 break
             }
@@ -534,7 +533,7 @@ public struct InputEngine: Sendable {
             appendModifierTransitions(from: logicalBefore, to: logicalModifiers(for: physical), into: &output)
         }
         if let tapAlone {
-            tapOnce(tapAlone, time: time, into: &output)
+            tapOnce(tapAlone, key: code, time: time, into: &output)
         }
     }
 
@@ -792,7 +791,7 @@ public struct InputEngine: Sendable {
                     deadline: event.time &+ UInt64(settings.doubleTapMilliseconds) * 1_000_000
                 )
             } else {
-                tapOnce(pending.binding.tap, time: event.time, into: &output)
+                tapOnce(pending.binding.tap, key: code, time: event.time, into: &output)
                 lastTap = (code, event.time)
             }
             replay(pending.buffered, into: &output)
@@ -893,7 +892,7 @@ public struct InputEngine: Sendable {
         let candidates = rules.sequences.filter { $0.keys.starts(with: current.path) && matches($0.conditions) }
         if let done = candidates.first(where: { $0.keys == current.path }) {
             sequence = nil
-            tapOnce(done.output, time: time, into: &output)
+            tapOnce(done.output, key: code, time: time, into: &output)
         } else if candidates.isEmpty {
             sequence = nil
         } else {
@@ -984,7 +983,12 @@ public struct InputEngine: Sendable {
 
     /// Presses and releases an output at once. A typed key takes pending
     /// one-shot modifiers.
-    private mutating func tapOnce(_ keyOutput: KeyOutput, time: UInt64, into output: inout EngineOutput) {
+    /// `key` is the physical key the tap came from, if any: a compass it
+    /// opens closes when that key is pressed again.
+    private mutating func tapOnce(_ keyOutput: KeyOutput, key: KeyCode? = nil, time: UInt64, into output: inout EngineOutput) {
+        let previous = tappingKey
+        tappingKey = key
+        defer { tappingKey = previous }
         let owner = Owner.group(newGroup())
         if case .key = keyOutput { takeOneShot(for: owner) }
         press(keyOutput, owner: owner, time: time, into: &output)
@@ -1047,7 +1051,7 @@ public struct InputEngine: Sendable {
         }
         if let pending = pendingDoubleTap {
             pendingDoubleTap = nil
-            tapOnce(pending.binding.tap, time: time, into: &output)
+            tapOnce(pending.binding.tap, key: pending.key, time: time, into: &output)
         }
         sequence = nil
     }
@@ -1169,7 +1173,7 @@ public struct InputEngine: Sendable {
             output.compass.append(.cancel)
             return
         }
-        var key = currentKey
+        var key = tappingKey
         if case let .key(code)? = trigger { key = code }
         compass = CompassSession(id: id, trigger: trigger, key: key, held: trigger != nil, deadline: compassDeadline)
         output.compass.append(.open(id: id, held: trigger != nil))
