@@ -99,8 +99,12 @@ struct CompassView: View {
     var body: some View {
         ZStack {
             base
-            ForEach(CompassDirection.allCases, id: \.self) { direction in
-                segment(direction)
+            if model.tiles.isEmpty {
+                RingSector(start: 0, end: 360, inner: Self.inner + 6, outer: Self.outer - 6, gap: 0)
+                    .fill(Color.white.opacity(0.03))
+            }
+            ForEach(Self.zones(for: Array(model.tiles.keys)), id: \.direction) { zone in
+                segment(zone)
             }
             centre
         }
@@ -128,10 +132,12 @@ struct CompassView: View {
     }
 
     @ViewBuilder
-    private func segment(_ direction: CompassDirection) -> some View {
+    private func segment(_ zone: Zone) -> some View {
+        let direction = zone.direction
         let tile = model.tiles[direction]
         let isOn = model.highlighted == direction && tile != nil
-        let shape = RingSector(centre: direction.degrees, inner: Self.inner + 6, outer: Self.outer - 6)
+        let shape = RingSector(start: zone.start, end: zone.end, inner: Self.inner + 6, outer: Self.outer - 6,
+                               gap: zone.end - zone.start >= 359 ? 0 : 1.2)
         ZStack {
             shape
                 .fill(isOn ? AnyShapeStyle(accent) : AnyShapeStyle(Color.white.opacity(tile == nil ? 0.015 : 0.055)))
@@ -220,6 +226,30 @@ struct CompassView: View {
         }
     }
 
+    /// The part of the ring that picks one direction: from halfway to the
+    /// previous defined direction to halfway to the next one, the same rule
+    /// `CompassGeometry` uses. Two actions get half the ring each.
+    struct Zone {
+        let direction: CompassDirection
+        let start: Double
+        let end: Double
+    }
+
+    nonisolated static func zones(for defined: [CompassDirection]) -> [Zone] {
+        let sorted = defined.sorted { $0.degrees < $1.degrees }
+        guard sorted.count > 1 else {
+            return sorted.map { Zone(direction: $0, start: $0.degrees - 180, end: $0.degrees + 180) }
+        }
+        return sorted.indices.map { index in
+            let direction = sorted[index]
+            var below = direction.degrees - sorted[(index + sorted.count - 1) % sorted.count].degrees
+            if below <= 0 { below += 360 }
+            var above = sorted[(index + 1) % sorted.count].degrees - direction.degrees
+            if above <= 0 { above += 360 }
+            return Zone(direction: direction, start: direction.degrees - below / 2, end: direction.degrees + above / 2)
+        }
+    }
+
     /// `turn` moves the point along the ring, in degrees counterclockwise.
     private func offset(_ direction: CompassDirection, radius: CGFloat, turn: Double = 0) -> CGSize {
         let angle = (direction.degrees + turn) * .pi / 180
@@ -228,10 +258,12 @@ struct CompassView: View {
     }
 }
 
-/// One eighth of a ring, centred on a direction (degrees counterclockwise
-/// from the right, as in mathematics).
+/// A part of a ring between two angles (degrees counterclockwise from the
+/// right, as in mathematics).
 struct RingSector: Shape {
-    var centre: Double
+    /// Degrees counterclockwise from the right; `end` is after `start`.
+    var start: Double
+    var end: Double
     var inner: CGFloat
     var outer: CGFloat
     var gap: Double = 1.2
@@ -239,11 +271,11 @@ struct RingSector: Shape {
     func path(in rect: CGRect) -> Path {
         let c = CGPoint(x: rect.midX, y: rect.midY)
         // Screen angles grow clockwise because y points down.
-        let start = Angle.degrees(-(centre + 22.5 - gap))
-        let end = Angle.degrees(-(centre - 22.5 + gap))
+        let from = Angle.degrees(-(end - gap))
+        let to = Angle.degrees(-(start + gap))
         var path = Path()
-        path.addArc(center: c, radius: outer, startAngle: start, endAngle: end, clockwise: false)
-        path.addArc(center: c, radius: inner, startAngle: end, endAngle: start, clockwise: true)
+        path.addArc(center: c, radius: outer, startAngle: from, endAngle: to, clockwise: false)
+        path.addArc(center: c, radius: inner, startAngle: to, endAngle: from, clockwise: true)
         path.closeSubpath()
         return path
     }

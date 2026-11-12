@@ -54,6 +54,13 @@ enum ScreenshotRenderer {
                                                   highlighted: .right, held: true)
                     try render(CompassView(model: model).padding(10).background(Brand.heroGradient), size: NSSize(width: 580, height: 580), appearance: appearance,
                                to: outputDirectory.appendingPathComponent("compass-panel-\(suffix).png"))
+                    for (name, directions) in [("four", [CompassDirection.up, .right, .down, .left]), ("two", [.left, .right])] {
+                        var fewer = model
+                        fewer.tiles = model.tiles.filter { directions.contains($0.key) }
+                        fewer.highlighted = directions.first
+                        try render(CompassView(model: fewer).padding(10).background(Brand.heroGradient), size: NSSize(width: 580, height: 580),
+                                   appearance: appearance, to: outputDirectory.appendingPathComponent("compass-panel-\(name)-\(suffix).png"))
+                    }
                 }
                 if let draft = editor.rows.first(where: { $0.draft?.kind == .trackpadGesture && $0.draft?.gesture == .swipe })?.draft {
                     let sheet = RuleEditorView(model: agent, draft: draft, isNew: false) { _ in nil }

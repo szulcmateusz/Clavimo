@@ -86,6 +86,21 @@ struct CompassAppTests {
         #expect(interpreted?.unsupported.isEmpty == true)
     }
 
+    @Test func ringZonesMatchWhatAMovePicks() {
+        let two = CompassView.zones(for: [.right, .left])
+        #expect(two.map(\.direction) == [.right, .left])
+        #expect(two.map { $0.end - $0.start } == [180, 180], "two actions get half the ring each")
+        let four = CompassView.zones(for: [.up, .right, .down, .left])
+        #expect(four.allSatisfy { $0.end - $0.start == 90 })
+        #expect(CompassView.zones(for: [.up]).first.map { $0.end - $0.start } == 360)
+        // Every angle in a zone picks that zone's direction.
+        for zone in CompassView.zones(for: [.up, .downRight, .left]) {
+            let middle = (zone.start + zone.end) / 2 * .pi / 180
+            #expect(CompassGeometry.direction(dx: cos(middle) * 100, dy: sin(middle) * 100,
+                                              among: [.up, .downRight, .left], deadZone: 40) == zone.direction)
+        }
+    }
+
     @Test func swappingDirections() {
         var draft = CompassDraft(id: "main", name: "Main")
         CompassTemplates.everyday.apply(to: &draft)

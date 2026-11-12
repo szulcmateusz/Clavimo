@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+### Changed
+
+- The compass draws one segment per action, as large as the area that picks it: two actions get half the ring each, four a quarter.
+
 ## [1.3.0] - 2026-11-12
 
 ### Added
