@@ -2,7 +2,7 @@
 """Fails when a string in the app's catalog lacks a translation or has
 format specifiers that differ from the source.
 
-Usage: scripts/check-translations.py [language ...]   (default: pl)
+Usage: scripts/check-translations.py [language ...]   (default: pl de)
 """
 import json
 import pathlib
@@ -12,9 +12,9 @@ import sys
 CATALOG = pathlib.Path(__file__).resolve().parent.parent / "Packages/ClavimoApp/Resources/Localizable.xcstrings"
 SPECIFIER = re.compile(r"%(?:\d+\$)?(?:lld|ld|d|@|f|\.\d+f)")
 
-languages = sys.argv[1:] or ["pl"]
+languages = sys.argv[1:] or ["pl", "de"]
 # CLDR plural categories that a plural translation must provide.
-PLURAL_FORMS = {"pl": ["one", "few", "many", "other"], "en": ["one", "other"]}
+PLURAL_FORMS = {"pl": ["one", "few", "many", "other"], "de": ["one", "other"], "en": ["one", "other"]}
 strings = json.loads(CATALOG.read_text())["strings"]
 problems = []
 for key, entry in sorted(strings.items()):

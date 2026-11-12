@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-11-12
+
+### Added
+
+- German interface.
+
 ## [1.2.2] - 2026-11-12
 
 First public release of the 1.2 features below.

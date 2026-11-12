@@ -41,7 +41,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Diagnostics: event tap health, processing time, and an opt-in input inspector kept in memory only | Experimental | |
 | First-launch guide for permissions, devices and a first rule | Experimental | |
 | Pause for 5 minutes, 1 hour or until resumed; emergency disable and safe mode | Experimental | |
-| English and Polish interface | Available | Follows the macOS language setting. |
+| English, Polish and German interface | Available | Follows the macOS language setting. German is new in 1.2.3. |
 | Launch at Login, automatic pause while another macOS account is active | Experimental | Multi-account behavior not yet verified on hardware. |
 | Per-device pointer speed and scrolling, mouse button gestures, pinch and edge gestures, window actions, macros, importing other apps' settings, more languages | Planned | |
 | Remapping at the login window or before FileVault unlock | Unsupported | macOS does not allow it for apps like Clavimo. |
