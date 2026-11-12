@@ -1547,6 +1547,22 @@
         }
       }
     },
+    "Add rules written by an AI assistant or copied from elsewhere": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regeln hinzufügen, die ein KI-Assistent geschrieben hat oder die du kopiert hast"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dodaj reguły napisane przez asystenta AI albo skopiowane z innego miejsca"
+          }
+        }
+      }
+    },
     "Added": {
       "localizations": {
         "de": {
@@ -6263,6 +6279,38 @@
         }
       }
     },
+    "No rules found. A rule needs a trigger and an action.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Regeln gefunden. Eine Regel braucht einen Auslöser und eine Aktion."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie znaleziono reguł. Reguła potrzebuje wyzwalacza i akcji."
+          }
+        }
+      }
+    },
+    "No rules found. Paste the JSON your assistant wrote, including the braces.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Regeln gefunden. Füge das JSON deines Assistenten samt geschweiften Klammern ein."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie znaleziono reguł. Wklej JSON napisany przez asystenta razem z nawiasami klamrowymi."
+          }
+        }
+      }
+    },
     "No trackpad": {
       "localizations": {
         "de": {
@@ -6873,6 +6921,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Page Up"
+          }
+        }
+      }
+    },
+    "Paste Rules...": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regeln einfügen …"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklej reguły…"
+          }
+        }
+      }
+    },
+    "Paste from Clipboard": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Zwischenablage einfügen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklej ze schowka"
+          }
+        }
+      }
+    },
+    "Paste rules": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regeln einfügen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklej reguły"
+          }
+        }
+      }
+    },
+    "Paste the rules an AI assistant wrote, or any Clavimo rules in JSON. You see every change before it is applied.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge Regeln ein, die ein KI-Assistent geschrieben hat, oder beliebige Clavimo-Regeln als JSON. Du siehst jede Änderung, bevor sie übernommen wird."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklej reguły napisane przez asystenta AI albo dowolne reguły Clavimo w JSON. Zobaczysz każdą zmianę, zanim zostanie zastosowana."
+          }
+        }
+      }
+    },
+    "Pasted rule %lld": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eingefügte Regel %lld"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wklejona reguła %lld"
           }
         }
       }
@@ -8111,6 +8239,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Obracanie (obraca zdjęcia i mapy w aplikacjach, które to obsługują)"
+          }
+        }
+      }
+    },
+    "Rule %lld cannot be read. Ask the assistant to follow the Clavimo configuration format.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regel %lld kann nicht gelesen werden. Bitte den Assistenten, das Clavimo-Konfigurationsformat einzuhalten."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie da się odczytać reguły %lld. Poproś asystenta, żeby trzymał się formatu konfiguracji Clavimo."
+          }
+        }
+      }
+    },
+    "Rule %lld has no trigger or action.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regel %lld hat keinen Auslöser oder keine Aktion."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reguła %lld nie ma wyzwalacza albo akcji."
           }
         }
       }
@@ -9947,6 +10107,22 @@
         }
       }
     },
+    "The text is not valid JSON. Copy the whole code block from the answer.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Text ist kein gültiges JSON. Kopiere den ganzen Codeblock aus der Antwort."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To nie jest poprawny JSON. Skopiuj cały blok kodu z odpowiedzi."
+          }
+        }
+      }
+    },
     "The trackpad gesture is incomplete or not supported.": {
       "localizations": {
         "de": {
@@ -10023,6 +10199,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nie ma jeszcze poprzedniej wersji. Zachowuje się ją przy każdej zmianie reguły."
+          }
+        }
+      }
+    },
+    "This looks like a whole configuration, but it cannot be read. Ask the assistant to check it against the schema.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das sieht nach einer ganzen Konfiguration aus, lässt sich aber nicht lesen. Bitte den Assistenten, sie mit dem Schema abzugleichen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To wygląda na całą konfigurację, ale nie da się jej odczytać. Poproś asystenta, żeby sprawdził ją ze schematem."
           }
         }
       }

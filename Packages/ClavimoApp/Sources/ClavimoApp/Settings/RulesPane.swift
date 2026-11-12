@@ -26,6 +26,7 @@ struct RulesPane: View {
     @Bindable var navigation: SettingsNavigation
     @State private var editing: Editing?
     @State private var editingKeyboard: KeyboardPane.Editing?
+    @State private var pasting = false
     @State private var selection: String?
     @State private var search = ""
     @State private var filter: Filter = .all
@@ -80,6 +81,10 @@ struct RulesPane: View {
                 .labelsHidden()
                 .frame(maxWidth: 320)
                 Spacer()
+                Button { pasting = true } label: {
+                    Label(String(localized: "Paste Rules..."), systemImage: "doc.on.clipboard")
+                }
+                .help(String(localized: "Add rules written by an AI assistant or copied from elsewhere"))
                 Button { editing = Editing(ruleID: nil, draft: newDraft()) } label: {
                     Label(String(localized: "New Rule"), systemImage: "plus")
                 }
@@ -151,6 +156,9 @@ struct RulesPane: View {
                                layers: Array(Set(editor.rows.compactMap { $0.keyboard?.layer })).sorted()) { draft in
                 editor.upsertKeyboard(draft, id: item.ruleID)
             }
+        }
+        .sheet(isPresented: $pasting) {
+            PasteRulesView(editor: editor) { result in errorMessage = result == String(localized: "Configuration applied.") ? nil : result }
         }
         .onAppear(perform: consumeRequest)
         .onChange(of: navigation.ruleToCreate) { consumeRequest() }

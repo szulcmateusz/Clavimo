@@ -38,6 +38,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Visual rule editor with key recording, rule templates and a live preview in words | Experimental | |
 | Profiles that inherit the Default rules, switched from the menu bar | Experimental | |
 | Export, import with a preview of the changes, and restoring the previous configuration | Experimental | |
+| Paste rules written by an AI assistant (or copied from anywhere) straight into Clavimo, with a preview of the changes | Experimental | |
 | Diagnostics: event tap health, processing time, and an opt-in input inspector kept in memory only | Experimental | |
 | First-launch guide for permissions, devices and a first rule | Experimental | |
 | Pause for 5 minutes, 1 hour or until resumed; emergency disable and safe mode | Experimental | |

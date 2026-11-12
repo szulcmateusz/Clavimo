@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.2.4] - 2026-11-12
+
+### Added
+
+- Paste Rules, in Rules and in General > Backup and Import: paste rules an AI assistant wrote, or any Clavimo rules in JSON, without saving a file. A whole configuration, a list of rules or one rule is accepted, also inside a Markdown code block; missing IDs, names and profiles are filled in, and every change is shown before it is applied.
+
 ## [1.2.3] - 2026-11-12
 
 First public release of the 1.2 features below.

@@ -9,6 +9,7 @@ struct BackupSection: View {
     @Bindable var editor: ConfigEditor
     @State private var preview: Preview?
     @State private var message: String?
+    @State private var pasting = false
 
     struct Preview: Identifiable {
         let id = UUID()
@@ -21,6 +22,7 @@ struct BackupSection: View {
             HStack {
                 Button(String(localized: "Export...")) { export() }
                 Button(String(localized: "Import...")) { importFile() }
+                Button(String(localized: "Paste Rules...")) { pasting = true }
                 Spacer()
                 Button(String(localized: "Restore Previous Version...")) {
                     if let backup = editor.backupDocument {
@@ -35,6 +37,9 @@ struct BackupSection: View {
             Text(String(localized: "Backup and Import"))
         } footer: {
             Text(String(localized: "Exported files contain your rules, app identifiers and device IDs, never anything you typed. Importing shows the changes before anything is applied.")).formFooterStyle()
+        }
+        .sheet(isPresented: $pasting) {
+            PasteRulesView(editor: editor) { result in message = result }
         }
         .sheet(item: $preview) { item in
             ImportPreviewView(editor: editor, title: item.title, incoming: item.document) { result in
@@ -66,6 +71,64 @@ struct BackupSection: View {
             preview = Preview(title: String(localized: "Import \(url.lastPathComponent)"), document: document)
         case let .failure(error):
             message = error.message
+        }
+    }
+}
+
+/// Rules pasted as text, for example from an AI assistant: first the text,
+/// then the same preview of changes as a file import.
+struct PasteRulesView: View {
+    @Bindable var editor: ConfigEditor
+    let completion: (String?) -> Void
+    @State private var text = ""
+    @State private var parsed: ConfigDocument?
+    @State private var errorMessage: String?
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        if let parsed {
+            ImportPreviewView(editor: editor, title: String(localized: "Paste rules"), incoming: parsed, completion: completion)
+        } else {
+            VStack(alignment: .leading, spacing: Spacing.m) {
+                SectionHeader(title: String(localized: "Paste rules"),
+                              subtitle: String(localized: "Paste the rules an AI assistant wrote, or any Clavimo rules in JSON. You see every change before it is applied."))
+                TextEditor(text: $text)
+                    .font(.system(.callout, design: .monospaced))
+                    .scrollContentBackground(.hidden)
+                    .padding(Spacing.s)
+                    .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(.quaternary))
+                if let errorMessage {
+                    Label(errorMessage, systemImage: "exclamationmark.triangle").foregroundStyle(.orange).font(.callout)
+                }
+                HStack {
+                    Button(String(localized: "Paste from Clipboard")) {
+                        text = NSPasteboard.general.string(forType: .string) ?? ""
+                    }
+                    Spacer()
+                    Button(String(localized: "Cancel"), role: .cancel) { dismiss() }.keyboardShortcut(.cancelAction)
+                    Button(String(localized: "Continue")) { readText() }
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            .padding(Spacing.xl)
+            .frame(width: 560, height: 480)
+            .onAppear {
+                // Start with the clipboard when it holds JSON.
+                if let clip = NSPasteboard.general.string(forType: .string), PastedRules.extractJSON(from: clip) != nil {
+                    text = clip
+                }
+            }
+        }
+    }
+
+    private func readText() {
+        guard let current = editor.document else { return }
+        switch PastedRules.apply(text, to: current) {
+        case let .success(document): parsed = document
+        case let .failure(failure): errorMessage = failure.message
         }
     }
 }
