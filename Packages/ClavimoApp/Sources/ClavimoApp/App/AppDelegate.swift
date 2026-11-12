@@ -23,9 +23,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var editor = ConfigEditor(store: store)
     private lazy var windows = WindowCoordinator(agent: agent, editor: editor)
     private var menu: StatusMenuController?
+    /// Set when another copy is already running; this one quits without
+    /// touching input or the Caps Lock mapping that copy owns.
+    private var isDuplicate = false
     private let overlayPanel = KeyboardOverlayPanel()
 
     func applicationDidFinishLaunching(_: Notification) {
+        // Two copies would each install an event tap and run every rule
+        // twice. A second launch shows the running copy's settings instead.
+        let me = NSRunningApplication.current
+        if let bundleID = Bundle.main.bundleIdentifier,
+           let other = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+               .first(where: { $0.processIdentifier != me.processIdentifier && !$0.isTerminated }) {
+            isDuplicate = true
+            other.activate()
+            NSApp.terminate(nil)
+            return
+        }
         let menu = StatusMenuController(agent: agent, editor: editor) { [weak self] in self?.windows.showSettings() }
         self.menu = menu
         agent.onChange = { [weak menu] in menu?.updateIcon() }
@@ -54,6 +68,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_: Notification) {
+        guard !isDuplicate else { return }
         agent.stop()
     }
 
