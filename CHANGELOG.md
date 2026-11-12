@@ -4,6 +4,19 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-12
+
+### Added
+
+- Action compass: up to eight actions around the pointer. Hold a key or mouse button, move towards an action and let go; after a moment the compass shows its actions and highlights the one that will run. A tap, a trackpad gesture or the menu bar opens it as a panel, where a click, Return, the number keys 1 to 8 or Escape decide. Compasses have pages for apps, can open other compasses, come with templates (Spaces and windows, music, browsers, code editors, Zoom) and are edited in the new Compass pane or pasted from an AI assistant.
+- Choose a menu item of the frontmost app as an action, also for commands without a shortcut, picked from the app's menus in the editor.
+- Side mouse buttons (3 and up) can run an action on their own, without a modifier.
+
+### Changed
+
+- The configuration file keeps top-level fields that this version does not know when it is saved, so files from newer versions lose nothing. Versions before 1.3.0 drop `compasses` when they save the file.
+- While a rule opens a compass, left and right clicks pass through the event tap so a click can pick or close it. Pointer movement is still never observed by the tap; the pointer position is read only while a compass is open.
+
 ## [1.2.4] - 2026-11-12
 
 ### Added

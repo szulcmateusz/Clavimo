@@ -23,6 +23,7 @@ Check a file without touching input:
 | `activeProfileId` | Only rules and device settings with this `profileId` are used. Profile inheritance is not supported yet. |
 | `rules` | Keyboard and mouse rules (below). |
 | `deviceSettings` | Mouse wheel and trackpad scrolling settings (below). |
+| `compasses` | Optional. Action compasses (below). |
 | `macros` | Reserved; macros are not supported yet. |
 
 Rules that are enabled but cannot run are listed as unsupported in the menu and the settings window. They are never applied partially.
@@ -41,6 +42,7 @@ Every rule has `id`, `name`, `enabled`, `priority`, `profileId`, `trigger`, `con
 | Keys pressed together | `keyCombo` with two or three `keys` | any keyboard output | |
 | Key sequence | `keySequence` with one to four `keys` | any keyboard output | Runs after a key with `startSequence`. |
 | Modifier + mouse button | `modifierChord` with `requiredModifiers` and `mouseButton` | any action (below) | Modifiers: `control`, `option`, `shift`, `command`, `function`. The held set must match exactly. Buttons 1 and 2 require `behavior.allowProtectedButton: true`. |
+| Mouse button | `mouseButton` with `mouseButton` and optional `requiredModifiers` | any action | Buttons 3 and up can act alone; without modifiers the button no longer does its usual job. Buttons 1 and 2 need a modifier, like a modifier chord. |
 | Key + mouse button | `keyMouseChord` with `leaderKey`, `mouseButton`, `order: leaderThenMouse` | any action | Requires `behavior.leaderPolicy` (below). |
 | Trackpad gesture | `trackpadGesture` (below) | any action | Experimental. |
 | Trackpad click | `trackpadClick` (below) | any action | Experimental. Replaces the click. |
@@ -57,6 +59,8 @@ Chords and trackpad rules require `behavior` `{"consumeTrigger": true, "fireOn":
 | `{"kind": "launchApp", "bundleId": "com.apple.Safari"}` | Opens or activates an app. |
 | `{"kind": "mediaKey", "key": "playPause"}` | Presses a media key: `playPause`, `nextTrack`, `previousTrack`, `volumeUp`, `volumeDown`, `mute`, `brightnessUp`, `brightnessDown`. Brightness keys may not work with external displays. |
 | `{"kind": "toggleCapsLock"}` | Turns Caps Lock on or off. |
+| `{"kind": "openCompass", "compassId": "main"}` | Opens an [action compass](#action-compasses). Held keys and buttons pick by direction when released; taps, chords with modifiers and gestures open it as a panel. |
+| `{"kind": "menuItem", "path": ["File", "New Tab"]}` | Chooses an item in the frontmost app's menus, by its titles from the menu bar down. Titles must match the app's language; case and a trailing ellipsis do not matter. Works for items without a shortcut. |
 
 ### Trackpad gestures and clicks
 
@@ -140,6 +144,43 @@ A letter key used as a chord leader must be held back briefly, otherwise its cha
 | `nonConsuming` | The key types immediately and the chord still works, but the character reaches the app. |
 
 The leader is only held back in apps where at least one of its chords can apply.
+
+## Action compasses
+
+A compass holds up to eight actions around the pointer, one per direction. A rule with the action `openCompass` opens it.
+
+- **Hold and move.** While the trigger (a key, a mouse button, or a tap-hold key's hold) is held, move the pointer towards an action and let go: it runs at once. After `hintDelayMs` the compass shows its actions and highlights the one that would run. Letting go inside `deadZone` after holding cancels; a short tap without moving keeps the compass open as a panel.
+- **Panel.** Opened by a tap, a gesture or the menu bar. The direction of the pointer from the middle highlights an action; a click, Return or Space runs it, the number keys 1 to 8 (clockwise from up) run one directly, and Escape, a right click or the trigger again close the compass. Any other key closes it and types normally.
+
+```json
+"compasses": [{
+  "id": "main",
+  "name": "Main",
+  "slots": [
+    {"direction": "up", "action": {"kind": "missionControl"}},
+    {"direction": "left", "name": "Back", "action": {"kind": "sendShortcut", "key": {"codeNamespace": "macVirtualKeyCode", "code": 33}, "modifiers": ["command"]}},
+    {"direction": "upRight", "name": "Music", "action": {"kind": "openCompass", "compassId": "media"}}
+  ],
+  "apps": [{"bundleId": "com.apple.Safari", "slots": [
+    {"direction": "up", "name": "New tab", "action": {"kind": "menuItem", "path": ["File", "New Tab"]}},
+    {"direction": "upRight", "action": {"kind": "none"}}
+  ]}],
+  "hintDelayMs": 250,
+  "deadZone": 40,
+  "returnPointer": true
+}]
+```
+
+| Field | Meaning |
+| --- | --- |
+| `id`, `name` | `id` is what `openCompass` refers to; `name` is shown in the middle of the compass. |
+| `slots` | Up to eight `{direction, name, action}` entries. `direction` is `up`, `upRight`, `right`, `downRight`, `down`, `downLeft`, `left` or `upLeft`. `name` is optional; without it the compass shows what the action does. With fewer slots, each one covers a wider angle. |
+| `apps` | Pages for apps by `bundleId`. A direction on an app page replaces the default page's slot in that app; `{"kind": "none"}` hides it; directions not listed keep the default page's slot. |
+| `hintDelayMs` | 0-2000, default 250. How long the trigger is held before the actions are shown. |
+| `deadZone` | 10-200 points, default 40. Pointer travel below this picks nothing. |
+| `returnPointer` | Default `true`. Puts the pointer back where it was after an action picked by moving. |
+
+A slot can open another compass (`openCompass`), which then appears in the same place as a panel. Rules that open a missing compass, and slots with an unknown direction or action, are reported as unsupported and left out. While a compass is open Clavimo reads the pointer position to know the direction; it never records pointer movement otherwise.
 
 ## Conditions
 

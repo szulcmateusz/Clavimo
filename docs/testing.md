@@ -54,6 +54,10 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 25. **Combos and sequences.** J + K together type Escape while J and K alone type letters; tapping Right Option shows the sequence panel and S opens Safari; Escape cancels.
 26. **Secure typing.** In a password field in Safari, keyboard rules pause and the menu names the app; they resume after leaving the field.
 27. **Rotation and zones.** Turning two fingers clockwise and counterclockwise changes the volume step by step without scrolling the page; with zone rules, the left half changes volume and the right half brightness. Two-finger scrolling and pinching still work as before.
+28. **Action compass, held.** With a key (for example F13 or a Caps Lock hold) and button 5 opening a compass: hold, move quickly up and let go, and the up action runs without the compass appearing; hold still, the compass appears after the delay, the highlight follows the pointer in all eight directions, and letting go runs it; the pointer returns to where it was; letting go in the middle after holding runs nothing.
+29. **Action compass, panel.** A tap of the trigger, a four-finger tap and the menu bar item open the compass as a panel: a click runs the highlighted action without clicking the app below, 1 to 8 run directly, Esc, a right click or the trigger again close it, and typing a letter closes it and types the letter. It closes by itself after eight seconds without movement.
+30. **Compass pages and menus.** In Safari, an app page action replaces the default one and a hidden direction disappears; a direction that opens another compass shows it in the same place; a menu item action without a shortcut (for example File > New Tab) runs; the menu picker lists the menus of a running app.
+31. **Compass from an assistant.** A compass and the rule that opens it, pasted together from an assistant's answer, appear in the preview and work after applying.
 
 ### Results
 
@@ -66,7 +70,7 @@ Behavior that depends on macOS, keyboards and mice has to be checked by hand. Re
 
 | 2026-11-11 | 27.2 (26B123) | MacBook Pro, Apple M1 Pro | Built-in Force Touch trackpad (family 105) | 18 (probe, 15 s) | 884 valid frames, none invalid; 96-byte records decode at the expected offsets; top right corner reads x 0.98, y 0.94, so y grows upwards; three fingers detected |
 
-Not yet verified: items 2 to 4, 6 to 17 and 19 to 27, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
+Not yet verified: items 2 to 4, 6 to 17 and 19 to 31, Intel Macs, Magic Trackpad, macOS versions other than 27.2, Bluetooth and Logitech receiver devices.
 
 ### Latency measurement
 

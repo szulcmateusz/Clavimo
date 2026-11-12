@@ -837,6 +837,57 @@
       "ui": {
         "order": 25
       }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d54",
+      "name": "Button 5: action compass",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "mouseButton",
+        "mouseButton": 5
+      },
+      "conditions": [],
+      "action": {
+        "kind": "openCompass",
+        "compassId": "main"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 26
+      }
+    },
+    {
+      "id": "7d1b0f3e-6c0a-4c62-9d1e-1f2a3b4c5d55",
+      "name": "F13 held: action compass",
+      "enabled": true,
+      "priority": 50,
+      "profileId": "default",
+      "trigger": {
+        "kind": "key",
+        "key": {
+          "codeNamespace": "macVirtualKeyCode",
+          "code": 105
+        }
+      },
+      "conditions": [],
+      "action": {
+        "kind": "openCompass",
+        "compassId": "main"
+      },
+      "behavior": {
+        "consumeTrigger": true,
+        "fireOn": "down",
+        "repeat": "once"
+      },
+      "ui": {
+        "order": 27
+      }
     }
   ],
   "macros": [],
@@ -884,6 +935,162 @@
         },
         "momentum": true
       }
+    }
+  ],
+  "compasses": [
+    {
+      "id": "main",
+      "name": "Main",
+      "slots": [
+        {
+          "direction": "up",
+          "action": {
+            "kind": "missionControl"
+          }
+        },
+        {
+          "direction": "down",
+          "action": {
+            "kind": "applicationWindows"
+          }
+        },
+        {
+          "direction": "left",
+          "action": {
+            "kind": "previousWorkspace"
+          }
+        },
+        {
+          "direction": "right",
+          "action": {
+            "kind": "nextWorkspace"
+          }
+        },
+        {
+          "direction": "upLeft",
+          "action": {
+            "kind": "mediaKey",
+            "key": "playPause"
+          }
+        },
+        {
+          "direction": "upRight",
+          "name": "Music",
+          "action": {
+            "kind": "openCompass",
+            "compassId": "media"
+          }
+        },
+        {
+          "direction": "downLeft",
+          "name": "Screenshot of an area",
+          "action": {
+            "kind": "sendShortcut",
+            "key": {
+              "codeNamespace": "macVirtualKeyCode",
+              "code": 21
+            },
+            "modifiers": [
+              "shift",
+              "command"
+            ]
+          }
+        },
+        {
+          "direction": "downRight",
+          "action": {
+            "kind": "launchApp",
+            "bundleId": "com.apple.finder"
+          }
+        }
+      ],
+      "apps": [
+        {
+          "bundleId": "com.apple.Safari",
+          "slots": [
+            {
+              "direction": "up",
+              "name": "New tab",
+              "action": {
+                "kind": "menuItem",
+                "path": [
+                  "File",
+                  "New Tab"
+                ]
+              }
+            },
+            {
+              "direction": "left",
+              "name": "Back",
+              "action": {
+                "kind": "sendShortcut",
+                "key": {
+                  "codeNamespace": "macVirtualKeyCode",
+                  "code": 33
+                },
+                "modifiers": [
+                  "command"
+                ]
+              }
+            },
+            {
+              "direction": "right",
+              "name": "Forward",
+              "action": {
+                "kind": "sendShortcut",
+                "key": {
+                  "codeNamespace": "macVirtualKeyCode",
+                  "code": 30
+                },
+                "modifiers": [
+                  "command"
+                ]
+              }
+            },
+            {
+              "direction": "upLeft",
+              "action": {
+                "kind": "none"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "name": "Music",
+      "slots": [
+        {
+          "direction": "up",
+          "action": {
+            "kind": "mediaKey",
+            "key": "volumeUp"
+          }
+        },
+        {
+          "direction": "down",
+          "action": {
+            "kind": "mediaKey",
+            "key": "volumeDown"
+          }
+        },
+        {
+          "direction": "left",
+          "action": {
+            "kind": "mediaKey",
+            "key": "previousTrack"
+          }
+        },
+        {
+          "direction": "right",
+          "action": {
+            "kind": "mediaKey",
+            "key": "nextTrack"
+          }
+        }
+      ],
+      "hintDelayMs": 150
     }
   ]
 }

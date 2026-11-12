@@ -4,7 +4,7 @@ Clavimo changes keyboard and mouse input, so it can see sensitive events. This d
 
 ## What Clavimo processes
 
-- **Keyboard events** (key codes, modifier state, autorepeat), **mouse button events** and, only when a scrolling setting is enabled, **scroll events**. Left and right clicks are observed only when a rule uses them. Pointer movement is never observed.
+- **Keyboard events** (key codes, modifier state, autorepeat), **mouse button events** and, only when a scrolling setting is enabled, **scroll events**. Left and right clicks are observed only when a rule uses them, including a rule that opens an action compass (a click then picks or closes it). The event tap never observes pointer movement.
 - Events are processed in memory, one at a time, to decide whether a rule applies. They are **not stored, logged or transmitted**. Clavimo never records typed text.
 - For rules limited to a device, Clavimo asks connected input devices whether a specific key or button is currently pressed. Only the device's vendor and product ID are used.
 - To evaluate app conditions, Clavimo keeps the bundle identifier of the frontmost app in memory.
@@ -13,6 +13,8 @@ Clavimo changes keyboard and mouse input, so it can see sensitive events. This d
 - **Keys held back by keyboard rules.** Tap-hold keys, combos and key sequences keep a few key presses in memory for a fraction of a second (at most a few seconds for a sequence) until Clavimo knows what they mean; then they are delivered or dropped. They are never stored or logged. While a sequence runs, the on-screen panel shows the keys typed so far in that sequence.
 - To evaluate input source conditions, Clavimo keeps the identifier of the selected keyboard layout (for example `com.apple.keylayout.Polish`) in memory.
 - While keyboard rules are on, Clavimo checks every two seconds whether secure typing (Secure Event Input) is on, and which app turned it on, to explain why keyboard rules pause. It cannot see what is typed there.
+- **Action compasses.** While a compass is open, and only then, Clavimo reads the pointer position about 60 times a second to know which way you moved. Positions stay in memory and are forgotten when the compass closes; they are never stored or logged.
+- **Menu items.** A compass slot or rule that chooses a menu item reads the titles of the frontmost app's menus through Accessibility when it runs, and the editor reads the menus of the app you pick when you choose an item. Only the titles you choose are saved, in your configuration.
 - **Caps Lock rules** change one keyboard setting: while they run, Caps Lock is moved to F18 through the HID `UserKeyMapping` property (the one `hidutil` and System Settings > Modifier Keys use). Clavimo removes its entry when remapping stops or the app quits, and at the next launch if it could not.
 
 ## What is stored
@@ -33,7 +35,7 @@ Clavimo makes **no network connections**. There is no telemetry, analytics, cras
 
 | Permission | Why |
 | --- | --- |
-| Accessibility | Required to change, replace or suppress keyboard and mouse events. |
+| Accessibility | Required to change, replace or suppress keyboard and mouse events, and to choose menu items for compass and rule actions. |
 | Input Monitoring | Required to observe keyboard events and to read device state for device-specific rules. |
 
 Each macOS account grants permissions separately. You can revoke them at any time in **System Settings > Privacy & Security > Accessibility** and **Input Monitoring**; Clavimo then stops changing input and tells you why.

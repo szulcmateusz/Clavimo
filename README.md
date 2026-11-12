@@ -32,7 +32,9 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Trackpad clicks with 3-5 fingers or in a corner (also with tap to click) | Experimental | The click is replaced by the action. |
 | Turn two fingers like a knob (for example volume or brightness), and give a gesture different jobs on the left, right, top or bottom half of the trackpad | Experimental | Trackpad scrolling is held still while fingers turn. |
 | Trackpad scrolling separate from the mouse: direction per axis, speed, momentum on or off | Experimental | Also applies to Magic Mouse. |
-| Actions: click a mouse button, keyboard shortcut, open an app, media and volume keys | Experimental | Available to every rule with an action. |
+| Actions: click a mouse button, keyboard shortcut, open an app, media and volume keys, choose an item in the frontmost app's menus | Experimental | Available to every rule with an action. Menu items are chosen by their titles, in the app's language. |
+| Action compass: up to eight actions around the pointer, picked by moving towards one while a key or mouse button is held, or from a panel; pages per app, nested compasses, templates | Experimental | Reads the pointer position only while a compass is open. |
+| Side mouse buttons (3 and up) running an action on their own | Experimental | Without modifiers the button no longer does its usual job. |
 | Rules limited to apps or excluded from apps | Experimental | |
 | Rules limited to one keyboard or mouse | Experimental | Works without a driver by asking devices which one is pressing the key; if that is ambiguous, the rule does not apply. Identical devices cannot be told apart. |
 | Visual rule editor with key recording, rule templates and a live preview in words | Experimental | |
@@ -44,7 +46,7 @@ Clavimo is a native, open source menu bar app that remaps keys and combines your
 | Pause for 5 minutes, 1 hour or until resumed; emergency disable and safe mode | Experimental | |
 | English, Polish and German interface | Available | Follows the macOS language setting. German is new in 1.2.3. |
 | Launch at Login, automatic pause while another macOS account is active | Experimental | Multi-account behavior not yet verified on hardware. |
-| Per-device pointer speed and scrolling, mouse button gestures, pinch and edge gestures, window actions, macros, importing other apps' settings, more languages | Planned | |
+| Per-device pointer speed and scrolling, mouse button drag gestures, pinch and edge gestures, window actions, macros, importing other apps' settings, more languages | Planned | |
 | Remapping at the login window or before FileVault unlock | Unsupported | macOS does not allow it for apps like Clavimo. |
 
 **Available** means implemented, covered by automated tests and verified on real hardware. **Experimental** means implemented and covered by automated tests, but not yet verified on hardware, so it may not work everywhere. **Planned** features do not exist yet.
@@ -111,6 +113,15 @@ Open **Trackpad** in the settings window. The live preview draws your fingers an
 <p align="center"><img src="docs/images/keyboard-dark.png" width="70%" alt="Keyboard pane: Caps Lock as Escape when tapped and Hyper when held, home row modifiers with timing, and keyboard rules"></p>
 
 Open **Keyboard** in the settings window. Choose what **Caps Lock** does (for example Escape when tapped and Hyper, all four modifiers, when held), turn on **home row modifiers** (hold A S D F or J K L ; for ⌘ ⌥ ⌃ ⇧), or add a template: arrows under the right hand while holding Space, a number pad while holding Tab, J + K for Escape, app shortcuts after tapping Right Option, parentheses on the Shift keys, or 英数/かな on the Command keys. **New Rule** creates any tap-hold key, layer key, combo or sequence. Keyboard rules pause while an app has secure typing on (a password field); the menu says which app.
+
+### Action compass
+
+<p align="center">
+  <img src="docs/images/compass-panel.png" width="34%" alt="The action compass: eight actions around the pointer, with Next Space highlighted">
+  <img src="docs/images/compass-light.png" width="58%" alt="Compass pane: eight directions with their actions, app pages and templates">
+</p>
+
+Open **Compass** in the settings window and create a compass from a template, then choose what opens it: holding a key (for example Caps Lock or F13), a side mouse button, or a trackpad gesture. Hold the trigger, move towards an action and let go; after a moment the compass shows its actions and highlights the one that will run. A short tap keeps it open instead: click an action, press 1 to 8, or press Esc. Each app can have its own actions in some directions, a direction can open another compass, and an action can choose an item from the app's menus, even one without a shortcut.
 
 ### Example: swap Command and Option
 
